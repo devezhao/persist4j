@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Metadata DTD 1.0
+-->
+
+<!--
+ 主节点
+-->
+<!ELEMENT metadata-config (entity)+>
+
+<!--
+ default-parent			- 全局实体的默认继承
+ schema-name-optimize	- 是否启用schema优化（优化以连字符号在每个大写字母前连接，表名为全小写，字段为全大写，如：实体ReferencesMapping优化为references_mapping，字段uniqueId优化为UNIQUE_ID）
+-->
+<!ATTLIST metadata-config
+	default-parent CDATA #IMPLIED
+	schema-name-optimize (true | false | 1 | 0) "false"
+>
+
+<!--
+ 实体定义
+-->
+<!ELEMENT entity (field+, index*)>
+<!-- 
+ 实体定义的属性列表
+ name					- 实体名称
+ physical-name			- 物理名称
+ type-code				- 实体代号，3位数字
+ name-field 			- 名称字段
+ parent					- 父实体
+ description			- 描述
+ schema-name-optimize	- 是否启用schema优化
+-->
+<!ATTLIST entity
+	name       			CDATA #REQUIRED
+	physical-name   	CDATA #IMPLIED
+	type-code  			CDATA #REQUIRED
+	name-field 			CDATA #IMPLIED
+	parent		 		CDATA #IMPLIED
+	description 		CDATA #IMPLIED
+	schema-name-optimize (true | false | 1 | 0) "false"
+>
+
+<!--
+ 字段定义
+-->
+<!ELEMENT field EMPTY>
+<!--
+ 字段定义的属性列表
+ name					- 字段名称
+ type					- 字段类型
+ physical-name			- 物理名称
+ nullable				- 可为空
+ creatable				- 可创建
+ updatable				- 可更新
+ repeatable     		- 可含有重复值
+ ref-entity				- 引用实体列表
+ max-length     		- 最大长度，只支持某些字段
+ cascade				- 级联模式，只支持删除级联
+ auto-value				- 是否含有自动值（如在MySQL中可能存在如自动增长或当前时间），如为true，则系统会忽略填充此值
+ description			- 描述
+ decimal-scale			- 小数位精度
+ default-value			- 默认值，由数据库完成
+-->
+<!ATTLIST field
+	name   				CDATA #REQUIRED
+	physical-name 		CDATA #IMPLIED
+	type   				(primary | reference | reference-list | char | string | text | ntext 
+							| int | small-int | tiny-int | double | decimal | long | date | datetime | timestamp | bool | binary) #REQUIRED
+	nullable   			(true | false | 1 | 0) "true"
+	creatable  			(true | false | 1 | 0) "true"
+	updatable  			(true | false | 1 | 0) "true"
+	repeatable 			(true | false | 1 | 0) "true"
+	ref-entity 			CDATA #IMPLIED
+	max-length      	CDATA #IMPLIED
+	cascade				(delete | remove-links | ignore) "remove-links"
+	auto-value      	(true | false | 1 | 0) "false"
+	description 		CDATA #IMPLIED
+	decimal-scale       (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8) "4"
+	default-value       CDATA #IMPLIED
+>
+
+<!--
+只为生成SCHEMA所用
+ 索引定义
+-->
+<!ELEMENT index EMPTY>
+<!--
+ 字段定义的属性列表
+ type					- 索引类型
+ field-list				- 字段列表
+-->
+<!ATTLIST index
+	type   				(key | unique) "key"
+	field-list		    CDATA #REQUIRED
+>

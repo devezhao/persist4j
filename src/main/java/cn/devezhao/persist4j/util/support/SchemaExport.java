@@ -1,4 +1,4 @@
-package cn.devezhao.persist4j.support.schema;
+package cn.devezhao.persist4j.util.support;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,14 +32,14 @@ public class SchemaExport {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void export(boolean drop, boolean createFK) {
+	public void export(boolean dropExists, boolean createFK) {
 		Entity[] entities = metadataFactory.getEntities();
 		Element cfgRoot = ((ConfigurationMetadataFactory) metadataFactory).getConfigDocument().getRootElement();
 
 		PreparedStatement pstmt = null;
 		try {
 			for (Entity entity : entities) {
-				String[] sqls = new Table(entity, dialect, cfgRoot).generateDDL(drop, createFK);
+				String[] sqls = new Table(entity, dialect, cfgRoot).generateDDL(dropExists, createFK);
 
 				pstmt = connect.prepareStatement("/* !NULL */");
 				for (String sql : sqls) {

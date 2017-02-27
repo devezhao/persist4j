@@ -23,9 +23,9 @@ import cn.devezhao.persist4j.engine.StandardRecord;
  * @since 0.1, Feb 14, 2009
  * @version $Id: XMLRecordCreator.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
-public class XMLRecordCreator implements RecordCreator {
+public class XmlRecordCreator implements RecordCreator {
 	
-	private static final Log LOG = LogFactory.getLog(XMLRecordCreator.class);
+	private static final Log LOG = LogFactory.getLog(XmlRecordCreator.class);
 
 	final protected Entity entity;
 	final protected ID editor;
@@ -46,7 +46,7 @@ public class XMLRecordCreator implements RecordCreator {
 	 * @param editor
 	 * @param source
 	 */
-	public XMLRecordCreator(Entity entity, Element source) {
+	public XmlRecordCreator(Entity entity, Element source) {
 		this(entity, source, null);
 	}
 	
@@ -56,7 +56,7 @@ public class XMLRecordCreator implements RecordCreator {
 	 * @param source
 	 * @param editor
 	 */
-	public XMLRecordCreator(Entity entity, Element source, ID editor) {
+	public XmlRecordCreator(Entity entity, Element source, ID editor) {
 		Validate.notNull(entity);
 		Validate.notNull(source);
 		

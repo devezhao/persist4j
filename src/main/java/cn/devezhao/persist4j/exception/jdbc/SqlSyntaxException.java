@@ -2,7 +2,7 @@ package cn.devezhao.persist4j.exception.jdbc;
 
 import java.sql.SQLException;
 
-import cn.devezhao.persist4j.exception.JDBCException;
+import cn.devezhao.persist4j.exception.JdbcException;
 
 
 /**
@@ -12,7 +12,7 @@ import cn.devezhao.persist4j.exception.JDBCException;
  * @since 0.1, 03/06/08
  * @version $Id: SqlSyntaxException.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
-public class SqlSyntaxException extends JDBCException {
+public class SqlSyntaxException extends JdbcException {
 	private static final long serialVersionUID = 7095739972833914851L;
 
 	public SqlSyntaxException(String message, SQLException root) {

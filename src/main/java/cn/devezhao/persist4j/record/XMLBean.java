@@ -10,15 +10,15 @@ import cn.devezhao.persist4j.engine.ID;
  * @since 0.1, Feb 14, 2009
  * @version $Id: XMLBean.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
-public class XMLBean {
+public class XmlBean {
 	
-	public XMLBean(Entity entity) {
+	public XmlBean(Entity entity) {
 	}
 	
-	public XMLBean(Entity entity, ID recordId) {
+	public XmlBean(Entity entity, ID recordId) {
 	}
 	
-	public XMLBean addValue(String fieldName, String value) {
+	public XmlBean addValue(String fieldName, String value) {
 		return this;
 	}
 }

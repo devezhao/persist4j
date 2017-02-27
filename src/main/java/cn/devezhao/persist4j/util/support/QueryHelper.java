@@ -1,4 +1,4 @@
-package cn.devezhao.persist4j.support;
+package cn.devezhao.persist4j.util.support;
 
 import java.util.ArrayList;
 import java.util.List;

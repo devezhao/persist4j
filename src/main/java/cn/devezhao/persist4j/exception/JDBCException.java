@@ -11,22 +11,22 @@ import cn.devezhao.persist4j.DataAccessException;
  * @since 0.1, Feb 11, 2009
  * @version $Id: JDBCException.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
-public class JDBCException extends DataAccessException {
+public class JdbcException extends DataAccessException {
 	private static final long serialVersionUID = -6444431350667265965L;
 
 	private SQLException sqlex;
 	private String sql;
 
-	public JDBCException(String message, Throwable ex) {
+	public JdbcException(String message, Throwable ex) {
 		super(message, ex);
 	}
 
-	public JDBCException(String message, SQLException root) {
+	public JdbcException(String message, SQLException root) {
 		super(message, root);
 		sqlex = root;
 	}
 
-	public JDBCException(String message, SQLException root, String sql) {
+	public JdbcException(String message, SQLException root, String sql) {
 		super(message, root);
 		this.sqlex = root; 
 		this.sql = sql;

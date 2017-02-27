@@ -70,3 +70,5 @@ Temporary Items
 .apdisk
 /target/
 /.settings/
+/TESTDB/
+derby.log

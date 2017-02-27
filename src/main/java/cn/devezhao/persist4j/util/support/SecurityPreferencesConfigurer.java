@@ -1,4 +1,4 @@
-package cn.devezhao.persist4j.support;
+package cn.devezhao.persist4j.util.support;
 
 import java.io.IOException;
 import java.util.Properties;

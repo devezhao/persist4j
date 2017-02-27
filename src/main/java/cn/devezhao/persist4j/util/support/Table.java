@@ -1,4 +1,4 @@
-package cn.devezhao.persist4j.support.schema;
+package cn.devezhao.persist4j.util.support;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -34,13 +34,13 @@ public class Table {
 		this.cfgRoot = cfgRoot;
 	}
 
-	public String[] generateDDL(boolean drop, boolean createFk) {
+	public String[] generateDDL(boolean dropExists, boolean createFk) {
 		List<String> sqls = new ArrayList<String>();
 		
 		StringBuilder sql = new StringBuilder();
 
 		String schema = entity.getPhysicalName();
-		if (drop) {
+		if (dropExists) {
 			sql.append("drop table if exists ").append(dialect.quote(schema)).append(";");
 			sqls.add(sql.toString());
 			sql = new StringBuilder();

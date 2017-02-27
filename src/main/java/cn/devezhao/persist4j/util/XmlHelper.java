@@ -44,8 +44,9 @@ public class XmlHelper {
 	 */
 	public SAXReader createSAXReader(String file, List<String> errorsList,
 			EntityResolver entityResolver) {
-		if (saxReader == null)
+		if (saxReader == null) {
 			saxReader = new SAXReader();
+		}
 		
 		if (entityResolver != null) {
 			saxReader.setEntityResolver(entityResolver);
@@ -61,8 +62,9 @@ public class XmlHelper {
 	 * Create a dom4j DOMReader
 	 */
 	public DOMReader createDOMReader() {
-		if (domReader == null)
+		if (domReader == null) {
 			domReader = new DOMReader();
+		}
 		return domReader;
 	}
 
@@ -103,8 +105,7 @@ public class XmlHelper {
 			writer.flush();
 			System.out.println("");
 		} catch (Throwable t) {
-			// otherwise, just dump it
-			System.out.println(element.asXML());
+			System.err.println(element.asXML());
 		}
 	}
 
@@ -136,7 +137,7 @@ public class XmlHelper {
 
 	static public class DTDEntityResolver implements EntityResolver {
 		public static final String PUBLIC_ID = "metadata.dtd";
-		public static final String SYSTEM_ID = "http://qdss-persist.googlecode.com/svn/trunk/src/main/conf/metadata.dtd";
+		public static final String SYSTEM_ID = "https://raw.githubusercontent.com/devezhao/persist4j/master/src/main/resources/metadata.dtd";
 
 		DTDEntityResolver() {
 			super();
@@ -144,8 +145,7 @@ public class XmlHelper {
 
 		public InputSource resolveEntity(String publicId, String systemId)
 				throws SAXException, IOException {
-			InputStream stream = getClass().getClassLoader()
-					.getResourceAsStream(PUBLIC_ID);
+			InputStream stream = getClass().getClassLoader().getResourceAsStream(PUBLIC_ID);
 			InputSource source = new InputSource(stream);
 			source.setPublicId(PUBLIC_ID);
 			source.setSystemId(SYSTEM_ID);

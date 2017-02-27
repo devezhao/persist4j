@@ -45,8 +45,9 @@ public abstract class JdbcSupport {
 		PreparedStatement pstmt = null;
 		
 		try {
-			if (LOG.isDebugEnabled())
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("exec sql: " + callback.getSql());
+			}
 				
 			pstmt = connect.prepareStatement(callback.getSql());
 			pstmt.setQueryTimeout(getTimeout());
@@ -85,8 +86,9 @@ public abstract class JdbcSupport {
 			if (SqlHelper.supportsBatchUpdates(connect)) {
 				stmt.setQueryTimeout(TIMEOUT_DEFAULT * 3);
 				for (int i = 0; i < sqls.length; i++) {
-					if (LOG.isDebugEnabled())
+					if (LOG.isDebugEnabled()) {
 						LOG.debug("add sql to batch: " + sqls[i]);
+					}
 					
 					stmt.addBatch(sqls[i]);
 				}
@@ -97,12 +99,14 @@ public abstract class JdbcSupport {
 				for (int i = 0; i < sqls.length; i++) {
 					String crtSql = sqls[i];
 					
-					if (LOG.isDebugEnabled())
+					if (LOG.isDebugEnabled()) {
 						LOG.debug("exec sql(batch): " + crtSql);
+					}
 					
 					if (!stmt.execute(crtSql)) {
 						rowsAffected[i] = stmt.getUpdateCount();
 					} else {
+						SqlHelper.close(stmt);
 						throw new DataAccessException("Invalid batch SQL statement: " + crtSql);
 					}
 				}
@@ -110,7 +114,11 @@ public abstract class JdbcSupport {
 		} catch (SQLException sqlex) {
 			throw sqlex;
 		} catch (Throwable unex) {
-			throw new DataAccessException("Unexception on executeBatch", unex);
+			if (unex instanceof DataAccessException) {
+				throw (DataAccessException) unex;
+			} else {
+				throw new DataAccessException("Unexception on executeBatch", unex);
+			}
 		} finally {
 			SqlHelper.close(stmt);
 			releaseConnection(connect);
@@ -127,8 +135,9 @@ public abstract class JdbcSupport {
 		try {
 			stmt = connect.createStatement();
 			stmt.setQueryTimeout(180);
-			if (LOG.isDebugEnabled())
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("exec query: " + sql);
+			}
 			
 			rs = stmt.executeQuery(sql);
 		} catch (SQLException sqlex) {

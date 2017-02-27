@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cn.devezhao.persist4j.exception.jdbc.ConstraintViolationException;
-import cn.devezhao.persist4j.exception.jdbc.GenericJDBCException;
+import cn.devezhao.persist4j.exception.jdbc.GenericJdbcException;
 import cn.devezhao.persist4j.exception.jdbc.LockAcquisitionException;
 import cn.devezhao.persist4j.exception.jdbc.SqlSyntaxException;
 
@@ -56,7 +56,7 @@ public class SqlExceptionConverter {
 	 * @param sql
 	 * @return
 	 */
-	public static JDBCException convert(SQLException sqlex, String message, String sql) {
+	public static JdbcException convert(SQLException sqlex, String message, String sql) {
 		String stateCode = sqlex.getSQLState();
 
 		if (stateCode != null && stateCode.length() >= 2) {
@@ -90,8 +90,8 @@ public class SqlExceptionConverter {
 	 * @param sql
 	 * @return
 	 */
-	private static JDBCException handledNonSpecificException(SQLException sqlex,
+	private static JdbcException handledNonSpecificException(SQLException sqlex,
 			String message, String sql) {
-		return new GenericJDBCException(message, sqlex, sql);
+		return new GenericJdbcException(message, sqlex, sql);
 	}
 }

@@ -424,17 +424,7 @@ public class QueryCompiler implements Serializable {
 			Entity crte = entity;
 			for (int i = 0; i < joined.length; i++) {
 				Field field = crte.getField(joined[i]);
-				if (field.getType() == FieldType.REFERENCE_LIST) {
-					if (joined.length > 1) {
-						throw new CompileException(field + " does not support joins");
-					} else {
-						path = fName.substring(1);
-						break;
-					}
-				}
-				
 				crte = getReferenceEntity(field);
-				
 				if (i + 1 == joined.length) {
 					path += crte.getNameField().getName();
 					break;

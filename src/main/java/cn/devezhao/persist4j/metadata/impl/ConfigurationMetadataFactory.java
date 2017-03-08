@@ -195,7 +195,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				
 				map.put(field.getName(), fieldImpl);
 				
-				if (field.getType() == FieldType.REFERENCE_LIST || field.getType() == FieldType.REFERENCE) {
+				if (field.getType() == FieldType.REFERENCE) {
 					completeMap.put(fieldImpl, completeMap.get(field));
 				}
 			}
@@ -281,7 +281,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				decimalScale, defaultValue, a);
 		
 		String refs = fNode.valueOf("@ref-entity");
-		if (type == FieldType.REFERENCE || type == FieldType.REFERENCE_LIST) {
+		if (type == FieldType.REFERENCE) {
 			Validate.notEmpty(refs, 
 					"reference field [ " + field + " ] must have attribute ref-entity");
 			completeMap.put(field, refs.split("\\,"));

@@ -20,7 +20,6 @@ public class MySQL5Dialect extends Dialect {
 		final String idt = String.format("char(%d)", ID.getIDGenerator().getLength());
 		registerColumnType(FieldType.PRIMARY.getMask(), idt, Types.CHAR);
 		registerColumnType(FieldType.REFERENCE.getMask(), idt, Types.CHAR);
-		registerColumnType(FieldType.REFERENCE_LIST.getMask(), idt, Types.CHAR);
 		registerColumnType(FieldType.INT.getMask(), "int(11)", Types.INTEGER);
 		registerColumnType(FieldType.SMALL_INT.getMask(), "smallint(6)", Types.SMALLINT);
 		registerColumnType(FieldType.DOUBLE.getMask(), "double(19, %d)", Types.DOUBLE);

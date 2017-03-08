@@ -276,7 +276,7 @@ public class StandardRecord implements Record {
 			return;
 		
 		Field field = entity.getField(key);
-		if (field.getType() == FieldType.REFERENCE || field.getType() == FieldType.REFERENCE_LIST) {
+		if (field.getType() == FieldType.REFERENCE) {
 			checkReferenceValue(field, value);
 		}
 

@@ -291,20 +291,10 @@ public class AjqlResultImpl implements Result {
 			
 			Editor editor = item.getField().getType().getFieldEditor();
 			Object value = editor.get(rs, item.getIndex() + 1);
-			if (value == null)
+			if (value == null) {
 				continue;
-			
-			if (item.getField().getType() == FieldType.REFERENCE_LIST) {
-				Map<ID, Integer> map = referenceListMap.get(item.getIndex());
-				if (map == null) {
-					map = new HashMap<ID, Integer>();
-					referenceListMap.put(item.getIndex(), map);
-				}
-				
-				map.put((ID) value, dataCache.size());
-			} else {
-				row[item.getIndex()] = value;
 			}
+			row[item.getIndex()] = value;
 		}
 		return row;
 	}

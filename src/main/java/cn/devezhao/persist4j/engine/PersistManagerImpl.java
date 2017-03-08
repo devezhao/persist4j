@@ -102,14 +102,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 						try {
 							if (field.getType() == FieldType.PRIMARY) {
 								value = eId;
-							} else if (field.getType() == FieldType.REFERENCE_LIST) {
-								value = eId;
-								ID[] array = record.getIDArray(field.getName());
-								String sqls[] = SystemMetadataHelper.updateSqlReferenceListMapping(
-										field, eId, array, false);
-								for (String s : sqls) {
-									refsSqls.add(s);
-								}
 							} else {
 								value = record.getObjectValue(field.getName());
 							}
@@ -166,10 +158,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 			}
 			
 			fieldList.add(field);
-			if (field.getType() == FieldType.REFERENCE_LIST) {
-				continue;
-			}
-			
 			if (first) {
 				first = false;
 			} else {
@@ -194,10 +182,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 					public Object doInParameters(PreparedStatement pstmt) throws SQLException {
 						int index = 1;
 						for (Field field : fieldList) {
-							if (field.getType() == FieldType.REFERENCE_LIST) {
-								continue;
-							}
-							
 							Editor editor = field.getType().getFieldEditor();
 							Object value = record.getObjectValue(field.getName());
 							
@@ -217,30 +201,12 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 					}
 				});
 			}
-			
-			List<String> refsSqls = new ArrayList<String>();
-			for (Field field : fieldList) {
-				if (field.getType() != FieldType.REFERENCE_LIST)
-					continue;
-				
-				String[] sqls = SystemMetadataHelper.updateSqlReferenceListMapping(
-						field, record.getPrimary(), record.getIDArray(field.getName()), true);
-				for (String s : sqls) {
-					refsSqls.add(s);
-				}
-			}
-			
-			if (!refsSqls.isEmpty()) {
-				int[] batchAffected = executeBatch(refsSqls.toArray(new String[refsSqls.size()]));
-				
-				for (int ba : batchAffected)
-					affected += ba;
-			}
 		} catch (SQLException sqlex) {
 			throw SqlExceptionConverter.convert(sqlex, "#UPDATE", sql);
 		}
-		if (LOG.isDebugEnabled())
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("total affected " + affected + " rows");
+		}
 		
 		return record;
 	}

@@ -53,12 +53,6 @@ public class RecordVisitor {
 		
 		if (FieldType.PRIMARY.equals(ft) || FieldType.REFERENCE.equals(ft)) {
 			pVal = ID.valueOf(value);
-		} else if (FieldType.REFERENCE_LIST.equals(ft)) {
-			String[] split = value.split("\\,");
-			ID[] ids = new ID[split.length];
-			for (int i = 0; i < split.length; i++) {
-				ids[i] = ID.valueOf(split[i].trim());
-			}
 		} else if (FieldType.INT.equals(ft) || FieldType.SMALL_INT.equals(ft)) {
 			pVal = NumberUtils.toInt(value);
 		} else if (FieldType.DOUBLE.equals(ft)) {
@@ -99,15 +93,6 @@ public class RecordVisitor {
 		if (FieldType.PRIMARY.equals(ft) 
 				|| FieldType.REFERENCE.equals(ft)) {
 			pVal = ((ID) value).toLiteral();
-		} else if (FieldType.REFERENCE_LIST.equals(ft)) {
-			ID[] ids = (ID[]) value;
-			StringBuilder sb = new StringBuilder(ids.length * 41);
-			for (int i = 0; i < ids.length; i++) {
-				if (i > 0) {
-					sb.append(",");
-				}
-				sb.append(ids[i].toLiteral());
-			}
 		} else if (FieldType.INT.equals(ft) 
 				|| FieldType.SMALL_INT.equals(ft)
 				|| FieldType.DOUBLE.equals(ft) 

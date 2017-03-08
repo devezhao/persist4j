@@ -65,7 +65,7 @@
 <!ATTLIST field
 	name   				CDATA #REQUIRED
 	physical-name 		CDATA #IMPLIED
-	type   				(primary | reference | reference-list | char | string | text | ntext 
+	type   				(primary | reference | char | string | text | ntext 
 							| int | small-int | double | decimal | long | date | timestamp | bool | binary) #REQUIRED
 	nullable   			(true | false | 1 | 0) "true"
 	creatable  			(true | false | 1 | 0) "true"

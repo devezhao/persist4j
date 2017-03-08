@@ -46,7 +46,6 @@ public abstract class Dialect implements Serializable {
 		
 		registerFieldType(FieldType.PRIMARY);
 		registerFieldType(FieldType.REFERENCE);
-		registerFieldType(FieldType.REFERENCE_LIST);
 		registerFieldType(FieldType.INT);
 		registerFieldType(FieldType.SMALL_INT);
 		registerFieldType(FieldType.DOUBLE);

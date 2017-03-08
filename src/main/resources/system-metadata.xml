@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE metadata-config PUBLIC "-//Persist4j/Metadata DTD 0.1//EN" "metadata.dtd">
 <metadata-config schema-name-optimize="true">
-	<!-- 多引用型字段 -->
-	<entity name="ReferenceListMapping" type-code="001" physical-name="reference_list_mappings">
-		<field name="uniqueId" type="primary" />
-		<field name="entity" type="small-int" nullable="false" />
-		<field name="field" type="string" max-length="100" nullable="false" />
-		<field name="recordId" type="reference" ref-entity="ReferenceListMapping" nullable="false" />
-		<field name="referenceId" type="reference" ref-entity="ReferenceListMapping" nullable="false" />
-		<index type="unique" field-list="entity,field,recordId" />
-	</entity>
 	<!-- 大文本或二进制引用（TODO ） -->
 	<entity name="LobsRepository" type-code="002" physical-name="lobs_repository">
 		<field name="uniqueId" type="primary" />

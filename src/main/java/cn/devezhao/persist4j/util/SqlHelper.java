@@ -33,11 +33,13 @@ public final class SqlHelper {
 	 * @param rs
 	 */
 	public static void close(ResultSet rs) {
-		if ( rs == null )
+		if (rs == null) {
 			return;
+		}
 		try {
-			if (!rs.isClosed())
+			if (!rs.isClosed()) {
 				rs.close();
+			}
 		} catch (Throwable ex) {
 			logSQLException(ex, "Unable to close JDBC ResultSet.");
 		}
@@ -47,11 +49,13 @@ public final class SqlHelper {
 	 * @param stmt
 	 */
 	public static void close(Statement stmt) {
-		if ( stmt == null )
+		if (stmt == null) {
 			return;
+		}
 		try {
-			if (!stmt.isClosed())
+			if (!stmt.isClosed()) {
 				stmt.close();
+			}
 		} catch (Throwable ex) {
 			logSQLException(ex, "Unable to close JDBC Statement.");
 		}
@@ -64,11 +68,13 @@ public final class SqlHelper {
 	 */
 	@Deprecated
 	public static void close(Connection connect) {
-		if ( connect == null )
+		if (connect == null) {
 			return;
+		}
 		try {
-			if (!connect.isClosed())
+			if (!connect.isClosed()) {
 				connect.close();
+			}
 		} catch (Throwable ex) {
 			logSQLException(ex, "Unable to close JDBC Connection.");
 		}
@@ -81,10 +87,10 @@ public final class SqlHelper {
 	 * @param dataSource
 	 */
 	public static void release(Connection connect, DataSource dataSource) {
-		if ( connect == null )
+		if (connect == null) {
 			return;
+		}
 		Validate.notNull(dataSource);
-		
 		try {
 			DataSourceUtils.releaseConnection(connect, dataSource);
 		} catch (Throwable ex) {
@@ -98,11 +104,13 @@ public final class SqlHelper {
 	 * @param stmt
 	 */
 	public static void clear(Statement stmt) {
-		if ( stmt == null )
+		if ( stmt == null ) {
 			return;
+		}
 		try {
-			if (stmt instanceof PreparedStatement)
+			if (stmt instanceof PreparedStatement) {
 				((PreparedStatement) stmt).clearParameters();
+			}
 			stmt.clearBatch();
 			stmt.clearWarnings();
 		} catch (Throwable ex) {
@@ -117,8 +125,9 @@ public final class SqlHelper {
 	 * @param ignoreWarnings
 	 */
 	public static void handleWarnings(SQLWarning warning, boolean ignoreWarnings) {
-		if (warning == null)
+		if (warning == null) {
 			return;
+		}
 		
 		if (ignoreWarnings) {
 			if (LOG.isDebugEnabled()) {
@@ -146,12 +155,14 @@ public final class SqlHelper {
 		try {
 			DatabaseMetaData dbmd = con.getMetaData();
 			if (dbmd.supportsBatchUpdates()) {
-				if (LOG.isDebugEnabled())
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("JDBC driver supports batch updates");
+				}
 				return true;
 			} else {
-				if (LOG.isDebugEnabled())
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("JDBC driver does not support batch updates");
+				}
 			}
 		} catch (SQLException ex) {
 			LOG.debug("JDBC driver 'supportsBatchUpdates' method threw exception: " + ex);
@@ -168,14 +179,15 @@ public final class SqlHelper {
 	 * @param message
 	 */
 	static void logSQLException(Throwable ex, String message) {
-		if (ex instanceof SQLException)
+		if (ex instanceof SQLException) {
 			LOG.debug(SqlExceptionConverter.convert((SQLException) ex, message, null));
-		else if (ex.getCause() instanceof SQLException)
+		} else if (ex.getCause() instanceof SQLException) {
 			LOG.debug(SqlExceptionConverter.convert((SQLException) ex.getCause(), message, null));
-		else if (ex instanceof AbstractMethodError)
+		} else if (ex instanceof AbstractMethodError) {
 			LOG.debug("JDBC driver does not support. " + ex);
-		else
+		} else {
 			LOG.debug("Unexception exception. " + ex);
+		}
 	}
 	
 	private SqlHelper() { }

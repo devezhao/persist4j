@@ -53,48 +53,35 @@ public class RecordVisitor {
 		
 		if (FieldType.PRIMARY.equals(ft) || FieldType.REFERENCE.equals(ft)) {
 			pVal = ID.valueOf(value);
-		}
-		else if (FieldType.REFERENCE_LIST.equals(ft)) {
+		} else if (FieldType.REFERENCE_LIST.equals(ft)) {
 			String[] split = value.split("\\,");
 			ID[] ids = new ID[split.length];
-			for (int i = 0; i < split.length; i++)
+			for (int i = 0; i < split.length; i++) {
 				ids[i] = ID.valueOf(split[i].trim());
-		}
-		else if (FieldType.INT.equals(ft) || FieldType.TINY_INT.equals(ft) || FieldType.SMALL_INT.equals(ft)) {
+			}
+		} else if (FieldType.INT.equals(ft) || FieldType.SMALL_INT.equals(ft)) {
 			pVal = NumberUtils.toInt(value);
-		}
-		else if (FieldType.DOUBLE.equals(ft)) {
+		} else if (FieldType.DOUBLE.equals(ft)) {
 			pVal = NumberUtils.toDouble(value);
-		}
-		else if (FieldType.DECIMAL.equals(ft)) {
+		} else if (FieldType.DECIMAL.equals(ft)) {
 			pVal = new BigDecimal(value.toCharArray());
-		}
-		else if (FieldType.LONG.equals(ft)) {
+		} else if (FieldType.LONG.equals(ft)) {
 			pVal = NumberUtils.toLong(value);
-		}
-		else if (FieldType.DATE.equals(ft)) {
+		} else if (FieldType.DATE.equals(ft)) {
 			pVal = getDefaultDateFormat().parse(value, new ParsePosition(0));
-		}
-		else if (FieldType.DATETIME.equals(ft) || FieldType.TIMESTAMP.equals(ft)) {
+		} else if (FieldType.TIMESTAMP.equals(ft)) {
 			pVal = getDefaultDateTimeFormat().parse(value, new ParsePosition(0));
-		}
-		else if (FieldType.BOOL.equals(ft)) {
+		} else if (FieldType.BOOL.equals(ft)) {
 			char ch = value.toUpperCase().charAt(0);
-			if (ch == BoolEditor.TRUE)
-				pVal = true;
-			else
-				pVal = false;
-		}
-		else if (FieldType.NTEXT.equals(ft)) {
+			pVal = ch == BoolEditor.TRUE;
+		} else if (FieldType.NTEXT.equals(ft)) {
 			pVal = new StringReader(value);
-		}
-		else if (FieldType.BINARY.equals(ft)) {
-			return;  // TODO FieldTypeImpl.BINARY
-		}
-		else {  // FieldTypeImpl.CHAR, FieldTypeImpl.STRING, FieldTypeImpl.TEXT
+		} else if (FieldType.BINARY.equals(ft)) {
+			// TODO BINARY
+			throw new UnsupportedOperationException("Unsupported Type: BINARY");
+		} else {  // FieldTypeImpl.CHAR, FieldTypeImpl.STRING, FieldTypeImpl.TEXT
 			pVal = value;
 		}
-		
 		record.setObjectValue(field.getName(), pVal);
 	}
 	
@@ -112,44 +99,34 @@ public class RecordVisitor {
 		if (FieldType.PRIMARY.equals(ft) 
 				|| FieldType.REFERENCE.equals(ft)) {
 			pVal = ((ID) value).toLiteral();
-		}
-		else if (FieldType.REFERENCE_LIST.equals(ft)) {
+		} else if (FieldType.REFERENCE_LIST.equals(ft)) {
 			ID[] ids = (ID[]) value;
 			StringBuilder sb = new StringBuilder(ids.length * 41);
 			for (int i = 0; i < ids.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					sb.append(",");
+				}
 				sb.append(ids[i].toLiteral());
 			}
-		}
-		else if (FieldType.INT.equals(ft) 
-				|| FieldType.TINY_INT.equals(ft) 
+		} else if (FieldType.INT.equals(ft) 
 				|| FieldType.SMALL_INT.equals(ft)
 				|| FieldType.DOUBLE.equals(ft) 
 				|| FieldType.DECIMAL.equals(ft)
 				|| FieldType.LONG.equals(ft)) {
 			pVal = String.valueOf( value );
-		}
-		else if (FieldType.DATE.equals(ft)) {
+		} else if (FieldType.DATE.equals(ft)) {
 			pVal = getDefaultDateFormat().format((Date) value);
-		}
-		else if (FieldType.DATETIME.equals(ft) 
-				|| FieldType.TIMESTAMP.equals(ft)) {
+		} else if (FieldType.TIMESTAMP.equals(ft)) {
 			pVal = getDefaultDateTimeFormat().format((Date) value);
-		}
-		else if (FieldType.BOOL.equals(ft)) {
-			if ((Boolean) value)
-				pVal = "T";
-			else
-				pVal = "F";
-		}
-		else if (FieldType.NTEXT.equals(ft)) {
-			throw new UnsupportedOperationException();
-		}
-		else if (FieldType.BINARY.equals(ft)) {
-			throw new UnsupportedOperationException();
-		}
-		else {  // FieldTypeImpl.CHAR, FieldTypeImpl.STRING, FieldTypeImpl.TEXT
+		} else if (FieldType.BOOL.equals(ft)) {
+			pVal = (Boolean) value ? "T" : "F";
+		} else if (FieldType.NTEXT.equals(ft)) {
+			// TODO NTEXT
+			throw new UnsupportedOperationException("Unsupported Type: NTEXT");
+			// TODO BINARY
+		} else if (FieldType.BINARY.equals(ft)) {
+			throw new UnsupportedOperationException("Unsupported Type: BINARY");
+		} else {  // FieldTypeImpl.CHAR, FieldTypeImpl.STRING, FieldTypeImpl.TEXT
 			pVal = value.toString();
 		}
 		return pVal;

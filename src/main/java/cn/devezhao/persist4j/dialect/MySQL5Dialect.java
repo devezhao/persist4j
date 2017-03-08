@@ -22,7 +22,6 @@ public class MySQL5Dialect extends Dialect {
 		registerColumnType(FieldType.REFERENCE.getMask(), idt, Types.CHAR);
 		registerColumnType(FieldType.REFERENCE_LIST.getMask(), idt, Types.CHAR);
 		registerColumnType(FieldType.INT.getMask(), "int(11)", Types.INTEGER);
-		registerColumnType(FieldType.TINY_INT.getMask(), "tinyint(6)", Types.TINYINT);
 		registerColumnType(FieldType.SMALL_INT.getMask(), "smallint(6)", Types.SMALLINT);
 		registerColumnType(FieldType.DOUBLE.getMask(), "double(19, %d)", Types.DOUBLE);
 		registerColumnType(FieldType.DECIMAL.getMask(), "decimal(19, 4)", Types.DECIMAL);
@@ -31,7 +30,6 @@ public class MySQL5Dialect extends Dialect {
 		registerColumnType(FieldType.STRING.getMask(), "varchar(%d)", Types.VARCHAR);
 		registerColumnType(FieldType.TEXT.getMask(), "text(%d)", Types.VARCHAR);
 		registerColumnType(FieldType.DATE.getMask(), "date", Types.DATE);
-		registerColumnType(FieldType.DATETIME.getMask(), "date", Types.DATE);
 		registerColumnType(FieldType.TIMESTAMP.getMask(), "timestamp", Types.TIMESTAMP);
 		registerColumnType(FieldType.BOOL.getMask(), "char(1)", Types.CHAR);
 		registerColumnType(FieldType.NTEXT.getMask(), "longtext", Types.LONGVARCHAR);
@@ -55,9 +53,10 @@ public class MySQL5Dialect extends Dialect {
 
 	@Override
 	public String insertLimit(String query, int limit, int offset) {
-		return new StringBuilder(query.length() + 12).append(query).append(
-				" limit ").append(limit).append(
-				(offset > 0) ? (" offset " + offset) : "").toString();
+		return new StringBuilder(query)
+				.append(" limit ").append(limit)
+				.append(offset > 0 ? (" offset " + offset) : "")
+				.toString();
 	}
 
 	@Override

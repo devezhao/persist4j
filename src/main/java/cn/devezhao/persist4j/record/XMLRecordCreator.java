@@ -59,7 +59,6 @@ public class XmlRecordCreator implements RecordCreator {
 	public XmlRecordCreator(Entity entity, Element source, ID editor) {
 		Validate.notNull(entity);
 		Validate.notNull(source);
-		
 		this.entity = entity;
 		this.source = source;
 		this.editor = editor;
@@ -80,7 +79,7 @@ public class XmlRecordCreator implements RecordCreator {
 			String fn = ele.getName();
 			Field field = entity.getField(fn);
 			
-			if (field == null) { /* unknow field */
+			if (field == null) {
 				LOG.warn("Unable found field [ " + entity.getName() + '#' + fn  + " ], will ignore");
 				continue;
 			}
@@ -99,7 +98,6 @@ public class XmlRecordCreator implements RecordCreator {
 
 			if (StringUtils.isBlank(value)) {
 				value = null;
-				
 				if (isNew) {
 					if (!field.isNullable() && !field.isAutoValue()) {
 						throw new FieldValueException(entity.getName() + '#' + field.getName() + " must not be null");
@@ -113,7 +111,6 @@ public class XmlRecordCreator implements RecordCreator {
 		
 		afterCreate(record, isNew);
 		validate(record, isNew);
-		
 		return record;
 	}
 	

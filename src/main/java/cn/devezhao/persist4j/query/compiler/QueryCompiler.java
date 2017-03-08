@@ -333,15 +333,16 @@ public class QueryCompiler implements Serializable {
 				String neste = new QueryCompiler(this.sqlExecutorContext).compileNesteSelect(next);
 				EXISTS_ENTITY.set(null);
 				
-				// FIXME so bad!!!
+				// FIXME SO BAD!!! CHANGEIT MUST!!!
 				// select _t0.`ORDER_ID` as _c0 from `sales_order` as _t0 where _t0.`SALES_ORDER_ID` = _t0.`ORDER_ID`
 				String[] AS = neste.split("` as _t0 where _t0.`");
 				AS[0] = AS[0].replaceAll(" _t0.`", " _t1.`");
 				AS[1] = AS[1].replaceAll(" _t0.`", " _t1.`");
 				neste = AS[0] + "` as _t1 where _t0.`" + AS[1];
 				
-				if (LOG.isDebugEnabled())
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("compiled neste select clause [ " + neste + " ], will return now");
+				}
 				return clause.append(neste).append(" )").toString();  // NOTE: neste select, return now
 			default:
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype))

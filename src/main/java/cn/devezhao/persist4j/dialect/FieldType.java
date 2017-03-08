@@ -6,7 +6,6 @@ import cn.devezhao.persist4j.dialect.editor.BinaryEditor;
 import cn.devezhao.persist4j.dialect.editor.BoolEditor;
 import cn.devezhao.persist4j.dialect.editor.CharEditor;
 import cn.devezhao.persist4j.dialect.editor.DateEditor;
-import cn.devezhao.persist4j.dialect.editor.DateTimeEditor;
 import cn.devezhao.persist4j.dialect.editor.DecimalEditor;
 import cn.devezhao.persist4j.dialect.editor.DoubleEditor;
 import cn.devezhao.persist4j.dialect.editor.IntEditor;
@@ -19,7 +18,6 @@ import cn.devezhao.persist4j.dialect.editor.SmallIntEditor;
 import cn.devezhao.persist4j.dialect.editor.StringEditor;
 import cn.devezhao.persist4j.dialect.editor.TextEditor;
 import cn.devezhao.persist4j.dialect.editor.TimestampEditor;
-import cn.devezhao.persist4j.dialect.editor.TinyIntEditor;
 
 /**
  * 字段类型定义
@@ -36,8 +34,8 @@ public class FieldType implements Type, Serializable {
 	public static final int NO_NEED_LENGTH = -1;
 	public static final int DEFAULT_TEXT_LENGTH = 21845; // TEXT类型默认长度
 	public static final int DEFAULT_STRING_LENGTH = 255; // STRING类型默认长度
-	public static final int DEFAULT_PRECISION = 19; // 数字精度(整数位+小数位=精度)
-	public static final int DEFAULT_DECIMAL_SCALE = 4; // 默认小数精度
+	public static final int DEFAULT_PRECISION = 19; 	 // 数字精度(整数位+小数位=精度)
+	public static final int DEFAULT_DECIMAL_SCALE = 4; 	 // 默认小数精度
 
 	// -------------------------------------------------------------------------------------
 
@@ -47,13 +45,11 @@ public class FieldType implements Type, Serializable {
 
 	public static final Type INT = new FieldType(10011, "int", new IntEditor());
 	public static final Type SMALL_INT = new FieldType(10012, "small-int", new SmallIntEditor());
-	public static final Type TINY_INT = new FieldType(10013, "tiny-int", new TinyIntEditor());
 	public static final Type DOUBLE = new FieldType(10014, "double", new DoubleEditor());
 	public static final Type DECIMAL = new FieldType(10015, "decimal", new DecimalEditor());
 	public static final Type LONG = new FieldType(10016, "long", new LongEditor());
 
 	public static final Type DATE = new FieldType(10021, "date", new DateEditor());
-	public static final Type DATETIME = new FieldType(10022, "datetime", new DateTimeEditor());
 	public static final Type TIMESTAMP = new FieldType(10023, "timestamp", new TimestampEditor());
 
 	public static final Type CHAR = new FieldType(10031, "char", new CharEditor());

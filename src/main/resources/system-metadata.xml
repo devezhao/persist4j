@@ -10,7 +10,7 @@
 		<field name="referenceId" type="reference" ref-entity="ReferenceListMapping" nullable="false" />
 		<index type="unique" field-list="entity,field,recordId" />
 	</entity>
-	<!-- 大文本或二进制引用（暂未用!!!） -->
+	<!-- 大文本或二进制引用（TODO ） -->
 	<entity name="LobsRepository" type-code="002" physical-name="lobs_repository">
 		<field name="uniqueId" type="primary" />
 		<field name="entity" type="small-int" nullable="false" />

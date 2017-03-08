@@ -54,25 +54,29 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	private Document configDocument = null;
 	private boolean schemaNameOptimize = false;
 	
-	
+	/**
+	 * @param configLocation
+	 * @param dialect
+	 */
 	public ConfigurationMetadataFactory(String configLocation, Dialect dialect) {
 		this.configLocation = configLocation;
 		this.dialect = dialect;
-		
 		refresh();
 	}
 
 	public Entity getEntity(String name) {
 		Integer aType = cnMap.get(name);
-		if (aType == null)
+		if (aType == null) {
 			throw new MetadataException("entity [ " + name + " ] dose not exists");
+		}
 		return getEntity(aType);
 	}
 
 	public Entity getEntity(int type) {
 		Entity e = entityMap.get(type);
-		if (e == null)
+		if (e == null) {
 			throw new MetadataException("entity [ " + type + " ] dose not exists");
+		}
 		return e;
 	}
 	
@@ -85,11 +89,12 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	public void registerEntity(Entity entity) {
-		if (LOG.isDebugEnabled())
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("register entity " + entity);
-		if (cnMap.get(entity.getName()) != null || entityMap.get(entity.getEntityCode()) != null)
+		}
+		if (cnMap.get(entity.getName()) != null || entityMap.get(entity.getEntityCode()) != null) {
 			throw new MetadataException("repeated entity: " + entity);
-		
+		}
 		cnMap.put(entity.getName(), entity.getEntityCode());
 		entityMap.put(entity.getEntityCode(), entity);
 	}
@@ -102,7 +107,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	
 	/**
 	 */
-	void refresh() {
+	private void refresh() {
 		URL url = getClass().getClassLoader().getResource("system-metadata.xml");
 		Document sysDocument = read( url );
 		bind(sysDocument);
@@ -122,7 +127,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	/**
 	 * @param document
 	 */
-	void bind(Document document) {
+	private void bind(Document document) {
 		Element root = document.getRootElement();
 		schemaNameOptimize = BooleanUtils.toBoolean(root.valueOf("@schema-name-optimize"));
 		
@@ -154,7 +159,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 * @param parent
 	 * @return
 	 */
-	Entity bindEntity(Node eNode, Entity parent) {
+	private Entity bindEntity(Node eNode, Entity parent) {
 		String tCode = eNode.valueOf("@type-code");
 		Validate.notEmpty(tCode);
 		boolean theSchemaNameOptimize = BooleanUtils.toBoolean(eNode.valueOf("@schema-name-optimize"));
@@ -218,7 +223,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 * @param theSchemaNameOptimize
 	 * @return
 	 */
-	Field bindField(Node fNode, Entity own, boolean theSchemaNameOptimize) {
+	private Field bindField(Node fNode, Entity own, boolean theSchemaNameOptimize) {
 		String name = fNode.valueOf("@name");
 		namingPolicy(name, "field");
 		String pName = fNode.valueOf("@physical-name");

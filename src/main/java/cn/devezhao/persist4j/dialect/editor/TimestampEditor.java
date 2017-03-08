@@ -15,7 +15,7 @@ import cn.devezhao.persist4j.dialect.FieldType;
  * @since 0.1, Feb 14, 2009
  * @version $Id: TimestampEditor.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
  */
-public class TimestampEditor extends DateTimeEditor {
+public class TimestampEditor extends DateEditor {
 
 	private static final long serialVersionUID = -8487826805942935976L;
 
@@ -30,12 +30,13 @@ public class TimestampEditor extends DateTimeEditor {
 		Timestamp v = null;
 		Class<?> vClazz = value.getClass();
 		if (vClazz == java.util.Date.class
-				|| vClazz == java.sql.Date.class)
+				|| vClazz == java.sql.Date.class) {
 			v = new Timestamp( ((java.util.Date) value).getTime() );
-		else if (vClazz == Long.class)
+		} else if (vClazz == Long.class) {
 			v = new Timestamp( (Long) value );
-		else
+		} else {
 			v = (Timestamp) value;
+		}
 		pstmt.setTimestamp(index, v);
 	}
 	

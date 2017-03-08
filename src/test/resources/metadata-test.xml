@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE metadata-config PUBLIC "-//persist4j/Metadata 0.3" "https://raw.githubusercontent.com/devezhao/persist4j/master/src/main/resources/metadata.dtd">
+<metadata-config schema-name-optimize="true">
+	<entity name="User" type-code="100">
+		<field name="uniqueId" type="primary" />
+		<field name="userName" type="string" nullable="false" max-length="50"/>
+		<field name="password" type="string" nullable="false" max-length="50"/>
+		<field name="registerTime" type="timestamp" nullable="false" updatable="false"/>
+	</entity>
+</metadata-config>

@@ -55,8 +55,9 @@ public class SystemMetadataHelper {
 	 */
 	public static String[] updateSqlReferenceListMapping(Field field, ID recordId, ID[] referenceIds, boolean deleteBefore) {
 		List<String> sqls = new LinkedList<String>();
-		if (deleteBefore)
+		if (deleteBefore) {
 			sqls.add(deleteSqlReferenceListMapping(field, recordId));
+		}
 		
 		for (ID rid : referenceIds) {
 			sqls.add(insertSqlReferenceListMapping(field, recordId, rid));

@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE metadata-config PUBLIC "-//persist4j/Metadata 0.3" "https://raw.githubusercontent.com/devezhao/persist4j/master/src/main/resources/metadata.dtd">
 <metadata-config schema-name-optimize="true">
-	<entity name="User" type-code="100">
-		<field name="uniqueId" type="primary" />
-		<field name="userName" type="string" nullable="false" max-length="50"/>
-		<field name="password" type="string" nullable="false" max-length="50"/>
-		<field name="registerTime" type="timestamp" nullable="false" updatable="false"/>
+	<entity name="TestAllType" type-code="100">
+		<field name="tPrimary" type="primary" description="主键" />
+		<field name="tReference" type="reference" ref-entity="TestAllType" description="引用"/>
+		<field name="tInt" type="int"/>
+		<field name="tSmallInt" type="small-int"/>
+		<field name="tDouble" type="double"/>
+		<field name="tDecimal" type="decimal"/>
+		<field name="tLong" type="long"/>
+		<field name="tDate" type="date" description="日期"/>
+		<field name="tTimestamp" type="timestamp" description="日期时间"/>
+		<field name="tChar" type="char" description="字符"/>
+		<field name="tString" type="string" description="文版"/>
+		<field name="tText" type="text" description="长文本"/>
+		<field name="tBool" type="bool" description="布尔"/>
+		<field name="tNtext" type="ntext" description="超大文本"/>
+		<field name="tBinary" type="binary" description="二进制数据"/>
 	</entity>
 </metadata-config>

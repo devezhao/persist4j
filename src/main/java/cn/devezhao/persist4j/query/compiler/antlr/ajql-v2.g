@@ -1,6 +1,6 @@
 header {
 // $Id$
-org.qdss.persist.query.compiler.antlr;
+cn.devezhao.persist4j.query.compiler.antlr;
 }
 
 // PAESER ***************************************************************************

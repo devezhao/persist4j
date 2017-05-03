@@ -93,9 +93,10 @@ public class StandardRecord implements Record {
 	}
 
 	public Record setID(String key, ID value) {
-		if (entity.getPrimaryField().getName().equalsIgnoreCase(key) && getPrimary() != null)
+		if (entity.getPrimaryField().getName().equalsIgnoreCase(key) && getPrimary() != null) {
 			throw new IllegalStateException(
 					"primary field value already exists, can not be re-settings");
+		}
 		
 		setObject(key, value);
 		return this;
@@ -103,8 +104,9 @@ public class StandardRecord implements Record {
 
 	public ID[] getIDArray(String key) {
 		Object v = recordMap.get(key);
-		if (v == null)
+		if (v == null) {
 			return EMPTY_ID_ARRAY;
+		}
 		return (ID[]) v;
 	}
 
@@ -290,18 +292,22 @@ public class StandardRecord implements Record {
 	}
 
 	protected Object getObject(String key, Class<?> clazz) {
-		if (!entity.containsField(key))
+		if (!entity.containsField(key)) {
 			throw new MetadataException(
 					"No such field [ " + key + " ] in entity [ " + entity.getName() + " ]");
+		}
 
 		Object v = recordMap.get(key);
-		if (v == null)
+		if (v == null) {
 			return null;
+		}
 
-		if (clazz.isAssignableFrom(v.getClass()))
+		if (clazz.isAssignableFrom(v.getClass())) {
 			return v;
-		if (v == ObjectUtils.NULL)
+		}
+		if (v == ObjectUtils.NULL) {
 			return null;
+		}
 		throw new PersistException(
 				"can't cast field [ " + key + " ] value type " + v.getClass() + " to " + clazz);
 	}

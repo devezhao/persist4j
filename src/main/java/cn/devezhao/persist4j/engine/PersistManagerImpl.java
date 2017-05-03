@@ -234,12 +234,14 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 			refToIdMap = new HashMap<Field, ID[]>();
 			
 			for (Field rto : referenceTos) {
-				if (rto.getCascadeModel() == CascadeModel.Ignore)
+				if (rto.getCascadeModel() == CascadeModel.Ignore) {
 					continue;
+				}
 				
 				ID[] referenceToIds = getReferenceToIds(rto, id);
-				if (referenceToIds.length > 0)
+				if (referenceToIds.length > 0) {
 					refToIdMap.put(rto, referenceToIds);
+				}
 			}
 			
 			Set<ID> nRefIds = new HashSet<ID>();
@@ -293,11 +295,13 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		}
 		
 		int affected = 0;
-		for (int ba : batchAffected)
+		for (int ba : batchAffected) {
 			affected += ba;
+		}
 		
-		if (LOG.isDebugEnabled())
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("total affected " + affected + " rows");
+		}
 		return affected;
 	}
 

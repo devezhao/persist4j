@@ -29,8 +29,7 @@ public class TimestampEditor extends DateEditor {
 			throws SQLException {
 		Timestamp v = null;
 		Class<?> vClazz = value.getClass();
-		if (vClazz == java.util.Date.class
-				|| vClazz == java.sql.Date.class) {
+		if (vClazz == java.util.Date.class || vClazz == java.sql.Date.class) {
 			v = new Timestamp( ((java.util.Date) value).getTime() );
 		} else if (vClazz == Long.class) {
 			v = new Timestamp( (Long) value );

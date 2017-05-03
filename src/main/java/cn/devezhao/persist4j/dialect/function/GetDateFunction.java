@@ -28,7 +28,6 @@ public class GetDateFunction implements SqlFunction {
 	}
 
 	public String render(Object[] arguments) {
-		return new SimpleDateFormat("yyyy-MM-dd").format(
-				Calendar.getInstance().getTime());
+		return new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 	}
 }

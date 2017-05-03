@@ -65,10 +65,12 @@ public class ID implements Serializable {
 			return true;
 		
 		if (id == null || StringUtils.isEmpty(id.toString())
-				|| id.toString().length() != idLength)
+				|| id.toString().length() != idLength) {
 			return false;
-		if (id.toString().charAt(3) != '-')
+		}
+		if (id.toString().charAt(3) != '-') {
 			return false;
+		}
 		return true;
 	}
 
@@ -77,8 +79,9 @@ public class ID implements Serializable {
 	 * @return
 	 */
 	public static ID valueOf(String id) {
-		if (!isId(id))
+		if (!isId(id)) {
 			throw new IllegalArgumentException("Invaild id character: " + id);
+		}
 		return (new ID(id));
 	}
 	
@@ -145,8 +148,9 @@ public class ID implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj == this || obj instanceof ID))
+		if (obj == null || !(obj == this || obj instanceof ID)) {
 			return false;
+		}
 		return obj.hashCode() == hashCode();
 	}
 }

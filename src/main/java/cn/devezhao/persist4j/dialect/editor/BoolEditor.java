@@ -34,8 +34,9 @@ public class BoolEditor extends CharEditor {
 	@Override
 	public Object get(ResultSet rs, int index) throws SQLException {
 		Object v = super.get(rs, index);
-		if (v == null)
+		if (v == null) {
 			return null;
+		}
 		
 		char ch = v.toString().toUpperCase().charAt(0);
 		switch (ch) {

@@ -33,11 +33,9 @@ public class PersistManagerFactoryImpl implements PersistManagerFactory {
 			MetadataFactory metadataFactory) {
 		this.dataSource = dataSource;
 		this.dialect = dialect;
-
+		
 		this.metadataFactory = metadataFactory;
 		this.executorContext = new SqlExecutorContext(metadataFactory, dialect, dataSource);
-
-		SystemMetadataHelper.install(metadataFactory, dialect);
 	}
 
 	public DataSource getDataSource() {

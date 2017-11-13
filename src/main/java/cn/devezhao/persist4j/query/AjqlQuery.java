@@ -57,8 +57,9 @@ public class AjqlQuery extends BaseQuery<Query> implements Query {
 	}
 
 	public Result result() {
-		if (result == null)
+		if (result == null) {
 			result = new AjqlResultImpl(this);
+		}
 		return result;
 	}
 
@@ -94,8 +95,9 @@ public class AjqlQuery extends BaseQuery<Query> implements Query {
 	}
 
 	private void compileQueryIfNeed() {
-		if (queryCompiler != null)
+		if (queryCompiler != null) {
 			return;
+		}
 		queryCompiler = new QueryCompiler(this.ajql);
 		queryCompiler.compile(managerFactory.getSQLExecutorContext(), this.filter);
 	}

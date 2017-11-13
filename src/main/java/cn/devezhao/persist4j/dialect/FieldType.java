@@ -99,7 +99,7 @@ public class FieldType implements Type, Serializable {
 			return false;
 		}
 		Type t2 = (Type) obj;
-		return t2.getMask() == this.getMask();
+		return t2.getMask().equals(this.getMask());
 	}
 
 	@Override

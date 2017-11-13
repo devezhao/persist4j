@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -25,7 +24,6 @@ import cn.devezhao.persist4j.dialect.Editor;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.Type;
 import cn.devezhao.persist4j.engine.ID;
-import cn.devezhao.persist4j.engine.SystemMetadataHelper;
 import cn.devezhao.persist4j.exception.SqlExceptionConverter;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.query.compiler.JoinField;
@@ -61,24 +59,25 @@ public class AjqlResultImpl implements Result {
 	}
 
 	public Object[][] array() {
-		if (execQuery(0).isEmpty())
+		if (execQuery(0).isEmpty()) {
 			return EMPTY_OBJECT_ARRAYS;
-		
+		}
 		return dataCache.toArray(new Object[dataCache.size()][]);
 	}
 	
 	public Object[] unique() {
 		query.setMaxResults(1);
 		query.setLimit(1, query.offset);
-		if (execQuery(1).isEmpty())
+		if (execQuery(1).isEmpty()) {
 			return null;
-		
+		}
 		return dataCache.get(0);
 	}
 
 	public List<Record> list() {
-		if (execQuery(0).isEmpty())
+		if (execQuery(0).isEmpty()) {
 			return Collections.<Record>emptyList();
+		}
 		
 		List<Record> records = new ArrayList<Record>();
 		for (Object[] row : dataCache) {
@@ -90,15 +89,17 @@ public class AjqlResultImpl implements Result {
 	public Record record() {
 		query.setMaxResults(1);
 		query.setLimit(1, query.offset);
-		if (execQuery(1).isEmpty())
+		if (execQuery(1).isEmpty()) {
 			return null;
+		}
 		
 		return bindRecord(dataCache.get(0));
 	}
 	
 	public Result reset() {
-		if (dataCache != null)
+		if (dataCache != null) {
 			dataCache = null;
+		}
 		return this;
 	}
 	
@@ -109,8 +110,9 @@ public class AjqlResultImpl implements Result {
 	 * @return
 	 */
 	protected List<Object[]> execQuery(int fetch) {
-		if (dataCache != null)
+		if (dataCache != null) {
 			return dataCache;
+		}
 		dataCache = new LinkedList<Object[]>();
 		
 		SelectItem[] selectItems = query.getSelectItems();
@@ -132,14 +134,12 @@ public class AjqlResultImpl implements Result {
 					pVal = inParameters.get(e.getKey().substring(1));
 				}
 				
-				if (pVal == null)
+				if (pVal == null) {
 					throw new QueryException(( (index) ? "index" : "named" ) + " parameter unset, " + ( (index) ? "index " : "name " ) + e.getKey());
+				}
 				paramatersMapping.put(e.getValue(), pVal);
 			}
 		}
-		
-		// <ROW, <ID, COL>>
-		Map<Integer, Map<ID, Integer>> referenceListMap = new HashMap<Integer, Map<ID, Integer>>();
 		
 		// Optimize limit offset
 //		boolean limitOffset = query.getPersistManagerFactory().getDialect().supportsLimitOffset();
@@ -185,79 +185,33 @@ public class AjqlResultImpl implements Result {
 				}
 			}
 			
-			if (query.getTimeout() > 0)
+			if (query.getTimeout() > 0) {
 				pstmt.setQueryTimeout(query.getTimeout());
+			}
 			
 			rs = pstmt.executeQuery();
-			if (fetch > 0)
+			if (fetch > 0) {
 				rs.setFetchSize(fetch);
+			}
 			
-			if (query.getFirstResult() > 0)
+			if (query.getFirstResult() > 0) {
 				rs.absolute(query.getFirstResult());
+			}
 			
 			if (query.getMaxResults() <= 0) {
 				while (rs.next()) {
-					dataCache.add(readRow(selectItems, rs, referenceListMap));
+					dataCache.add(readRow(selectItems, rs));
 				}
 			} else {
 				int current = 0;
 				while (current++ < query.getMaxResults() && rs.next()) {
-					dataCache.add(readRow(selectItems, rs, referenceListMap));
+					dataCache.add(readRow(selectItems, rs));
 				}
 			}
-			
-			if (referenceListMap.isEmpty())
-				return dataCache;
 			
 			// clean
 			SqlHelper.close(rs);
 			SqlHelper.clear(pstmt);
-			
-			/*
-			 * query multi-reference id
-			 */
-			for (Map.Entry<Integer, Map<ID, Integer>> e : referenceListMap.entrySet()) {
-				SelectItem selectItem = selectItems[e.getKey()];
-				Map<ID, Integer> map = e.getValue();
-				
-				Set<ID> rIds = map.keySet();
-				String ql = SystemMetadataHelper.selectAjqlReferenceListMapping(
-						selectItem.getField(), rIds.toArray(new ID[rIds.size()]));
-				
-				QueryCompiler compiler = new QueryCompiler(ql);
-				String subQl = compiler.compile(query.getPersistManagerFactory().getSQLExecutorContext());
-				if (LOG.isDebugEnabled())
-					LOG.debug("exec sub query(n-reference): " + subQl);
-
-				rs = pstmt.executeQuery(ql);
-				Map<ID, List<ID>> idMap = new HashMap<ID, List<ID>>();
-				Editor editor = FieldType.REFERENCE.getFieldEditor();
-				while (rs.next()) {
-					ID id1 = (ID) editor.get(rs, compiler.getSelectItems()[0].getIndex() + 1);  // 1
-					ID id2 = (ID) editor.get(rs, compiler.getSelectItems()[1].getIndex() + 1);  // 2
-					
-					List<ID> list = idMap.get(id1);
-					if (list == null) {
-						list = new ArrayList<ID>();
-						idMap.put(id1, list);
-					}
-					list.add(id2);
-				}
-				SqlHelper.close(rs);
-				SqlHelper.clear(pstmt);
-				
-				for (Map.Entry<ID, List<ID>> e2 : idMap.entrySet()) {
-					int colIndex = map.get(e2.getKey());
-					ID[] ids = e2.getValue().toArray(new ID[e2.getValue().size()]);
-					
-					if (selectItem.getType() == SelectItemType.Label) {
-						dataCache.get(colIndex)[e.getKey()] = readLabel(ids);
-					} else {
-						dataCache.get(colIndex)[e.getKey()] = ids;
-					}
-				}
-				
-			}
 			
 		} catch (SQLException sqlex) {
 			throw SqlExceptionConverter.convert(sqlex, "#AJQL_QUERY", aSql);
@@ -272,7 +226,7 @@ public class AjqlResultImpl implements Result {
 	}
 	
 	// read a row
-	Object[] readRow(SelectItem[] selectItems, ResultSet rs, Map<Integer, Map<ID, Integer>> referenceListMap) throws SQLException {
+	Object[] readRow(SelectItem[] selectItems, ResultSet rs) throws SQLException {
 		Object[] row = new Object[selectItems.length];
 
 		for (SelectItem item : selectItems) {

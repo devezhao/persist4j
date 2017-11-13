@@ -42,7 +42,8 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 
 	private static final Log LOG = LogFactory.getLog(ConfigurationMetadataFactory.class);
 	
-	final private XmlHelper xmlHelper = new XmlHelper();
+	transient
+	final private XmlHelper XML_HELPER = new XmlHelper();
 	
 	final private Map<String, Integer> cnMap = new HashMap<String, Integer>();
 	final private Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
@@ -108,19 +109,9 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	/**
 	 */
 	private void refresh() {
-		URL url = getClass().getClassLoader().getResource("system-metadata.xml");
-		Document sysDocument = read( url );
-		bind(sysDocument);
-
-		url = getClass().getClassLoader().getResource(configLocation);
+		URL url = getClass().getClassLoader().getResource(configLocation);
 		Document userDocument = read( url );
 		bind(userDocument);
-		
-		Element userRoot = (Element) userDocument.selectSingleNode("metadata-config");
-		for (Object o : sysDocument.getRootElement().selectNodes("//entity")) {
-			Element el = (Element) o;
-			userRoot.add((Element) el.clone());
-		}
 		configDocument = userDocument;
 	}
 	
@@ -175,8 +166,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			}
 		}
 		namingPolicy(pName, "entity physical");
-		
-		StringHelper.hyphenate(name).toLowerCase();
 		
 		String nameField = eNode.valueOf("@name-field");
 		String desc = eNode.valueOf("@description");
@@ -298,7 +287,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		Document document = null;
 		try {
-			document = xmlHelper.createSAXReader("",
+			document = XML_HELPER.createSAXReader("",
 					errors, XmlHelper.DEFAULT_DTD_RESOLVER).read( url.openStream() );
 		} catch (IOException e) {
 			throw new MetadataException("could not load metadata config [ " + url + " ]", e);

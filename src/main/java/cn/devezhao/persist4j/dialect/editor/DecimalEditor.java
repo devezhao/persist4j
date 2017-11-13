@@ -35,8 +35,9 @@ public class DecimalEditor extends AbstractFieldEditor {
 			value = new BigDecimal((Double) value);
 		}
 		
-		((BigDecimal) value).setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP);
-		pstmt.setBigDecimal(index, (BigDecimal) value);
+		BigDecimal value2 = (BigDecimal) value;
+		value2 = value2.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP);
+		pstmt.setBigDecimal(index, value2);
 	}
 
 	@Override

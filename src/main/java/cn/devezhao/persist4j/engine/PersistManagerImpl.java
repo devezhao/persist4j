@@ -7,15 +7,12 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -244,8 +241,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 				}
 			}
 			
-			Set<ID> nRefIds = new HashSet<ID>();
-			
 			for (Iterator<Map.Entry<Field, ID[]>> iter = refToIdMap.entrySet().iterator(); iter.hasNext(); ) {
 				Map.Entry<Field, ID[]> e = iter.next();
 				Field cField = e.getKey();
@@ -269,21 +264,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 								id.toLiteral() );
 						sqlList.add(cql);
 					}
-				} else {  // Type.REFERENCE_LIST
-					for (ID s : e.getValue()) {
-						nRefIds.add(s);
-					}
 				}
-			}
-			
-			if (!nRefIds.isEmpty()) {
-				Entity rlm_e = managerFactory.getMetadataFactory().getEntity("ReferenceListMapping");
-				StringBuilder ql = new StringBuilder("delete from ").append(
-						quote(rlm_e.getPhysicalName()));
-				ql.append(" where ")
-						.append(quote(rlm_e.getField("uniqueId").getPhysicalName())).append(" in ( '")
-						.append(StringUtils.join(nRefIds.toArray(new ID[nRefIds.size()]), "', '")).append("' )");
-				sqlList.add(ql.toString());
 			}
 		}
 		
@@ -340,13 +321,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 					quote(own.getPhysicalName()),
 					quote(referenceToField.getPhysicalName()),
 					masterId.toLiteral());
-		} else {  // Type.REFERENCE_LIST
-			sql = MessageFormat.format("select {0} from {1} where {2} = {3} and {4} = ''{5}'' and {6} = ''{7}''",
-					quote("uniqueId"),
-					quote("ReferenceListMapping"),
-					quote("entity"), own.getEntityCode(),
-					quote("field"), referenceToField.getName(),
-					quote("referenceId"), masterId.toLiteral());
 		}
 		
 		List<ID> ids = new ArrayList<ID>();

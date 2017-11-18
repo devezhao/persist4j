@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +73,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		for (Iterator<String> iter = record.getAvailableFieldIterator(); iter.hasNext(); ) {
 			Field field = e.getField( iter.next() );
 			fieldList.add( field );
-			
 			insert.append(", ").append(quote(field.getPhysicalName()));
 			valuesclause.append(", ?");
 		}
@@ -122,16 +122,15 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 			
 			if (!refsSqls.isEmpty()) {
 				int[] batchExec = executeBatch(refsSqls.toArray(new String[refsSqls.size()]));
-				
-				for (int be : batchExec)
+				for (int be : batchExec) {
 					affected += be;
+				}
 			}
 		} catch (SQLException sqlex) {
 			throw SqlExceptionConverter.convert(sqlex, "#INSERT", sql);
 		}
 		
-		if (LOG.isDebugEnabled())
-			LOG.debug("total affected " + affected + " rows");
+		LOG.debug("total affected " + affected + " rows");
 		
 		record.setID(e.getPrimaryField().getName(), eId);
 		return record;
@@ -201,9 +200,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		} catch (SQLException sqlex) {
 			throw SqlExceptionConverter.convert(sqlex, "#UPDATE", sql);
 		}
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("total affected " + affected + " rows");
-		}
+		LOG.debug("total affected " + affected + " rows");
 		
 		return record;
 	}
@@ -245,7 +242,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 				Map.Entry<Field, ID[]> e = iter.next();
 				Field cField = e.getKey();
 				
-				// TASK 迭代级联
+				// TODO 迭代级联
 				if (cField.getType() == FieldType.REFERENCE) {
 					String formatted = null;
 					if (cField.getCascadeModel() == CascadeModel.Delete) {
@@ -279,10 +276,8 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		for (int ba : batchAffected) {
 			affected += ba;
 		}
+		LOG.debug("total affected " + affected + " rows");
 		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("total affected " + affected + " rows");
-		}
 		return affected;
 	}
 
@@ -305,14 +300,13 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		SqlHelper.release(connect, managerFactory.getDataSource());
 	}
 	
-	
 	// ----------------------------------------------------------------------------------------
 	
-	String quote(String ident) {
+	private String quote(String ident) {
 		return this.managerFactory.getDialect().quote(ident);
 	}
 	
-	ID[] getReferenceToIds(Field referenceToField, ID masterId) {
+	private ID[] getReferenceToIds(Field referenceToField, ID masterId) {
 		String sql = null;
 		Entity own = referenceToField.getOwnEntity();
 		if (referenceToField.getType() == FieldType.REFERENCE) {
@@ -336,15 +330,18 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		} finally {
 			if (rs != null) {
 				SqlHelper.close(rs);
+				
+				Connection conn = null;
 				try {
-					SqlHelper.close(rs.getStatement());
+					Statement stmt = rs.getStatement();
+					conn = stmt == null ? null : stmt.getConnection();
+					SqlHelper.close(stmt);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				try {
-					releaseConnection(rs.getStatement().getConnection());
-				} catch (SQLException e) {
-					e.printStackTrace();
+				
+				if (conn != null) {
+					releaseConnection(conn);
 				}
 			}
 		}

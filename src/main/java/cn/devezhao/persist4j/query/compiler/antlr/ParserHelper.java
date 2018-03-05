@@ -56,6 +56,4 @@ public class ParserHelper {
 			|| isOperator(ttype)
 			|| isInIgnoreValue(ttype);
 	}
-
-	
 }

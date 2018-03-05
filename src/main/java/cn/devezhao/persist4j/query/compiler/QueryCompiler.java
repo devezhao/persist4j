@@ -2,10 +2,12 @@ package cn.devezhao.persist4j.query.compiler;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -25,7 +27,7 @@ import cn.devezhao.persist4j.query.compiler.antlr.ParserException;
 import cn.devezhao.persist4j.query.compiler.antlr.ParserHelper;
 
 /**
- * 
+ * AJQL 编译器
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Jan 22, 2009
@@ -55,6 +57,9 @@ public class QueryCompiler implements Serializable {
 	
 	transient private SqlExecutorContext sqlExecutorContext;
 
+	/**
+	 * @param ajql
+	 */
 	public QueryCompiler(String ajql) {
 		this.ajql = ajql;
 	}
@@ -76,8 +81,9 @@ public class QueryCompiler implements Serializable {
 	 * @return
 	 */
 	public String compile(SqlExecutorContext context, Filter filter) throws CompileException {
-		if (compiledSql != null)
+		if (compiledSql != null) {
 			return compiledSql;
+		}
 		
 		this.sqlExecutorContext = context;
 		
@@ -118,17 +124,26 @@ public class QueryCompiler implements Serializable {
 	
 	String compileQuery(AST select, Filter filter) {
 		AST from = select.getNextSibling();
-		if (LOG.isDebugEnabled())
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("compile select clause [" + select.toStringList() + " ]");
+		}
 		
 		Entity entity = sqlExecutorContext.getEntity(from.getFirstChild().getText());
 		this.rootEntity = entity;
 		final JoinTree aJTree = new JoinTree(entity.getPhysicalName());
 		
+		boolean distinctField = false;
+		Set<JoinField> distinctFields = new HashSet<>();
+		
 		List<JoinField> selectFields = new LinkedList<JoinField>();
 		AST item = select.getFirstChild();
 		do {
 			JoinField aJF = null;
+			if (item.getType() == AjQLParserTokenTypes.DISTINCT) {
+				distinctField = true;
+				continue;
+			}
+			
 			if (ParserHelper.isAggregator(item.getType())) {
 				AST col = item.getFirstChild();
 				aJF = bindJoinField(aJTree, entity, col, SelectItemType.Aggregator);
@@ -138,6 +153,10 @@ public class QueryCompiler implements Serializable {
 			}
 			
 			selectFields.add(aJF);
+			if (distinctField) {
+				distinctFields.add(aJF);
+			}
+			distinctField = false;
 		} while ((item = item.getNextSibling()) != null);
 		selectList.clear();
 		selectList.addAll(selectFields);
@@ -160,6 +179,7 @@ public class QueryCompiler implements Serializable {
 				order = next;
 				break;
 			}
+			
 			findFields(next, aJTree, entity);
 			next = next.getNextSibling();
 		}
@@ -209,11 +229,15 @@ public class QueryCompiler implements Serializable {
 				break;
 			}
 			
+			if (distinctFields.contains(aJF)) {
+				sql.append("distinct ");
+			}
 			sql.append(clause);
-			if (iter.hasNext())
+			if (iter.hasNext()) {
 				sql.append(", ");
-			else
+			} else {
 				break;
+			}
 		}
 		sql.append(" from ").append(aJQL).append(" where ");
 		
@@ -248,7 +272,6 @@ public class QueryCompiler implements Serializable {
 					clause.append('?');
 					paramIndex++;
 					text = (text.charAt(0) == '?') ? paramIndex + "" : text;
-					
 					parameters.put( text, new ParameterItem(text, paramIndex, aJF.getField()) );
 					break;
 				default:
@@ -257,17 +280,21 @@ public class QueryCompiler implements Serializable {
 					} else
 						LOG.warn("Unknow token: <" + ttype + ", " + text + ">");
 				}
+				
 				clause.append(' ');
 			} while ((next = next.getNextSibling()) != null);
+			
 			sql.append(clause);
 			clause = null;
 		}
 		
-		if (group != null)
+		if (group != null) {
 			sql.append(compileGroupByClause(group, having));
+		}
 		
-		if (order != null)
+		if (order != null) {
 			sql.append(compileOrderByClause(order));
+		}
 		
 		return sql.toString().trim();
 	}
@@ -292,18 +319,22 @@ public class QueryCompiler implements Serializable {
 				break;
 			case AjQLParserTokenTypes.SELECT:
 				String neste = new QueryCompiler(this.sqlExecutorContext).compileNesteSelect(next);
-				if (LOG.isDebugEnabled())
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("compiled neste select clause [ " + neste + " ], will return now");
+				}
 				return clause.append(neste).append(" )").toString();  // NOTE: neste select, return now
 			default:
-				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype))
+				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
-				else
+				} else {
 					LOG.warn("Unknow token in in clause [ " + ttype + ":" + text + " ]");
+				}
 				break;
 			}
-			if (ttype == AjQLParserTokenTypes.COMMA)
+
+			if (ttype == AjQLParserTokenTypes.COMMA) {
 				clause.append(' ');
+			}
 		}
 		return clause.append(" )").toString();
 	}
@@ -345,14 +376,17 @@ public class QueryCompiler implements Serializable {
 				}
 				return clause.append(neste).append(" )").toString();  // NOTE: neste select, return now
 			default:
-				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype))
+				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
-				else
+				} else {
 					LOG.warn("Unknow token in exists clause [ " + ttype + ":" + text + " ]");
+				}
 				break;
 			}
-			if (ttype == AjQLParserTokenTypes.COMMA)
+			
+			if (ttype == AjQLParserTokenTypes.COMMA) {
 				clause.append(' ');
+			}
 		} while ((next = next.getNextSibling()) != null);
 		return clause.append(" )").toString();
 	}
@@ -360,8 +394,9 @@ public class QueryCompiler implements Serializable {
 	String compileGroupByClause(AST by, AST having) {
 		StringBuilder clause = new StringBuilder();
 		clause.append( compileByClause(by, "group by ") );
-		if (having != null)
+		if (having != null) {
 			clause/*.append(' ')*/.append( compileByClause(having, "having ") );
+		}
 		return clause.toString();
 	}
 	
@@ -373,10 +408,11 @@ public class QueryCompiler implements Serializable {
 		StringBuilder clause = new StringBuilder(who);
 		
 		AST next = null;
-		if (who.startsWith("having"))
+		if (who.startsWith("having")) {
 			next = ast.getFirstChild();
-		else
+		} else {
 			next = ast.getFirstChild().getNextSibling();
+		}
 		
 		do {
 			int ttype = next.getType();
@@ -445,8 +481,9 @@ public class QueryCompiler implements Serializable {
 					}
 				}
 				
-				if (refTo == null)
+				if (refTo == null) {
 					throw new CompileException("entity " + entity2.getName() + " no reference-to " + rootEntity.getName());
+				}
 				
 				JoinNode jNode = tree.addChildJoin(
 						entity2.getPhysicalName(), rootEntity.getPrimaryField().getPhysicalName(), refTo.getPhysicalName());
@@ -503,21 +540,25 @@ public class QueryCompiler implements Serializable {
 	}
 	
 	Entity getReferenceEntity(Field field) {
-		if (FieldType.REFERENCE != field.getType())
+		if (FieldType.REFERENCE != field.getType()) {
 			throw new CompileException(field + " does not support joins");
+		}
 		return field.getReferenceEntities()[0];
 	}
 	
 	void findFields(AST ast, JoinTree aJTree, Entity entity) {
-		if (ast == null)
+		if (ast == null) {
 			return;
+		}
+		
 		ast = ast.getFirstChild();
 		do {
 			AST node = ast;
 			if (node.getType() != AjQLParserTokenTypes.IDENT) {
 				node = node.getFirstChild();
-				if (node == null || node.getType() != AjQLParserTokenTypes.IDENT)
+				if (node == null || node.getType() != AjQLParserTokenTypes.IDENT) {
 					continue;
+				}
 			}
 			bindJoinField(aJTree, entity, node, SelectItemType.Field);
 		} while ((ast = ast.getNextSibling()) != null);
@@ -525,17 +566,19 @@ public class QueryCompiler implements Serializable {
 	
 	JoinField getJoinField(AST jAst, Dialect dialect) {
 		JoinField aJF = joinFieldMap.get(jAst.getText());
-		if (aJF == null)
+		if (aJF == null) {
 			throw new CompileException("Unknow JoinField in clause [ " + jAst.getType() + ", " + jAst.getText() + " ]");
-		
-		if (aJF.getName() == null)
+		}
+		if (aJF.getName() == null) {
 			aJF.as(-1, dialect);
+		}
 		return aJF;
 	}
 	
 	void throwIfUncompile() {
-		if (this.compiledSql == null)
+		if (this.compiledSql == null) {
 			throw new IllegalStateException("uncompile");
+		}
 	}
 	
 	void handleParseException(Exception ex) {

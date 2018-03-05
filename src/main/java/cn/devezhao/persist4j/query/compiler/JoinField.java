@@ -80,8 +80,9 @@ public class JoinField implements SelectItem {
 	}
 	
 	protected String as(int increase, Dialect dialect) {
-		if (full != null)
+		if (full != null) {
 			return full;
+		}
 		
 		index = increase;
 		fName = String.format("%s.%s", 
@@ -94,7 +95,4 @@ public class JoinField implements SelectItem {
 	public String toString() {
 		return String.format("[%s->%s->%s]", fieldPath, fName, fAlias);
 	}
-	
-
-	
 }

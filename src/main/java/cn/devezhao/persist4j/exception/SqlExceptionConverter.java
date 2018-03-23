@@ -81,7 +81,25 @@ public class SqlExceptionConverter {
 		
 		return handledNonSpecificException(sqlex, message, sql);
 	}
-
+	
+	/**
+	 * 违反约束类异常？如唯一冲突
+	 * 
+	 * @param sqlex
+	 * @return
+	 */
+	public static boolean isConstraintViolationException(SQLException sqlex) {
+		String stateCode = sqlex.getSQLState();
+		if (stateCode != null && stateCode.length() >= 2) {
+			String classCode = stateCode.substring(0, 2);
+			if (INTEGRITY_VIOLATION_CATEGORIES.contains(classCode)
+					|| sqlex instanceof SQLIntegrityConstraintViolationException) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * non-specific sql exception
 	 * 

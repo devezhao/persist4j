@@ -18,7 +18,7 @@ public class SqlKeywordTest {
 
 	@Test
 	public void testDistinct() {
-		String ajql = "select distinct tString from TestAllType";
+		String ajql = "select distinct tString from TestAllType where tString is null";
 		String sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
 	}

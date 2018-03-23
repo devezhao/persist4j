@@ -180,13 +180,13 @@ public final class SqlHelper {
 	 */
 	static void logSQLException(Throwable ex, String message) {
 		if (ex instanceof SQLException) {
-			LOG.debug(SqlExceptionConverter.convert((SQLException) ex, message, null));
+			LOG.error(SqlExceptionConverter.convert((SQLException) ex, message, null));
 		} else if (ex.getCause() instanceof SQLException) {
-			LOG.debug(SqlExceptionConverter.convert((SQLException) ex.getCause(), message, null));
+			LOG.error(SqlExceptionConverter.convert((SQLException) ex.getCause(), message, null));
 		} else if (ex instanceof AbstractMethodError) {
-			LOG.debug("JDBC driver does not support. " + ex);
+			LOG.error("JDBC driver does not support. " + ex);
 		} else {
-			LOG.debug("Unexception exception. " + ex);
+			LOG.error("Unexception exception. " + ex);
 		}
 	}
 	

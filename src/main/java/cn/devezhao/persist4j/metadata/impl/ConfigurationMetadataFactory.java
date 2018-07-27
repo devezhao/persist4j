@@ -31,7 +31,7 @@ import cn.devezhao.persist4j.util.StringHelper;
 import cn.devezhao.persist4j.util.XmlHelper;
 
 /**
- * 
+ * 元数据配置
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 4, 2009
@@ -104,13 +104,46 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		return configDocument;
 	}
 	
-	// -------------------------------------------------------------------------------
+	// Maybe to Override
+	// ----
+	
+	/**
+	 * @param url
+	 * @return
+	 */
+	protected Document readConfiguration() {
+		URL url = getClass().getClassLoader().getResource(configLocation);
+		List<String> errors = new ArrayList<String>();
+		
+		Document document = null;
+		try {
+			document = XML_HELPER.createSAXReader("",
+					errors, XmlHelper.DEFAULT_DTD_RESOLVER).read( url.openStream() );
+		} catch (IOException e) {
+			throw new MetadataException("could not load metadata config [ " + url + " ]", e);
+		} catch (DocumentException e) {
+			throw new MetadataException("could not parse metadata config [ " + url + " ]", e);
+		} finally {
+		}
+		return document;
+	}
+	
+	/**
+	 * @param ident
+	 * @param type
+	 */
+	protected void namingPolicy(String ident, String type) {
+		if (!StringHelper.isIdentifier(ident)) {
+			throw new MetadataException(type + " name [ " + ident + " ] is wrong! must start with ['a-zA-Z'|'_'|'#'] and contains ['a-zA-Z'|'_'|'#'|'0-9'] only");
+		}
+	}
+	
+	// ----
 	
 	/**
 	 */
 	private void refresh() {
-		URL url = getClass().getClassLoader().getResource(configLocation);
-		Document userDocument = read( url );
+		Document userDocument = readConfiguration();
 		bind(userDocument);
 		configDocument = userDocument;
 	}
@@ -192,15 +225,17 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		for (Object obj : eNode.selectNodes("field")) {
 			Field field = bindField((Node) obj, entity, theSchemaNameOptimize);
-			if (entity.containsField(field.getName()))
+			if (entity.containsField(field.getName())) {
 				throw new MetadataException("Field [ " + field + " ] already exists");
+			}
 			entity.addField(field);
 		}
 		
 		for (Iterator<Map.Entry<String, Field>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<String, Field> e = iter.next();
-			if (entity.containsField(e.getKey()))
+			if (entity.containsField(e.getKey())) {
 				continue;
+			}
 			entity.addField(e.getValue());
 		}
 		return entity;
@@ -231,10 +266,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		boolean u = Boolean.parseBoolean(fNode.valueOf("@updatable"));
 		int maxLength = FieldType.NO_NEED_LENGTH;
 		if (StringUtils.isBlank( fNode.valueOf("@max-length") )) {
-			if (type == FieldType.STRING)
+			if (type == FieldType.STRING) {
 				maxLength = FieldType.DEFAULT_STRING_LENGTH;
-			else if (type == FieldType.TEXT)
+			} else if (type == FieldType.TEXT) {
 				maxLength = FieldType.DEFAULT_TEXT_LENGTH;
+			}
 		} else {
 			maxLength = Integer.parseInt( fNode.valueOf("@max-length") );
 		}
@@ -278,35 +314,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		return field;
 	}
 	
-	/**
-	 * @param url
-	 * @return
-	 */
-	protected Document read(URL url) {
-		List<String> errors = new ArrayList<String>();
-		
-		Document document = null;
-		try {
-			document = XML_HELPER.createSAXReader("",
-					errors, XmlHelper.DEFAULT_DTD_RESOLVER).read( url.openStream() );
-		} catch (IOException e) {
-			throw new MetadataException("could not load metadata config [ " + url + " ]", e);
-		} catch (DocumentException e) {
-			throw new MetadataException("could not parse metadata config [ " + url + " ]", e);
-		} finally {
-		}
-		return document;
-	}
-	
-	/**
-	 * @param ident
-	 * @param type
-	 */
-	protected void namingPolicy(String ident, String type) {
-		if (!StringHelper.isIdentifier(ident))
-			throw new MetadataException(type + " name [ " + ident + " ] is wrong! must start with ['a-zA-Z'|'_'|'#'] and contains ['a-zA-Z'|'_'|'#'|'0-9'] only");
-	}
-	
 	private static final Entity ANY_ENTITY = new AnyEntity();
 	private Map<Field, String[]> completeMap = new HashMap<Field, String[]>();
 	/**
@@ -315,8 +322,9 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		for (Iterator<Map.Entry<Field, String[]>> iter = completeMap.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<Field, String[]> e = iter.next();
 			FieldImpl field = (FieldImpl) e.getKey();
-			if (field.getOwnEntity().getName().equals(commonEntityName))
+			if (field.getOwnEntity().getName().equals(commonEntityName)) {
 				continue;
+			}
 			
 			if (field.getType() == FieldType.REFERENCE) {
 				String eName = e.getValue()[0];

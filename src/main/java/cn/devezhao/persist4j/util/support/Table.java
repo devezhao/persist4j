@@ -114,6 +114,12 @@ public class Table {
 			}
 			sql.append("\n  " + ddl);
 			sql.append(',');
+			
+			if (field.isAutoValue()) {
+				String aix = String.format("unique index `AIX0_%s` (`%s`)", schema, fName);
+				sql.append("\n  " + aix);
+				sql.append(',');
+			}
 		}
 		
 		// 主键

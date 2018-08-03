@@ -20,6 +20,4 @@ public interface MetadataFactory extends Serializable {
 	boolean containsEntity(int aType);
 	
 	Entity[] getEntities();
-	
-	void registerEntity(Entity entity);
 }

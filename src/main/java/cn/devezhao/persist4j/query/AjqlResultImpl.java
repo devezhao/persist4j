@@ -218,7 +218,7 @@ public class AjqlResultImpl implements Result {
 		} finally {
 			SqlHelper.close(rs);
 			SqlHelper.close(pstmt);
-			SqlHelper.release(connection, query.getPersistManagerFactory().getDataSource());
+			SqlHelper.close(connection, query.getPersistManagerFactory().getDataSource());
 			SlowLogger.stop(query.getSlowLoggerTime(), dataCache.size(), aSql);
 		}
 		

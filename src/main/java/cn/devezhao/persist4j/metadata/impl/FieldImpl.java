@@ -67,8 +67,9 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	}
 	
 	public Entity[] getReferenceEntities() {
-		if (referenceSet.isEmpty())
+		if (referenceSet.isEmpty()) {
 			return EntityImpl.EMPTY_ENTITY_ARRAY;
+		}
 		return referenceSet.toArray(new Entity[referenceSet.size()]);
 	}
 	
@@ -119,10 +120,12 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (!(obj instanceof FieldImpl))
+		}
+		if (!(obj instanceof FieldImpl)) {
 			return false;
+		}
 		return ((FieldImpl) obj).hashCode() == hashCode();
 	}
 
@@ -131,9 +134,6 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 		return new StringBuilder().append("<").append(
 				ownEntity.getName()).append("#").append(getName()).append(
 				"(").append(getType()).append(",").append(getMaxLength()).append(")>").toString();
-		
-//		'<' + ownEntity.getName() + '#' + getName() + ", "
-//				+ getType().getMask() + '>';
 	}
 	
 	@Override

@@ -42,17 +42,18 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 
 	private static final Log LOG = LogFactory.getLog(ConfigurationMetadataFactory.class);
 	
-	transient
 	final private XmlHelper XML_HELPER = new XmlHelper();
 	
-	final private Map<String, Integer> cnMap = new HashMap<String, Integer>();
-	final private Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
+	private boolean refreshLocked = false;
+	
+	volatile private Map<String, Integer> name2TypeMap = new HashMap<String, Integer>();
+	volatile private Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
+	volatile private Document configDocument = null;
 	
 	private String configLocation;
-	transient private Dialect dialect;
+	private Dialect dialect;
 	
 	private String commonEntityName = null;
-	private Document configDocument = null;
 	private boolean schemaNameOptimize = false;
 	
 	/**
@@ -62,11 +63,12 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	public ConfigurationMetadataFactory(String configLocation, Dialect dialect) {
 		this.configLocation = configLocation;
 		this.dialect = dialect;
-		refresh();
+		this.refresh();
 	}
-
+	
 	public Entity getEntity(String name) {
-		Integer aType = cnMap.get(name);
+		waitForRefreshLocked();
+		Integer aType = name2TypeMap.get(name);
 		if (aType == null) {
 			throw new MetadataException("entity [ " + name + " ] dose not exists");
 		}
@@ -74,6 +76,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 
 	public Entity getEntity(int type) {
+		waitForRefreshLocked();
 		Entity e = entityMap.get(type);
 		if (e == null) {
 			throw new MetadataException("entity [ " + type + " ] dose not exists");
@@ -82,30 +85,45 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	public boolean containsEntity(int aType) {
-		return cnMap.containsValue(aType);
+		waitForRefreshLocked();
+		return name2TypeMap.containsValue(aType);
 	}
 	
 	public Entity[] getEntities() {
+		waitForRefreshLocked();
 		return entityMap.values().toArray(new Entity[entityMap.size()]);
 	}
 	
-	public void registerEntity(Entity entity) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("register entity " + entity);
-		}
-		if (cnMap.get(entity.getName()) != null || entityMap.get(entity.getEntityCode()) != null) {
-			throw new MetadataException("repeated entity: " + entity);
-		}
-		cnMap.put(entity.getName(), entity.getEntityCode());
-		entityMap.put(entity.getEntityCode(), entity);
-	}
-	
 	public Document getConfigDocument() {
+		waitForRefreshLocked();
 		return configDocument;
 	}
 	
-	// Maybe to Override
-	// ----
+	private void waitForRefreshLocked() {
+		if (refreshLocked) {
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new MetadataException("Wait for refresh lock fail");
+			}
+		}
+	}
+	
+	public void refresh() {
+		this.refreshLocked = true;
+		this.name2TypeMap.clear();
+		this.entityMap.clear();
+		this.configDocument = null;
+		
+		try {
+			Document userDocument = readConfiguration();
+			build(userDocument);
+			this.configDocument = userDocument;
+		} finally {
+			this.notifyAll();
+		}
+	}
 	
 	/**
 	 * @param url
@@ -123,7 +141,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			throw new MetadataException("could not load metadata config [ " + url + " ]", e);
 		} catch (DocumentException e) {
 			throw new MetadataException("could not parse metadata config [ " + url + " ]", e);
-		} finally {
 		}
 		return document;
 	}
@@ -138,44 +155,34 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 	}
 	
-	// ----
-	
-	/**
-	 */
-	private void refresh() {
-		Document userDocument = readConfiguration();
-		bind(userDocument);
-		configDocument = userDocument;
-	}
-	
 	/**
 	 * @param document
 	 */
-	private void bind(Document document) {
+	private void build(Document document) {
 		Element root = document.getRootElement();
 		schemaNameOptimize = BooleanUtils.toBoolean(root.valueOf("@schema-name-optimize"));
 		
 		Entity common = null;
 		String allParent = root.valueOf("@default-parent");
 		if (!StringUtils.isBlank(allParent)) {
-			common = bindEntity(
-					root.selectSingleNode(String.format("entity[@name='%s']", allParent)), null);
-			if (LOG.isInfoEnabled())
+			common = buildEntity(root.selectSingleNode(String.format("entity[@name='%s']", allParent)), null);
+			if (LOG.isInfoEnabled()) {
 				LOG.info("default entity [ " + common + " ] will injecting all entity");
+			}
 			commonEntityName = common.getName();
 		}
 		
-		for (Object obj : root.selectNodes("//entity")) {
-			Node e = (Node) obj;
-			if (common != null && common.getName().equals(e.valueOf("@name")))
+		for (Object o : root.selectNodes("//entity")) {
+			Node e = (Node) o;
+			if (common != null && common.getName().equals(e.valueOf("@name"))) {
 				continue;
+			}
 			
-			Entity entity = bindEntity(e, common);
+			Entity entity = buildEntity(e, common);
 			registerEntity(entity);
 		}
 		
-		refreshBefore();
-		commonEntityName = null;
+		buildAfter();
 	}
 	
 	/**
@@ -183,18 +190,18 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 * @param parent
 	 * @return
 	 */
-	private Entity bindEntity(Node eNode, Entity parent) {
+	private Entity buildEntity(Node eNode, Entity parent) {
 		String tCode = eNode.valueOf("@type-code");
 		Validate.notEmpty(tCode);
-		boolean theSchemaNameOptimize = BooleanUtils.toBoolean(eNode.valueOf("@schema-name-optimize"));
-		theSchemaNameOptimize = theSchemaNameOptimize || (schemaNameOptimize && !theSchemaNameOptimize);
+		boolean fieldSchemaNameOptimize = BooleanUtils.toBoolean(eNode.valueOf("@schema-name-optimize"));
+		fieldSchemaNameOptimize = fieldSchemaNameOptimize || (schemaNameOptimize && !fieldSchemaNameOptimize);
 		
 		String name = eNode.valueOf("@name");
 		namingPolicy(name, "entity");
 		String pName = eNode.valueOf("@physical-name");
 		if (StringUtils.isEmpty(pName)) {
 			pName = name;
-			if (theSchemaNameOptimize) {
+			if (fieldSchemaNameOptimize) {
 				pName = StringHelper.hyphenate(pName).toLowerCase();
 			}
 		}
@@ -224,7 +231,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		
 		for (Object obj : eNode.selectNodes("field")) {
-			Field field = bindField((Node) obj, entity, theSchemaNameOptimize);
+			Field field = buildField((Node) obj, entity, fieldSchemaNameOptimize);
 			if (entity.containsField(field.getName())) {
 				throw new MetadataException("Field [ " + field + " ] already exists");
 			}
@@ -244,16 +251,16 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	/**
 	 * @param fNode
 	 * @param own
-	 * @param theSchemaNameOptimize
+	 * @param fieldSchemaNameOptimize
 	 * @return
 	 */
-	private Field bindField(Node fNode, Entity own, boolean theSchemaNameOptimize) {
+	private Field buildField(Node fNode, Entity own, boolean fieldSchemaNameOptimize) {
 		String name = fNode.valueOf("@name");
 		namingPolicy(name, "field");
 		String pName = fNode.valueOf("@physical-name");
 		if (StringUtils.isEmpty(pName)) {
 			pName = name;
-			if (theSchemaNameOptimize) {
+			if (fieldSchemaNameOptimize) {
 				pName = StringHelper.hyphenate(pName).toUpperCase();
 			}
 		}
@@ -314,11 +321,22 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		return field;
 	}
 	
-	private static final Entity ANY_ENTITY = new AnyEntity();
-	private Map<Field, String[]> completeMap = new HashMap<Field, String[]>();
+	private void registerEntity(Entity entity) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("register entity " + entity);
+		}
+		if (name2TypeMap.get(entity.getName()) != null || entityMap.get(entity.getEntityCode()) != null) {
+			throw new MetadataException("repeated entity: " + entity);
+		}
+		name2TypeMap.put(entity.getName(), entity.getEntityCode());
+		entityMap.put(entity.getEntityCode(), entity);
+	}
+	
+	final private static Entity ANY_ENTITY = new AnyEntity();
+	final private Map<Field, String[]> completeMap = new HashMap<Field, String[]>();
 	/**
 	 */
-	private void refreshBefore() {
+	private void buildAfter() {
 		for (Iterator<Map.Entry<Field, String[]>> iter = completeMap.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<Field, String[]> e = iter.next();
 			FieldImpl field = (FieldImpl) e.getKey();

@@ -297,7 +297,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	
 	@Override
 	protected void releaseConnection(Connection connect) {
-		SqlHelper.release(connect, managerFactory.getDataSource());
+		SqlHelper.close(connect, managerFactory.getDataSource());
 	}
 	
 	// ----------------------------------------------------------------------------------------

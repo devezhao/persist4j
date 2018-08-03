@@ -162,7 +162,7 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 		} finally {
 			SqlHelper.close(rs);
 			SqlHelper.close(pstmt);
-			SqlHelper.release(connect, managerFactory.getDataSource());
+			SqlHelper.close(connect, managerFactory.getDataSource());
 			SlowLogger.stop(getSlowLoggerTime(), dataCache.size(), aSql);
 		}
 	}

@@ -24,14 +24,16 @@ public class Table {
 
 	private Entity entity;
 	private Dialect dialect;
-	private Element cfgRoot;
+	private List<?> indexList;
 	
-	public static final boolean CREATE_FK = false;
-
-	public Table(Entity entity, Dialect dialect, Element cfgRoot) {
+	public Table(Entity entity, Dialect dialect) {
+		this(entity, dialect, null);
+	}
+	
+	public Table(Entity entity, Dialect dialect, List<?> indexList) {
 		this.entity = entity;
 		this.dialect = dialect;
-		this.cfgRoot = cfgRoot;
+		this.indexList = indexList;
 	}
 
 	public String[] generateDDL(boolean dropExists, boolean createFk) {
@@ -176,14 +178,13 @@ public class Table {
 	
 	// 索引
 	String[] genIndexDDL(boolean isUIX) {
-		Element entityEL = (Element) cfgRoot.selectSingleNode("//entity[@name='" + entity.getName() + "']");
-		if (entityEL.selectNodes("index").isEmpty()) {
+		if (indexList == null || indexList.isEmpty()) {
 			return new String[0];
 		}
 		
 		List<String> uix = new ArrayList<String>();
 		int idxIndex = 0;
-		for (Object o : entityEL.selectNodes("index")) {
+		for (Object o : indexList) {
 			Element el = (Element) o;
 			String type = el.attributeValue("type");
 			if (isUIX && !"unique".equals(type)) {

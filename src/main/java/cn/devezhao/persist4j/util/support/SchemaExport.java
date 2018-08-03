@@ -3,6 +3,7 @@ package cn.devezhao.persist4j.util.support;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.dom4j.Element;
 
@@ -31,7 +32,6 @@ public class SchemaExport {
 		this.connect = connect;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void export(boolean dropExists, boolean createFK) {
 		Entity[] entities = metadataFactory.getEntities();
 		Element cfgRoot = ((ConfigurationMetadataFactory) metadataFactory).getConfigDocument().getRootElement();
@@ -39,8 +39,10 @@ public class SchemaExport {
 		PreparedStatement pstmt = null;
 		try {
 			for (Entity entity : entities) {
-				String[] sqls = new Table(entity, dialect, cfgRoot).generateDDL(dropExists, createFK);
-
+				Element entityElement = (Element) cfgRoot.selectSingleNode("//entity[@name='" + entity.getName() + "']");
+				List<?> ix = entityElement.selectNodes("index");
+				String[] sqls = new Table(entity, dialect, ix).generateDDL(dropExists, createFK);
+				
 				pstmt = connect.prepareStatement("/* !NULL */");
 				for (String sql : sqls) {
 					pstmt.addBatch(sql);

@@ -66,7 +66,6 @@ public final class SqlHelper {
 	 * 
 	 * @param connect
 	 */
-	@Deprecated
 	public static void close(Connection connect) {
 		if (connect == null) {
 			return;
@@ -86,7 +85,7 @@ public final class SqlHelper {
 	 * @param connect
 	 * @param dataSource
 	 */
-	public static void release(Connection connect, DataSource dataSource) {
+	public static void close(Connection connect, DataSource dataSource) {
 		if (connect == null) {
 			return;
 		}

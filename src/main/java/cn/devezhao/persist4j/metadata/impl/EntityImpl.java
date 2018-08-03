@@ -69,7 +69,6 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		if (StringUtils.isBlank(nameFieldName)) {
 			nameFieldName = primaryFieldName;
 		}
-		
 		return getField(nameFieldName);
 	}
 
@@ -119,7 +118,6 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 
 	protected void addField(Field field) {
 		fieldMap.put(field.getName(), field);
-		
 		if (field.getType() == FieldType.PRIMARY) {
 			primaryFieldName = field.getName();
 			if (nameFieldName == null) {

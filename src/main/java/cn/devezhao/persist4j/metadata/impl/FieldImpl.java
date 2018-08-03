@@ -39,8 +39,8 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	 * @param physicalName
 	 * @param description
 	 * @param ownEntity
-	 * @param type
-	 * @param cascade
+	 * @param type see {@link FieldType}
+	 * @param cascade see {@link CascadeModel}
 	 * @param maxLength
 	 * @param nullable
 	 * @param updatable

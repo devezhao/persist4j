@@ -44,6 +44,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	
 	final private XmlHelper XML_HELPER = new XmlHelper();
 	
+	volatile
 	private boolean refreshLocked = false;
 	
 	volatile private Map<String, Integer> name2TypeMap = new HashMap<String, Integer>();
@@ -68,11 +69,15 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	
 	public Entity getEntity(String name) {
 		waitForRefreshLocked();
+		return getEntityNoLock(name);
+	}
+	
+	private Entity getEntityNoLock(String name) {
 		Integer aType = name2TypeMap.get(name);
 		if (aType == null) {
 			throw new MetadataException("entity [ " + name + " ] dose not exists");
 		}
-		return getEntity(aType);
+		return entityMap.get(aType);
 	}
 
 	public Entity getEntity(int type) {
@@ -99,6 +104,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		return configDocument;
 	}
 	
+	synchronized
 	private void waitForRefreshLocked() {
 		if (refreshLocked) {
 			try {
@@ -110,17 +116,19 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 	}
 	
+	synchronized
 	public void refresh() {
+		final Document newlyDocument = readConfiguration();
+		
 		this.refreshLocked = true;
 		this.name2TypeMap.clear();
 		this.entityMap.clear();
 		this.configDocument = null;
-		
 		try {
-			Document userDocument = readConfiguration();
-			build(userDocument);
-			this.configDocument = userDocument;
+			build(newlyDocument);
+			this.configDocument = newlyDocument;
 		} finally {
+			this.refreshLocked = false;
 			this.notifyAll();
 		}
 	}
@@ -346,13 +354,13 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			
 			if (field.getType() == FieldType.REFERENCE) {
 				String eName = e.getValue()[0];
-				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntity(eName);
+				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntityNoLock(eName);
 				field.addReference(entity);
 				continue;
 			}
 			
 			for (String eName : e.getValue()) {
-				Entity entity = getEntity(eName);
+				Entity entity = getEntityNoLock(eName);
 				field.addReference(entity);
 			}
 		}

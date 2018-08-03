@@ -28,15 +28,11 @@ import cn.devezhao.persist4j.dialect.editor.TimestampEditor;
 public class FieldType implements Type, Serializable {
 	private static final long serialVersionUID = 1L;
 
-	// -------------------------------------------------------------------------------------
-
 	public static final int NO_NEED_LENGTH = -1;
 	public static final int DEFAULT_TEXT_LENGTH = 21845; // TEXT类型默认长度
 	public static final int DEFAULT_STRING_LENGTH = 255; // STRING类型默认长度
 	public static final int DEFAULT_PRECISION = 19; 	 // 数字精度(整数位+小数位=精度)
 	public static final int DEFAULT_DECIMAL_SCALE = 4; 	 // 默认小数精度
-
-	// -------------------------------------------------------------------------------------
 
 	public static final Type PRIMARY = new FieldType(10001, "primary", new PrimaryEditor());
 	public static final Type REFERENCE = new FieldType(10002, "reference", new ReferenceEditor());
@@ -58,7 +54,7 @@ public class FieldType implements Type, Serializable {
 	public static final Type NTEXT = new FieldType(10092, "ntext", new NTextEditor());
 	public static final Type BINARY = new FieldType(10093, "binary", new BinaryEditor());
 
-	// -------------------------------------------------------------------------------------
+	// ----
 
 	final private Integer mask;
 	final private String name;
@@ -70,20 +66,14 @@ public class FieldType implements Type, Serializable {
 		this.editor = editor;
 	}
 
-	/**
-	 */
 	public Integer getMask() {
 		return mask;
 	}
 
-	/**
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 */
 	public Editor getFieldEditor() {
 		return editor;
 	}

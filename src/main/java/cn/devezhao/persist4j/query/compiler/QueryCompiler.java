@@ -133,7 +133,7 @@ public class QueryCompiler implements Serializable {
 		final JoinTree aJTree = new JoinTree(entity.getPhysicalName());
 		
 		boolean distinctField = false;
-		Set<JoinField> distinctFields = new HashSet<>();
+		Set<JoinField> distinctFields = new HashSet<JoinField>();
 		
 		List<JoinField> selectFields = new LinkedList<JoinField>();
 		AST item = select.getFirstChild();

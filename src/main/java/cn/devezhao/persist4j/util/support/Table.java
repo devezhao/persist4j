@@ -41,15 +41,15 @@ public class Table {
 		
 		StringBuilder sql = new StringBuilder();
 
-		String schema = entity.getPhysicalName();
+		String table = entity.getPhysicalName();
 		if (dropExists) {
-			sql.append("drop table if exists ").append(dialect.quote(schema)).append(";");
+			sql.append("drop table if exists ").append(dialect.quote(table)).append(";");
 			sqls.add(sql.toString());
 			sql = new StringBuilder();
 			
-			sql.append("create table /*!32312 if not exists*/ ").append(dialect.quote(schema)).append(" (");
+			sql.append("create table /*!32312 if not exists*/ ").append(dialect.quote(table)).append(" (");
 		} else {
-			sql.append("create table if not exists ").append(dialect.quote(schema)).append(" (");
+			sql.append("create table if not exists ").append(dialect.quote(table)).append(" (");
 		}
 		
 		String PK = "";
@@ -58,70 +58,18 @@ public class Table {
 		Field[] fields = entity.getFields();
 		for (int i = 0, j = fields.length; i < j; i++) {
 			Field field = fields[i];
-			String fName = field.getPhysicalName();
-			
-			if (field.getType() == FieldType.PRIMARY)
-				PK = fName;
-			
-			if (field.getType() == FieldType.REFERENCE && createFk) {
+			String column = field.getPhysicalName();
+			if (field.getType() == FieldType.PRIMARY) {
+				PK = column;
+			} else if (field.getType() == FieldType.REFERENCE && createFk) {
 				FKs.add(new Object[] {
-						fName,
+						column,
 						field.getReferenceEntities()[0] });
 			}
-
-			String type = dialect.getColumnType(field.getType().getMask());
-			if (field.getType() == FieldType.DOUBLE) {
-				type = String.format(type, field.getDecimalScale());
-			} else if (type.contains("%d") && field.getMaxLength() > 0) {
-				if (field.getType() == FieldType.TEXT 
-						&& field.getMaxLength() > FieldType.DEFAULT_TEXT_LENGTH) {
-					type = "mediumtext";
-				} else {
-					type = String.format(type, field.getMaxLength());
-				}
-			}
-
-			String canNull = "";  // "DEFAULT NULL";
-			if (!field.isNullable()) {
-				canNull = " not null";
-				if (field.getType() == FieldType.TIMESTAMP) {
-					canNull += " default '0000-00-00 00:00:00'";
-				}
-			} else if (field.getType() == FieldType.TIMESTAMP) {
-				canNull += " null default '0000-00-00 00:00:00'";
-			}
 			
-			// 自增值
-			if (field.isAutoValue()) {
-				canNull += " auto_increment";  // MS-SQL !?
-			} else if (StringUtils.isNotBlank((String) field.getDefaultValue())) {  // 默认值
-				if (canNull.contains("default")) {
-					canNull = canNull.split("default")[0];
-					canNull += " " + field.getDefaultValue().toString().replaceAll("'", "") + "'";
-				} else {
-					canNull += " default '" + field.getDefaultValue().toString().replaceAll("'", "") + "'";
-				}
-			}
-			
-			String ddl = String.format(COLUMN_,
-					StringUtils.rightPad(dialect.quote(fName), 20),
-					type + canNull);
-			// 注释
-			if (StringUtils.isNotBlank(field.getDescription())) {
-				if (dialect.getDialectName().startsWith("mysql")) {
-					ddl += " comment '" + field.getDescription().replaceAll("'", "") + "'";
-				} else {
-					ddl += " /* " + field.getDescription() + " */";
-				}
-			}
-			sql.append("\n  " + ddl);
-			sql.append(',');
-			
-			if (field.isAutoValue()) {
-				String aix = String.format("unique index `AIX0_%s` (`%s`)", schema, fName);
-				sql.append("\n  " + aix);
-				sql.append(',');
-			}
+			sql.append("\n  ");
+			generateFieldDDL(field, sql);
+			sql.append(",");
 		}
 		
 		// 主键
@@ -176,8 +124,71 @@ public class Table {
 		return sqls.toArray(new String[0]);
 	}
 	
+	/**
+	 * @param field
+	 * @param sql
+	 * @param belong
+	 */
+	public void generateFieldDDL(Field field, StringBuilder sql) {
+		String column = field.getPhysicalName();
+		String type = dialect.getColumnType(field.getType().getMask());
+		if (field.getType() == FieldType.DOUBLE) {
+			type = String.format(type, field.getDecimalScale());
+		}
+		
+		if (type.contains("%d") && field.getMaxLength() > 0) {
+			if (field.getType() == FieldType.TEXT 
+					&& field.getMaxLength() > FieldType.DEFAULT_TEXT_LENGTH) {
+				type = "mediumtext";
+			} else {
+				type = String.format(type, field.getMaxLength());
+			}
+		}
+
+		String canNull = "";  // "DEFAULT NULL";
+		if (!field.isNullable()) {
+			canNull = " not null";
+			if (field.getType() == FieldType.TIMESTAMP) {
+				canNull += " default '0000-00-00 00:00:00'";
+			}
+		} else if (field.getType() == FieldType.TIMESTAMP) {
+			canNull += " null default '0000-00-00 00:00:00'";
+		}
+		
+		// 自增值
+		if (field.isAutoValue()) {
+			canNull += " auto_increment";  // MS-SQL !?
+		} else if (StringUtils.isNotBlank((String) field.getDefaultValue())) {  // 默认值
+			if (canNull.contains("default")) {
+				canNull = canNull.split("default")[0];
+				canNull += " " + field.getDefaultValue().toString().replaceAll("'", "") + "'";
+			} else {
+				canNull += " default '" + field.getDefaultValue().toString().replaceAll("'", "") + "'";
+			}
+		}
+		
+		String ddl = String.format(COLUMN_,
+				StringUtils.rightPad(dialect.quote(column), 20),
+				type + canNull);
+		// 注释
+		if (StringUtils.isNotBlank(field.getDescription())) {
+			if (dialect.getDialectName().startsWith("mysql")) {
+				ddl += " comment '" + field.getDescription().replaceAll("'", "") + "'";
+			} else {
+				ddl += " /* " + field.getDescription() + " */";
+			}
+		}
+		sql.append(ddl);
+		
+		if (field.isAutoValue()) {
+			sql.append(',');
+			String aix = String.format("unique index `AIX0_%s` (`%s`)", entity.getPhysicalName(), column);
+			sql.append("\n  " + aix);
+		}
+	}
+	
 	// 索引
-	String[] genIndexDDL(boolean isUIX) {
+	protected String[] genIndexDDL(boolean isUIX) {
 		if (indexList == null || indexList.isEmpty()) {
 			return new String[0];
 		}

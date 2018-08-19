@@ -64,7 +64,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	public ConfigurationMetadataFactory(String configLocation, Dialect dialect) {
 		this.configLocation = configLocation;
 		this.dialect = dialect;
-		this.refresh();
+		this.refresh(true);
 	}
 	
 	public Entity getEntity(String name) {
@@ -117,8 +117,8 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	synchronized
-	public void refresh() {
-		final Document newlyDocument = readConfiguration();
+	public void refresh(boolean initState) {
+		final Document newlyDocument = readConfiguration(initState);
 		
 		this.refreshLocked = true;
 		this.name2TypeMap.clear();
@@ -137,7 +137,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 * @param url
 	 * @return
 	 */
-	protected Document readConfiguration() {
+	protected Document readConfiguration(boolean initState) {
 		URL url = getClass().getClassLoader().getResource(configLocation);
 		List<String> errors = new ArrayList<String>();
 		

@@ -105,7 +105,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 
 	@Override
 	public String toString() {
-		return "<" + getEntityCode() + ':' + getName() + '>';
+		return "<" + getEntityCode() + ':' + getName() + ">@" + super.toString();
 	}
 	
 	@Override

@@ -233,7 +233,8 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				map.put(field.getName(), fieldImpl);
 				
 				if (field.getType() == FieldType.REFERENCE) {
-					completeMap.put(fieldImpl, completeMap.get(field));
+					referenceFieldMap.put(fieldImpl, referenceFieldMap.get(field));
+					System.out.println("PARENT : " + fieldImpl);
 				}
 			}
 		}
@@ -324,7 +325,8 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		if (type == FieldType.REFERENCE) {
 			Validate.notEmpty(refs, 
 					"reference field [ " + field + " ] must have attribute ref-entity");
-			completeMap.put(field, refs.split("\\,"));
+			referenceFieldMap.put(field, refs.split("\\,"));
+			System.out.println("ENTITY : " + field);
 		}
 		return field;
 	}
@@ -341,11 +343,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	final private static Entity ANY_ENTITY = new AnyEntity();
-	final private Map<Field, String[]> completeMap = new HashMap<Field, String[]>();
+	final private Map<Field, String[]> referenceFieldMap = new HashMap<Field, String[]>();
 	/**
 	 */
 	private void buildAfter() {
-		for (Iterator<Map.Entry<Field, String[]>> iter = completeMap.entrySet().iterator(); iter.hasNext(); ) {
+		for (Iterator<Map.Entry<Field, String[]>> iter = referenceFieldMap.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<Field, String[]> e = iter.next();
 			FieldImpl field = (FieldImpl) e.getKey();
 			if (field.getOwnEntity().getName().equals(commonEntityName)) {
@@ -364,6 +366,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				field.addReference(entity);
 			}
 		}
-		completeMap.clear();
+		referenceFieldMap.clear();
 	}
 }

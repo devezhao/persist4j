@@ -34,6 +34,6 @@ public abstract class BaseMetaObject implements BaseMeta {
 
 	@Override
 	public String toString() {
-		return String.format("<%s, %s>", name, physicalName);
+		return String.format("<%s,%s>@%s", name, physicalName, Integer.toHexString(super.hashCode()));
 	}
 }

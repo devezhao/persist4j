@@ -234,7 +234,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				
 				if (field.getType() == FieldType.REFERENCE) {
 					referenceFieldMap.put(fieldImpl, referenceFieldMap.get(field));
-					System.out.println("PARENT : " + fieldImpl);
 				}
 			}
 		}
@@ -326,7 +325,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			Validate.notEmpty(refs, 
 					"reference field [ " + field + " ] must have attribute ref-entity");
 			referenceFieldMap.put(field, refs.split("\\,"));
-			System.out.println("ENTITY : " + field);
 		}
 		return field;
 	}

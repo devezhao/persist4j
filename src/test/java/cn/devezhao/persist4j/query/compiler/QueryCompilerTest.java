@@ -25,7 +25,7 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testIdLabelField() {
-		String ajql = "select #tReference from TestAllType where 1=1";
+		String ajql = "select #tReference.tReference from TestAllType where 1=1";
 		String sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
 	}

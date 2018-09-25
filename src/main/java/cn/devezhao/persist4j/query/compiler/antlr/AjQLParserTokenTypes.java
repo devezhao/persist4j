@@ -1,3 +1,6 @@
+// $ANTLR 2.7.7 (2006-11-01): "ajql.g" -> "AjQLParser.java"$
+
+// $Id$
 package cn.devezhao.persist4j.query.compiler.antlr;
 
 public interface AjQLParserTokenTypes {

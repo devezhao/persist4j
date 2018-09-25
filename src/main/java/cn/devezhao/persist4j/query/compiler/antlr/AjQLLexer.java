@@ -1,3 +1,6 @@
+// $ANTLR 2.7.7 (2006-11-01): "ajql.g" -> "AjQLLexer.java"$
+
+// $Id$
 package cn.devezhao.persist4j.query.compiler.antlr;
 
 import java.io.InputStream;
@@ -21,8 +24,7 @@ import antlr.TokenStreamRecognitionException;
 import antlr.collections.impl.BitSet;
 
 @SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-public class AjQLLexer extends antlr.CharScanner implements
-		AjQLParserTokenTypes, TokenStream {
+public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes, TokenStream {
 	public AjQLLexer(InputStream in) {
 		this(new ByteBuffer(in));
 	}
@@ -146,12 +148,10 @@ public class AjQLLexer extends antlr.CharScanner implements
 						} else if ((LA(1) == '<') && (LA(2) == '>')) {
 							mSQL_NE(true);
 							theRetToken = _returnToken;
-						} else if ((LA(1) == ':')
-								&& (_tokenSet_0.member(LA(2)))) {
+						} else if ((LA(1) == ':') && (_tokenSet_0.member(LA(2)))) {
 							mNAMED_PARAM(true);
 							theRetToken = _returnToken;
-						} else if ((LA(1) == '\'')
-								&& ((LA(2) >= '\u0000' && LA(2) <= '\ufffe'))) {
+						} else if ((LA(1) == '\'') && ((LA(2) >= '\u0000' && LA(2) <= '\ufffe'))) {
 							mQUOTED_STRING(true);
 							theRetToken = _returnToken;
 						} else if ((LA(1) == '\'') && (LA(2) == '\'')) {
@@ -180,8 +180,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 								uponEOF();
 								_returnToken = makeToken(Token.EOF_TYPE);
 							} else {
-								throw new NoViableAltForCharException(
-										(char) LA(1), getFilename(), getLine(),
+								throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(),
 										getColumn());
 							}
 						}
@@ -196,8 +195,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 				}
 			} catch (CharStreamException cse) {
 				if (cse instanceof CharStreamIOException) {
-					throw new TokenStreamIOException(
-							((CharStreamIOException) cse).io);
+					throw new TokenStreamIOException(((CharStreamIOException) cse).io);
 				} else {
 					throw new TokenStreamException(cse.getMessage());
 				}
@@ -206,8 +204,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 	}
 
 	public final void mDIVIDE(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -217,14 +214,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('/');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mPLUS(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mPLUS(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -234,14 +230,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('+');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mMINUS(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mMINUS(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -251,14 +246,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('-');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mSTAR(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mSTAR(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -268,14 +262,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('*');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mMOD(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mMOD(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -285,14 +278,12 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('%');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mEQ(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mEQ(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -302,14 +293,12 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('=');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mLT(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mLT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -319,14 +308,12 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('<');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mGT(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mGT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -336,14 +323,12 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('>');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mLE(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mLE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -353,14 +338,12 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match("<=");
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mGE(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mGE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -370,15 +353,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match(">=");
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mSQL_NE(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -388,14 +369,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match("<>");
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mDOT(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mDOT(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -405,14 +385,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('.');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mCOMMA(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mCOMMA(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -422,15 +401,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match(',');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mLPAREN(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -440,15 +417,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('(');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mRPAREN(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -458,14 +433,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match(')');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mCOLON(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mCOLON(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -475,15 +449,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match(':');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mQUESTION_MARK(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -493,15 +465,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('?');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mNAMED_PARAM(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -519,8 +489,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 						if (_cnt88 >= 1) {
 							break _loop88;
 						} else {
-							throw new NoViableAltForCharException((char) LA(1),
-									getFilename(), getLine(), getColumn());
+							throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 						}
 					}
 
@@ -530,15 +499,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	protected final void mIDENT_LETTER(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -546,6 +513,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 		int _saveIndex;
 
 		switch (LA(1)) {
+		case '#':
 		case '$':
 		case '&':
 		case '^':
@@ -597,20 +565,18 @@ public class AjQLLexer extends antlr.CharScanner implements
 			break;
 		}
 		default: {
-			throw new NoViableAltForCharException((char) LA(1), getFilename(),
-					getLine(), getColumn());
+			throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 		}
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mIDENT(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mIDENT(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -631,15 +597,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	protected final void mIDENT_START(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -657,6 +621,10 @@ public class AjQLLexer extends antlr.CharScanner implements
 		}
 		case '&': {
 			match('&');
+			break;
+		}
+		case '#': {
+			match('#');
 			break;
 		}
 		case '^': {
@@ -693,21 +661,18 @@ public class AjQLLexer extends antlr.CharScanner implements
 			break;
 		}
 		default: {
-			throw new NoViableAltForCharException((char) LA(1), getFilename(),
-					getLine(), getColumn());
+			throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 		}
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	protected final void mDIGIT(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -717,15 +682,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		matchRange('0', '9');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	protected final void mINT(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -741,8 +704,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 					if (_cnt97 >= 1) {
 						break _loop97;
 					} else {
-						throw new NoViableAltForCharException((char) LA(1),
-								getFilename(), getLine(), getColumn());
+						throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 					}
 				}
 
@@ -751,15 +713,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	protected final void mNUM(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -779,8 +739,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 							if (_cnt101 >= 1) {
 								break _loop101;
 							} else {
-								throw new NoViableAltForCharException(
-										(char) LA(1), getFilename(), getLine(),
+								throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(),
 										getColumn());
 							}
 						}
@@ -794,15 +753,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mLITERAL(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -820,8 +777,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 					if (_cnt104 >= 1) {
 						break _loop104;
 					} else {
-						throw new NoViableAltForCharException((char) LA(1),
-								getFilename(), getLine(), getColumn());
+						throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 					}
 				}
 
@@ -830,15 +786,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	public final void mQUOTED_STRING(boolean _createToken)
-			throws RecognitionException, CharStreamException,
-			TokenStreamException {
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -880,14 +834,13 @@ public class AjQLLexer extends antlr.CharScanner implements
 		text.setLength(_saveIndex);
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mESCqs(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mESCqs(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -898,14 +851,12 @@ public class AjQLLexer extends antlr.CharScanner implements
 		match('\'');
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
-	public final void mWS(boolean _createToken) throws RecognitionException,
-			CharStreamException, TokenStreamException {
+	public final void mWS(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
@@ -938,8 +889,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 				break;
 			}
 			default: {
-				throw new NoViableAltForCharException((char) LA(1),
-						getFilename(), getLine(), getColumn());
+				throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 			}
 			}
 		}
@@ -948,15 +898,14 @@ public class AjQLLexer extends antlr.CharScanner implements
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
 			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()
-					- _begin));
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
 		}
 		_returnToken = _token;
 	}
 
 	private static final long[] mk_tokenSet_0() {
 		long[] data = new long[1025];
-		data[0] = 288019613516562432L;
+		data[0] = 288019647876300800L;
 		data[1] = 576460746934714368L;
 		return data;
 	}
@@ -965,7 +914,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 
 	private static final long[] mk_tokenSet_1() {
 		long[] data = new long[1025];
-		data[0] = 343597383680L;
+		data[0] = 377957122048L;
 		data[1] = 576460746934714368L;
 		return data;
 	}
@@ -974,7 +923,7 @@ public class AjQLLexer extends antlr.CharScanner implements
 
 	private static final long[] mk_tokenSet_2() {
 		long[] data = new long[3072];
-		data[0] = 288019613516562432L;
+		data[0] = 288019647876300800L;
 		data[1] = 576460746934714368L;
 		for (int i = 2; i <= 1022; i++) {
 			data[i] = -1L;

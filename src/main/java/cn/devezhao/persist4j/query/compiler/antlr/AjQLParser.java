@@ -1,3 +1,6 @@
+// $ANTLR 2.7.7 (2006-11-01): "ajql.g" -> "AjQLParser.java"$
+
+// $Id$
 package cn.devezhao.persist4j.query.compiler.antlr;
 
 import antlr.ASTFactory;
@@ -43,8 +46,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		astFactory = new ASTFactory(getTokenTypeToASTClassMap());
 	}
 
-	public final void statement() throws RecognitionException,
-			TokenStreamException {
+	public final void statement() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -66,8 +68,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = statement_AST;
 	}
 
-	public final void selectStatement() throws RecognitionException,
-			TokenStreamException {
+	public final void selectStatement() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -88,8 +89,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = selectStatement_AST;
 	}
 
-	public final void queryExpression() throws RecognitionException,
-			TokenStreamException {
+	public final void queryExpression() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -126,8 +126,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = queryExpression_AST;
 	}
 
-	public final void subQueryExpression() throws RecognitionException,
-			TokenStreamException {
+	public final void subQueryExpression() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -148,8 +147,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = subQueryExpression_AST;
 	}
 
-	public final void orderByClause() throws RecognitionException,
-			TokenStreamException {
+	public final void orderByClause() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -223,8 +221,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 								break;
 							}
 							default: {
-								throw new NoViableAltException(LT(1),
-										getFilename());
+								throw new NoViableAltException(LT(1), getFilename());
 							}
 							}
 						}
@@ -246,8 +243,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = orderByClause_AST;
 	}
 
-	public final void queryRule() throws RecognitionException,
-			TokenStreamException {
+	public final void queryRule() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -322,8 +318,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = queryRule_AST;
 	}
 
-	public final void selectClause() throws RecognitionException,
-			TokenStreamException {
+	public final void selectClause() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -383,8 +378,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = selectClause_AST;
 	}
 
-	public final void fromClause() throws RecognitionException,
-			TokenStreamException {
+	public final void fromClause() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -409,8 +403,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = fromClause_AST;
 	}
 
-	public final void whereClause() throws RecognitionException,
-			TokenStreamException {
+	public final void whereClause() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -435,8 +428,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = whereClause_AST;
 	}
 
-	public final void groupByClause() throws RecognitionException,
-			TokenStreamException {
+	public final void groupByClause() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -480,8 +472,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = groupByClause_AST;
 	}
 
-	public final void havingClause() throws RecognitionException,
-			TokenStreamException {
+	public final void havingClause() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -506,8 +497,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = havingClause_AST;
 	}
 
-	public final void selectList() throws RecognitionException,
-			TokenStreamException {
+	public final void selectList() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -540,8 +530,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = selectList_AST;
 	}
 
-	public final void dbObject() throws RecognitionException,
-			TokenStreamException {
+	public final void dbObject() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -564,8 +553,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = dbObject_AST;
 	}
 
-	public final void simpleCondition() throws RecognitionException,
-			TokenStreamException {
+	public final void simpleCondition() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -594,8 +582,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 								break;
 							}
 							default: {
-								throw new NoViableAltException(LT(1),
-										getFilename());
+								throw new NoViableAltException(LT(1), getFilename());
 							}
 							}
 						}
@@ -619,8 +606,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = simpleCondition_AST;
 	}
 
-	public final void selectItem() throws RecognitionException,
-			TokenStreamException {
+	public final void selectItem() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -672,8 +658,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = selectItem_AST;
 	}
 
-	public final void column() throws RecognitionException,
-			TokenStreamException {
+	public final void column() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -710,8 +695,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 					dbObject();
 					astFactory.addASTChild(currentAST, returnAST);
 					column_AST = (AST) currentAST.root;
-				} else if ((_tokenSet_10.member(LA(1)))
-						&& (_tokenSet_11.member(LA(2)))) {
+				} else if ((_tokenSet_10.member(LA(1))) && (_tokenSet_11.member(LA(2)))) {
 					expression();
 					astFactory.addASTChild(currentAST, returnAST);
 					column_AST = (AST) currentAST.root;
@@ -730,8 +714,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = column_AST;
 	}
 
-	public final void aggregate() throws RecognitionException,
-			TokenStreamException {
+	public final void aggregate() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -842,8 +825,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = aggregate_AST;
 	}
 
-	public final void expression() throws RecognitionException,
-			TokenStreamException {
+	public final void expression() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -877,8 +859,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = expression_AST;
 	}
 
-	public final void subSimpleCondition() throws RecognitionException,
-			TokenStreamException {
+	public final void subSimpleCondition() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -891,8 +872,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 					tmp34_AST = astFactory.create(LT(1));
 					astFactory.addASTChild(currentAST, tmp34_AST);
 					match(NOT);
-				} else if ((_tokenSet_14.member(LA(1)))
-						&& (_tokenSet_15.member(LA(2)))) {
+				} else if ((_tokenSet_14.member(LA(1))) && (_tokenSet_15.member(LA(2)))) {
 				} else {
 					throw new NoViableAltException(LT(1), getFilename());
 				}
@@ -927,8 +907,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 					tmp36_AST = astFactory.create(LT(1));
 					astFactory.addASTChild(currentAST, tmp36_AST);
 					match(RPAREN);
-				} else if ((_tokenSet_14.member(LA(1)))
-						&& (_tokenSet_16.member(LA(2)))) {
+				} else if ((_tokenSet_14.member(LA(1))) && (_tokenSet_16.member(LA(2)))) {
 					simplePredicate();
 					astFactory.addASTChild(currentAST, returnAST);
 				} else {
@@ -948,8 +927,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = subSimpleCondition_AST;
 	}
 
-	public final void simplePredicate() throws RecognitionException,
-			TokenStreamException {
+	public final void simplePredicate() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -957,12 +935,10 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 
 		try { // for error handling
 			{
-				if ((_tokenSet_10.member(LA(1)))
-						&& (_tokenSet_18.member(LA(2)))) {
+				if ((_tokenSet_10.member(LA(1))) && (_tokenSet_18.member(LA(2)))) {
 					expression();
 					astFactory.addASTChild(currentAST, returnAST);
-				} else if ((_tokenSet_19.member(LA(1)))
-						&& (_tokenSet_20.member(LA(2)))) {
+				} else if ((_tokenSet_19.member(LA(1))) && (_tokenSet_20.member(LA(2)))) {
 					selectItem();
 					astFactory.addASTChild(currentAST, returnAST);
 					{
@@ -990,8 +966,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 									case NOT: {
 										AST tmp38_AST = null;
 										tmp38_AST = astFactory.create(LT(1));
-										astFactory.addASTChild(currentAST,
-												tmp38_AST);
+										astFactory.addASTChild(currentAST, tmp38_AST);
 										match(NOT);
 										break;
 									}
@@ -999,8 +974,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 										break;
 									}
 									default: {
-										throw new NoViableAltException(LT(1),
-												getFilename());
+										throw new NoViableAltException(LT(1), getFilename());
 									}
 									}
 								}
@@ -1018,8 +992,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 									case NOT: {
 										AST tmp40_AST = null;
 										tmp40_AST = astFactory.create(LT(1));
-										astFactory.addASTChild(currentAST,
-												tmp40_AST);
+										astFactory.addASTChild(currentAST, tmp40_AST);
 										match(NOT);
 										break;
 									}
@@ -1028,8 +1001,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 										break;
 									}
 									default: {
-										throw new NoViableAltException(LT(1),
-												getFilename());
+										throw new NoViableAltException(LT(1), getFilename());
 									}
 									}
 								}
@@ -1038,21 +1010,18 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 									case LIKE: {
 										AST tmp41_AST = null;
 										tmp41_AST = astFactory.create(LT(1));
-										astFactory.addASTChild(currentAST,
-												tmp41_AST);
+										astFactory.addASTChild(currentAST, tmp41_AST);
 										match(LIKE);
 										AST tmp42_AST = null;
 										tmp42_AST = astFactory.create(LT(1));
-										astFactory.addASTChild(currentAST,
-												tmp42_AST);
+										astFactory.addASTChild(currentAST, tmp42_AST);
 										match(QUOTED_STRING);
 										break;
 									}
 									case IN: {
 										AST tmp43_AST = null;
 										tmp43_AST = astFactory.create(LT(1));
-										astFactory.makeASTRoot(currentAST,
-												tmp43_AST);
+										astFactory.makeASTRoot(currentAST, tmp43_AST);
 										match(IN);
 										match(LPAREN);
 										{
@@ -1065,24 +1034,16 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 											case NAMED_PARAM:
 											case QUESTION_MARK: {
 												constant();
-												astFactory.addASTChild(
-														currentAST, returnAST);
+												astFactory.addASTChild(currentAST, returnAST);
 												{
 													_loop50: do {
 														if ((LA(1) == COMMA)) {
 															AST tmp45_AST = null;
-															tmp45_AST = astFactory
-																	.create(LT(1));
-															astFactory
-																	.addASTChild(
-																			currentAST,
-																			tmp45_AST);
+															tmp45_AST = astFactory.create(LT(1));
+															astFactory.addASTChild(currentAST, tmp45_AST);
 															match(COMMA);
 															constant();
-															astFactory
-																	.addASTChild(
-																			currentAST,
-																			returnAST);
+															astFactory.addASTChild(currentAST, returnAST);
 														} else {
 															break _loop50;
 														}
@@ -1093,13 +1054,11 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 											}
 											case SELECT: {
 												selectStatement();
-												astFactory.addASTChild(
-														currentAST, returnAST);
+												astFactory.addASTChild(currentAST, returnAST);
 												break;
 											}
 											default: {
-												throw new NoViableAltException(
-														LT(1), getFilename());
+												throw new NoViableAltException(LT(1), getFilename());
 											}
 											}
 										}
@@ -1107,16 +1066,14 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 										break;
 									}
 									default: {
-										throw new NoViableAltException(LT(1),
-												getFilename());
+										throw new NoViableAltException(LT(1), getFilename());
 									}
 									}
 								}
 								break;
 							}
 							default: {
-								throw new NoViableAltException(LT(1),
-										getFilename());
+								throw new NoViableAltException(LT(1), getFilename());
 							}
 							}
 						}
@@ -1166,8 +1123,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = simplePredicate_AST;
 	}
 
-	public final void comparisonOperator() throws RecognitionException,
-			TokenStreamException {
+	public final void comparisonOperator() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -1238,8 +1194,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = comparisonOperator_AST;
 	}
 
-	public final void constant() throws RecognitionException,
-			TokenStreamException {
+	public final void constant() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -1318,8 +1273,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = constant_AST;
 	}
 
-	public final void subExpression() throws RecognitionException,
-			TokenStreamException {
+	public final void subExpression() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -1423,8 +1377,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = subExpression_AST;
 	}
 
-	public final void binaryOperator() throws RecognitionException,
-			TokenStreamException {
+	public final void binaryOperator() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -1487,8 +1440,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = binaryOperator_AST;
 	}
 
-	public final void unaryOperator() throws RecognitionException,
-			TokenStreamException {
+	public final void unaryOperator() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
@@ -1527,17 +1479,13 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = unaryOperator_AST;
 	}
 
-	public static final String[] _tokenNames = { "<0>", "EOF", "<2>",
-			"NULL_TREE_LOOKAHEAD", "\"select\"", "\"distinct\"", "\"from\"",
-			"\"where\"", "\"and\"", "\"or\"", "\"order\"", "\"asc\"",
-			"\"desc\"", "\"group\"", "\"by\"", "\"having\"", "\"max\"",
-			"\"min\"", "\"avg\"", "\"sum\"", "\"count\"", "\"is\"", "\"not\"",
-			"\"null\"", "\"in\"", "\"like\"", "\"exists\"", "\"between\"",
-			"\"true\"", "\"false\"", "COMMA", "IDENT", "LPAREN", "RPAREN",
-			"STAR", "QUOTED_STRING", "LITERAL", "NAMED_PARAM", "QUESTION_MARK",
-			"PLUS", "MINUS", "DIVIDE", "MOD", "EQ", "LT", "GT", "LE", "GE",
-			"SQL_NE", "DOT", "COLON", "IDENT_START", "IDENT_LETTER", "DIGIT",
-			"INT", "NUM", "ESCqs", "WS" };
+	public static final String[] _tokenNames = { "<0>", "EOF", "<2>", "NULL_TREE_LOOKAHEAD", "\"select\"",
+			"\"distinct\"", "\"from\"", "\"where\"", "\"and\"", "\"or\"", "\"order\"", "\"asc\"", "\"desc\"",
+			"\"group\"", "\"by\"", "\"having\"", "\"max\"", "\"min\"", "\"avg\"", "\"sum\"", "\"count\"", "\"is\"",
+			"\"not\"", "\"null\"", "\"in\"", "\"like\"", "\"exists\"", "\"between\"", "\"true\"", "\"false\"", "COMMA",
+			"IDENT", "LPAREN", "RPAREN", "STAR", "QUOTED_STRING", "LITERAL", "NAMED_PARAM", "QUESTION_MARK", "PLUS",
+			"MINUS", "DIVIDE", "MOD", "EQ", "LT", "GT", "LE", "GE", "SQL_NE", "DOT", "COLON", "IDENT_START",
+			"IDENT_LETTER", "DIGIT", "INT", "NUM", "ESCqs", "WS" };
 
 	protected void buildTokenTypeASTClassMap() {
 		tokenTypeToASTClassMap = null;

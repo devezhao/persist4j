@@ -1,6 +1,9 @@
+// Usage: 
+// `java -cp antlr-2.7.7.jar antlr.Tool ajql.g`
+
 header {
 // $Id$
-package org.qdss.persist.query.compiler.antlr;
+package cn.devezhao.persist4j.query.compiler.antlr;
 }
 
 // PARSER *********************************************************************************
@@ -216,7 +219,7 @@ IDENT options { testLiterals = true; }
 	;
 protected
 IDENT_START 
-	: '_' | '$' | '&' | '^' | 'a'..'z'
+	: '_' | '$' | '&' | '#' | '^' | 'a'..'z'
 	;
 protected
 IDENT_LETTER 

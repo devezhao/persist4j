@@ -9,5 +9,6 @@ package cn.devezhao.persist4j.query.compiler;
  */
 public enum SelectItemType {
 	
-	Aggregator, Field, Label;
+	Aggregator,
+	Field, NameField, IDLabelField;
 }

@@ -38,7 +38,8 @@ public class QueryCompiler implements Serializable {
 
 	private static final Log LOG = LogFactory.getLog(QueryCompiler.class);
 	
-	public static final char NAMED_FIELD_PREFIX = '&';
+	public static final char NAME_FIELD_PREFIX = '&';
+	public static final char IDLABEL_FIELD_PREFIX = '#';
 	public static final char CUSTOM_FUNC_PREFIX = '$';
 	public static final char FORCE_JOIN_PREFIX 	= '^';
 	
@@ -443,28 +444,38 @@ public class QueryCompiler implements Serializable {
 	}
 	
 	JoinField bindJoinField(JoinTree tree, Entity entity, AST item, SelectItemType type) {
-		String fName = item.getText();
-		JoinField exist = joinFieldMap.get(fName);
+		String itemName = item.getText();
+		JoinField exist = joinFieldMap.get(itemName);
 		if (exist != null) {
 			return new JoinField(exist, type);
 		}
 		
-		String path = fName;
-		if (path.charAt(0) == NAMED_FIELD_PREFIX) {  // eg. &accountId
-			type = SelectItemType.Label;
-			
+		String path = itemName;
+		if (path.charAt(0) == NAME_FIELD_PREFIX) {  // eg. &accountId
+			type = SelectItemType.NameField;
 			path = path.substring(1);
-			String[] joined = path.split("\\.");
 			
+			String[] joined = path.split("\\.");
 			path += '.';
-			Entity crte = entity;
+			Entity currentEntity = entity;
 			for (int i = 0; i < joined.length; i++) {
-				Field field = crte.getField(joined[i]);
-				crte = getReferenceEntity(field);
+				Field field = currentEntity.getField(joined[i]);
+				currentEntity = getReferenceEntity(field);
 				if (i + 1 == joined.length) {
-					path += crte.getNameField().getName();
+					path += currentEntity.getNameField().getName();
 					break;
 				}
+			}
+			
+		} else if (path.charAt(0) == IDLABEL_FIELD_PREFIX) {  // eg. #accountId
+			type = SelectItemType.IDLabelField;
+			path = path.substring(1);
+			
+			String[] joined = path.split("\\.");
+			Entity currentEntity = entity;
+			for (int i = 0; i < joined.length; i++) {
+				Field field = currentEntity.getField(joined[i]);
+				currentEntity = getReferenceEntity(field);
 			}
 		}
 		
@@ -473,29 +484,29 @@ public class QueryCompiler implements Serializable {
 		if (path.charAt(0) == FORCE_JOIN_PREFIX) {  // eg. ^SalesOrder.totalAmount
 			if (joined.length == 2) {
 				Entity entity2 = sqlExecutorContext.getEntity( joined[0].substring(1) );
-				Field refTo = null;
+				Field referenceTo = null;
 				for (Field to : rootEntity.getReferenceToFields()) {
 					if ( entity2.equals(to.getOwnEntity()) ) {
-						refTo = to;
+						referenceTo = to;
 						break;
 					}
 				}
 				
-				if (refTo == null) {
+				if (referenceTo == null) {
 					throw new CompileException("entity " + entity2.getName() + " no reference-to " + rootEntity.getName());
 				}
 				
 				JoinNode jNode = tree.addChildJoin(
-						entity2.getPhysicalName(), rootEntity.getPrimaryField().getPhysicalName(), refTo.getPhysicalName());
-				JoinField aJF = new JoinField(jNode, entity2.getField(joined[1]), fName, type);
-				joinFieldMap.put(fName, aJF);
+						entity2.getPhysicalName(), rootEntity.getPrimaryField().getPhysicalName(), referenceTo.getPhysicalName());
+				JoinField aJF = new JoinField(jNode, entity2.getField(joined[1]), itemName, type);
+				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			} else if (joined.length == 1 && EXISTS_ENTITY.get() != null) {
 				Entity entity2 = EXISTS_ENTITY.get();
 				
 				JoinField aJF = new JoinField(
-						tree.getRootJoinNode(), entity2.getField(joined[0].substring(1)), fName, type);
-				joinFieldMap.put(fName, aJF);
+						tree.getRootJoinNode(), entity2.getField(joined[0].substring(1)), itemName, type);
+				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
 			throw new CompileException("Force join must has 2 node");
@@ -504,8 +515,8 @@ public class QueryCompiler implements Serializable {
 		if (joined.length == 1) {  // did not to join
 			Field field = entity.getField(joined[0]);
 			Validate.notNull(field, "Unknow field [ " + joined[0] + " ] in entity [ " + entity.getName() + " ]");
-			JoinField aJF = new JoinField(tree.getRootJoinNode(), field, fName, type);
-			joinFieldMap.put(fName, aJF);
+			JoinField aJF = new JoinField(tree.getRootJoinNode(), field, itemName, type);
+			joinFieldMap.put(itemName, aJF);
 			return aJF;
 		}
 		
@@ -531,8 +542,8 @@ public class QueryCompiler implements Serializable {
 				Field last = crte.getField(joined[i + 1]);
 				Validate.notNull(last, "Unknow field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
 				
-				JoinField aJF = new JoinField(pjn, last, fName, type);
-				joinFieldMap.put(fName, aJF);
+				JoinField aJF = new JoinField(pjn, last, itemName, type);
+				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
 		}

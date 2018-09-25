@@ -3,12 +3,13 @@ package cn.devezhao.persist4j.record;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import cn.devezhao.commons.CalendarUtils;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.FieldType;
@@ -61,10 +62,8 @@ public class RecordVisitor {
 			pVal = new BigDecimal(value.toCharArray());
 		} else if (FieldType.LONG.equals(ft)) {
 			pVal = NumberUtils.toLong(value);
-		} else if (FieldType.DATE.equals(ft)) {
-			pVal = getDefaultDateFormat().parse(value, new ParsePosition(0));
-		} else if (FieldType.TIMESTAMP.equals(ft)) {
-			pVal = getDefaultDateTimeFormat().parse(value, new ParsePosition(0));
+		} else if (FieldType.DATE.equals(ft) || FieldType.TIMESTAMP.equals(ft)) {
+			pVal = tryParseDate(value);
 		} else if (FieldType.BOOL.equals(ft)) {
 			char ch = value.toUpperCase().charAt(0);
 			pVal = ch == BoolEditor.TRUE;
@@ -129,5 +128,27 @@ public class RecordVisitor {
 	 */
 	public static DateFormat getDefaultDateTimeFormat() {
 		return new SimpleDateFormat(DATETIME_FORMAT_STRING);
+	}
+	
+	private static final String DATEPARSE_MODES[] = new String[] {
+			"yyyy", "yyyy-MM", "yyyy-MM-dd", "yyyy-MM-dd HH", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss"
+	};
+	/**
+	 * @param source
+	 * @return
+	 */
+	public static Date tryParseDate(String source) {
+		if (StringUtils.isBlank(source)) {
+			return null;
+		}
+		
+		source = source.trim();
+		int len = source.length();
+		for (String mode : DATEPARSE_MODES) {
+			if (mode.length() == len) {
+				return CalendarUtils.parse(source, CalendarUtils.getDateFormat(mode));
+			}
+		}
+		throw new FieldValueException("无效日期值 : " + source);
 	}
 }

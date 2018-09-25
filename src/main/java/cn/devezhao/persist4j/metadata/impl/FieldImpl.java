@@ -115,7 +115,7 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 
 	@Override
 	public int hashCode() {
-		return (ownEntity.getEntityCode() + getName()).hashCode() >> 13;
+		return (ownEntity.getName() + "#" + getName()).hashCode();
 	}
 
 	@Override

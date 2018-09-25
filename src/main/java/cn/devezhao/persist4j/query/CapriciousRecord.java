@@ -12,8 +12,6 @@ import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
 
 /**
- * 
- * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Mar 8, 2009
  * @version $Id: CapriciousRecord.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
@@ -51,14 +49,15 @@ public class CapriciousRecord extends StandardRecord {
 			super.setObject(key, value);
 			return;
 		}
-
-		if (key.charAt(0) == QueryCompiler.NAMED_FIELD_PREFIX) {
+		
+		if (key.charAt(0) == QueryCompiler.NAME_FIELD_PREFIX) {
 			key = key.substring(1);
 			ID id = getID(key);
-			if (id != null)
+			if (id != null) {
 				id.setLabel(value.toString());
-			else
+			} else {
 				idLabel.put(key, value);
+			}
 		} else {
 			recordMap.put(key, value);
 		}

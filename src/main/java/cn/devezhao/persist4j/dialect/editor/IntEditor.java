@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import cn.devezhao.commons.ObjectUtils;
 import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
@@ -29,6 +30,7 @@ public class IntEditor extends AbstractFieldEditor {
 	
 	@Override
 	public Object get(ResultSet rs, int index) throws SQLException {
-		return rs.getInt(index);
+		Object hasVal = rs.getObject(index);
+		return hasVal == null ? null : ObjectUtils.toInt(hasVal);
 	}
 }

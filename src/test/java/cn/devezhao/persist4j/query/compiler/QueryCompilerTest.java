@@ -29,4 +29,29 @@ public class QueryCompilerTest extends Compiler {
 		String sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
 	}
+	
+	@Test
+	public void testJoin() {
+		String ajql = "select t2Primary from Test2 where t2Reference.tInt > 99";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+	}
+	
+	@Test
+	public void testIn() {
+		String ajql = "select tPrimary from TestAllType where tReference in (select t2Primary from Test2 where t2Int > 10)";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+	}
+	
+	@Test
+	public void testExists() {
+		String ajql = "select tPrimary from TestAllType where exists (select t2Primary from Test2 where ^tReference = t2Reference and t2Int = 999)";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+		
+		ajql = "select tPrimary from TestAllType where exists (select t2Primary from Test2 where t2Reference = ^tReference and t2Int = 999)";
+		sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+	}
 }

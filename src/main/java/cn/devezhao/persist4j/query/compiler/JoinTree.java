@@ -22,9 +22,9 @@ public class JoinTree implements Serializable {
 	static final String COLUMN_ALIAS_PREFIX = "_c";
 	
 	private JoinNode rootNode;
-	private int tableIncrease = -1;
+	private int tableIncrease;
 	
-	private String tableAliasPrefix = TABLE_ALIAS_PREFIX;
+	private String tableAliasPrefix;
 	
 	/**
 	 * Create a new JoinTree
@@ -32,14 +32,25 @@ public class JoinTree implements Serializable {
 	 * @param table
 	 */
 	public JoinTree(String table) {
-		this.rootNode = new JoinNode(table);
+		this(table, -1);
 	}
 	
 	/**
 	 * @param table
+	 * @param tableIncrease
 	 */
-	public JoinTree(String table, String tableAliasPrefix) {
+	public JoinTree(String table, int tableIncrease) {
+		this(table, tableIncrease, TABLE_ALIAS_PREFIX);
+	}
+	
+	/**
+	 * @param table
+	 * @param tableIncrease
+	 * @param tableAliasPrefix
+	 */
+	public JoinTree(String table, int tableIncrease, String tableAliasPrefix) {
 		this.rootNode = new JoinNode(table);
+		this.tableIncrease = tableIncrease;
 		this.tableAliasPrefix = tableAliasPrefix;
 	}
 	

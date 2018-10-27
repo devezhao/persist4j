@@ -18,4 +18,10 @@
 		<field name="tNtext" type="ntext" description="超大文本"/>
 		<field name="tBinary" type="binary" description="二进制数据"/>
 	</entity>
+	
+	<entity name="Test2" type-code="101">
+		<field name="t2Primary" type="primary" description="主键" />
+		<field name="t2Reference" type="reference" ref-entity="TestAllType" description="引用"/>
+		<field name="t2Int" type="int"/>
+	</entity>
 </metadata-config>

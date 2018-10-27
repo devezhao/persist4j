@@ -249,7 +249,11 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 						formatted = "delete from {0} where {1} = ''{2}''";
 					} else if (cField.getCascadeModel() == CascadeModel.RemoveLinks) {
 						// set {1} = null, but some column can not be null
-						formatted = "update {0} set {1} = '''' where {1} = ''{2}''";
+						if (cField.isNullable()) {
+							formatted = "update {0} set {1} = NULL where {1} = ''{2}''";
+						} else {
+							formatted = "update {0} set {1} = '''' where {1} = ''{2}''";
+						}
 					} else {
 						LOG.warn("Unknow CascadeModel: " + cField.getCascadeModel());
 					}

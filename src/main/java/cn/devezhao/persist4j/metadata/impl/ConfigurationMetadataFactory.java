@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -47,7 +48,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	volatile
 	private boolean refreshLocked = false;
 	
-	volatile private Map<String, Integer> name2TypeMap = new HashMap<String, Integer>();
+	volatile private Map<String, Integer> name2TypeMap = new CaseInsensitiveMap<String, Integer>();
 	volatile private Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 	volatile private Document configDocument = null;
 	
@@ -216,12 +217,12 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		namingPolicy(pName, "entity physical");
 		
 		String nameField = eNode.valueOf("@name-field");
-		String desc = eNode.valueOf("@description");
+		String description = eNode.valueOf("@description");
 		
 		EntityImpl entity = new EntityImpl(
-				name, pName, desc, Integer.parseInt(tCode), nameField);
+				name, pName, description, Integer.parseInt(tCode), nameField);
 		
-		Map<String, Field> map = new HashMap<String, Field>();
+		Map<String, Field> fieldMap = new CaseInsensitiveMap<String, Field>();
 		if (parent != null && !"false".equals(eNode.valueOf("@parent"))) {
 			for (Field field : parent.getFields()) {
 				FieldImpl fieldImpl = new FieldImpl(
@@ -230,7 +231,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 						field.isNullable(), field.isUpdatable(),
 						field.getDecimalScale(), field.getDefaultValue(), field.isAutoValue());
 				
-				map.put(field.getName(), fieldImpl);
+				fieldMap.put(field.getName(), fieldImpl);
 				
 				if (field.getType() == FieldType.REFERENCE) {
 					referenceFieldMap.put(fieldImpl, referenceFieldMap.get(field));
@@ -246,7 +247,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			entity.addField(field);
 		}
 		
-		for (Iterator<Map.Entry<String, Field>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+		for (Iterator<Map.Entry<String, Field>> iter = fieldMap.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<String, Field> e = iter.next();
 			if (entity.containsField(e.getKey())) {
 				continue;

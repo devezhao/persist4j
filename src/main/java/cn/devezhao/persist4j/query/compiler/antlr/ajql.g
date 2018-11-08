@@ -143,17 +143,22 @@ subExpression
 	( constant
 	| dbObject
 	| LPAREN ((selectStatement) => selectStatement | expression) RPAREN 
+	| constantSimple AND constantSimple
 	)
 	;
 
-constant
+constantSimple
 	: QUOTED_STRING
 	| LITERAL
+	| NAMED_PARAM
+	| QUESTION_MARK
+	;
+
+constant
+	: constantSimple
 	| TRUE 
 	| FALSE
 	| NULL
-	| NAMED_PARAM
-	| QUESTION_MARK
 	;
 
 unaryOperator
@@ -165,7 +170,7 @@ binaryOperator
 	;
 
 comparisonOperator
-	: EQ | LT | GT | LE | GE | SQL_NE
+	: EQ | LT | GT | LE | GE | SQL_NE | BETWEEN
 	;
 
 // LEXER **********************************************************************************

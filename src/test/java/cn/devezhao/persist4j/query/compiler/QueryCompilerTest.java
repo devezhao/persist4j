@@ -23,12 +23,12 @@ public class QueryCompilerTest extends Compiler {
 		System.out.println(ajql + "\n>>\n" + sql);
 	}
 	
-	@Test
-	public void testIdLabelField() {
-		String ajql = "select #tReference.tReference from TestAllType where 1=1";
-		String sql = compile(ajql);
-		System.out.println(ajql + "\n>>\n" + sql);
-	}
+//	@Test
+//	public void testIdLabelField() {
+//		String ajql = "select #tReference.tReference from TestAllType where 1=1";
+//		String sql = compile(ajql);
+//		System.out.println(ajql + "\n>>\n" + sql);
+//	}
 	
 	@Test
 	public void testJoin() {
@@ -51,6 +51,21 @@ public class QueryCompilerTest extends Compiler {
 		System.out.println(ajql + "\n>>\n" + sql);
 		
 		ajql = "select tPrimary from TestAllType where exists (select t2Primary from Test2 where t2Reference = ^tReference and t2Int = 999)";
+		sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+	}
+	
+	@Test
+	public void testBetween() {
+		String ajql = "select tPrimary from TestAllType where tInt between 1 and 2";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+		
+		ajql = "select tPrimary from TestAllType where tInt between '2010-09-01' and '2010-10-01'";
+		sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+		
+		ajql = "select tPrimary from TestAllType where tInt between ? and ?";
 		sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
 	}

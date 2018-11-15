@@ -109,7 +109,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	private void waitForRefreshLocked() {
 		if (refreshLocked) {
 			try {
-				this.wait();
+				this.wait(1000 * 10);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				throw new MetadataException("Wait for refresh lock fail");

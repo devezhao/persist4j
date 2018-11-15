@@ -1,5 +1,7 @@
 package cn.devezhao.persist4j.query.compiler;
 
+import java.io.Serializable;
+
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
 
@@ -8,7 +10,8 @@ import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
  * @author zhaofang123@gmail.com
  * @since 10/27/2018
  */
-public class NesteSelectContext {
+public class NesteSelectContext implements Serializable {
+	private static final long serialVersionUID = 7585161604688620934L;
 	
 	private Entity master;
 	private JoinNode masterRoot;

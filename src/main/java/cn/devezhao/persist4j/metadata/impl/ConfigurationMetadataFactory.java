@@ -378,10 +378,10 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		// SM 实体处理
 		for (Iterator<Map.Entry<String, String>> iter = SM_MAPPING.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<String, String> e = iter.next();
-			Entity slaveEntity = getEntity(e.getKey());
+			Entity slaveEntity = getEntityNoLock(e.getKey());
 			String master = e.getValue();
 			if (name2TypeMap.containsKey(master)) {
-				((EntityImpl) slaveEntity).setMasterEntity(getEntity(master));
+				((EntityImpl) slaveEntity).setMasterEntity(getEntityNoLock(master));
 			} else {
 				throw new MetadataException("No master-entity found : " + master);
 			}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Metadata DTD 1.0
+ Metadata DTD 1.1
 -->
 
 <!--
@@ -10,7 +10,7 @@
 
 <!--
  default-parent			- 全局实体的默认继承
- schema-name-optimize	- 是否启用schema优化（优化以连字符号在每个大写字母前连接，表名为全小写，字段为全大写，如：实体ReferencesMapping优化为references_mapping，字段uniqueId优化为UNIQUE_ID）
+ schema-name-optimize	- 是否启用 schema 名称优化（实体 ReferencesMapping 优化为 references_mapping，字段 uniqueId 优化为 UNIQUE_ID）
 -->
 <!ATTLIST metadata-config
 	default-parent CDATA #IMPLIED
@@ -30,6 +30,7 @@
  parent					- 父实体
  description			- 描述
  schema-name-optimize	- 是否启用schema优化
+ master                 - 所属主实体
 -->
 <!ATTLIST entity
 	name       			CDATA #REQUIRED
@@ -39,6 +40,7 @@
 	parent		 		CDATA #IMPLIED
 	description 		CDATA #IMPLIED
 	schema-name-optimize (true | false | 1 | 0) "false"
+	master		 		CDATA #IMPLIED
 >
 
 <!--
@@ -81,8 +83,7 @@
 >
 
 <!--
-只为生成SCHEMA所用
- 索引定义
+索引定义（只为生成 SCHEMA 所用）
 -->
 <!ELEMENT index EMPTY>
 <!--

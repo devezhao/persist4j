@@ -34,6 +34,8 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private Map<String, Field> fieldMap = new CaseInsensitiveMap<String, Field>();
 	private List<Field> referenceTo = new ArrayList<Field>();
 	
+	private Entity masterEntity;
+	
 	/**
 	 * @param name
 	 * @param physicalName
@@ -85,6 +87,11 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		}
 		return referenceTo.toArray(new Field[referenceTo.size()]);
 	}
+	
+	@Override
+	public Entity getMasterEntity() {
+		return masterEntity;
+	}
 
 	@Override
 	public int hashCode() {
@@ -127,5 +134,9 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	
 	protected void addReferenceTo(Field field) {
 		referenceTo.add(field);
+	}
+	
+	protected void setMasterEntity(Entity masterEntity) {
+		this.masterEntity = masterEntity;
 	}
 }

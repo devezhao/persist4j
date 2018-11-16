@@ -191,7 +191,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			registerEntity(entity);
 		}
 		
-		buildAfter();
+		buildCompleted();
 	}
 	
 	/**
@@ -219,6 +219,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		String nameField = eNode.valueOf("@name-field");
 		String description = eNode.valueOf("@description");
 		
+		String master = eNode.valueOf("@master");
+		if (StringUtils.isNotBlank(master)) {
+			SM_MAPPING.put(name, master);
+		}
+		
 		EntityImpl entity = new EntityImpl(
 				name, pName, description, Integer.parseInt(tCode), nameField);
 		
@@ -234,7 +239,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				fieldMap.put(field.getName(), fieldImpl);
 				
 				if (field.getType() == FieldType.REFERENCE) {
-					referenceFieldMap.put(fieldImpl, referenceFieldMap.get(field));
+					REFFIELD_REFS.put(fieldImpl, REFFIELD_REFS.get(field));
 				}
 			}
 		}
@@ -312,20 +317,20 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		String desc = fNode.valueOf("@description");
 		String defaultValue = fNode.valueOf("@default-value");
-		boolean a = Boolean.parseBoolean(fNode.valueOf("@auto-value"));
-		if (a && type != FieldType.LONG) {
+		boolean auto = Boolean.parseBoolean(fNode.valueOf("@auto-value"));
+		if (auto && type != FieldType.LONG) {
 			type = FieldType.LONG;
 		}
 		
 		Field field = new FieldImpl(
 				name, pName, desc, own, type, cascade, maxLength, n, u,
-				decimalScale, defaultValue, a);
+				decimalScale, defaultValue, auto);
 		
 		String refs = fNode.valueOf("@ref-entity");
 		if (type == FieldType.REFERENCE) {
 			Validate.notEmpty(refs, 
 					"reference field [ " + field + " ] must have attribute ref-entity");
-			referenceFieldMap.put(field, refs.split("\\,"));
+			REFFIELD_REFS.put(field, refs.split("\\,"));
 		}
 		return field;
 	}
@@ -335,18 +340,21 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			LOG.debug("register entity " + entity);
 		}
 		if (name2TypeMap.get(entity.getName()) != null || entityMap.get(entity.getEntityCode()) != null) {
-			throw new MetadataException("repeated entity: " + entity);
+			throw new MetadataException("repeated entity : " + entity);
 		}
 		name2TypeMap.put(entity.getName(), entity.getEntityCode());
 		entityMap.put(entity.getEntityCode(), entity);
 	}
 	
 	final private static Entity ANY_ENTITY = new AnyEntity();
-	final private Map<Field, String[]> referenceFieldMap = new HashMap<Field, String[]>();
+	final private Map<Field, String[]> REFFIELD_REFS = new HashMap<Field, String[]>();
+	final private Map<String, String> SM_MAPPING = new HashMap<String, String>();
 	/**
+	 * 最终的
 	 */
-	private void buildAfter() {
-		for (Iterator<Map.Entry<Field, String[]>> iter = referenceFieldMap.entrySet().iterator(); iter.hasNext(); ) {
+	private void buildCompleted() {
+		// 特殊字段处理
+		for (Iterator<Map.Entry<Field, String[]>> iter = REFFIELD_REFS.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<Field, String[]> e = iter.next();
 			FieldImpl field = (FieldImpl) e.getKey();
 			if (field.getOwnEntity().getName().equals(commonEntityName)) {
@@ -365,6 +373,19 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				field.addReference(entity);
 			}
 		}
-		referenceFieldMap.clear();
+		REFFIELD_REFS.clear();
+		
+		// SM 实体处理
+		for (Iterator<Map.Entry<String, String>> iter = SM_MAPPING.entrySet().iterator(); iter.hasNext(); ) {
+			Map.Entry<String, String> e = iter.next();
+			Entity slaveEntity = getEntity(e.getKey());
+			String master = e.getValue();
+			if (name2TypeMap.containsKey(master)) {
+				((EntityImpl) slaveEntity).setMasterEntity(getEntity(master));
+			} else {
+				throw new MetadataException("No master-entity found : " + master);
+			}
+		}
+		SM_MAPPING.clear();
 	}
 }

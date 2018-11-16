@@ -61,4 +61,11 @@ public interface Entity extends BaseMeta {
 	 * @return
 	 */
 	Field[] getReferenceToFields();
+	
+	/**
+	 * 获取主实体（如有）
+	 * 
+	 * @return
+	 */
+	Entity getMasterEntity();
 }

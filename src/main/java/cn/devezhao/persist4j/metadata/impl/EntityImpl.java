@@ -35,6 +35,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private List<Field> referenceTo = new ArrayList<Field>();
 	
 	private Entity masterEntity;
+	private Entity slaveEntity;
 	
 	/**
 	 * @param name
@@ -92,6 +93,11 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	public Entity getMasterEntity() {
 		return masterEntity;
 	}
+	
+	@Override
+	public Entity getSlaveEntity() {
+		return slaveEntity;
+	}
 
 	@Override
 	public int hashCode() {
@@ -136,7 +142,8 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		referenceTo.add(field);
 	}
 	
-	protected void setMasterEntity(Entity masterEntity) {
-		this.masterEntity = masterEntity;
+	protected void setMasterEntity(Entity master) {
+		this.masterEntity = master;
+		((EntityImpl) master).slaveEntity = this;
 	}
 }

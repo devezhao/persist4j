@@ -28,11 +28,19 @@ public interface Field extends BaseMeta {
 	Entity getOwnEntity();
 
 	/**
+	 * 用于多引用字段。
 	 * 如果是引用型字段，获取到其引用的实体
 	 * 
 	 * @return
 	 */
 	Entity[] getReferenceEntities();
+	
+	/**
+	 * 如果是引用型字段，获取到其引用的实体
+	 * 
+	 * @return
+	 */
+	Entity getReferenceEntity();
 	
 	/**
 	 * 如果是引用型字段，获取其级联方式
@@ -48,6 +56,13 @@ public interface Field extends BaseMeta {
 	int getMaxLength();
 	
 	/**
+	 *  可创建/指定值（不可创建是指仅能由系统指定或由数据库生成）
+	 *  
+	 * @return
+	 */
+	boolean isCreatable();
+	
+	/**
 	 * 是否可更新值
 	 * 
 	 * @return
@@ -60,6 +75,13 @@ public interface Field extends BaseMeta {
 	 * @return
 	 */
 	boolean isNullable();
+	
+	/**
+	 * 是否可重复
+	 * 
+	 * @return
+	 */
+	boolean isRepeatable();
 
 	/**
 	 * 是否为数据库自动填充

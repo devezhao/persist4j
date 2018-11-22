@@ -28,7 +28,9 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	private Set<Entity> referenceSet = new HashSet<Entity>();
 	
 	private boolean nullable;
+	private boolean creatable;
 	private boolean updatable;
+	private boolean repeatable;
 	private boolean autoValue;
 	
 	private int decimalScale = FieldType.DEFAULT_DECIMAL_SCALE;
@@ -39,17 +41,20 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	 * @param physicalName
 	 * @param description
 	 * @param ownEntity
-	 * @param type see {@link FieldType}
-	 * @param cascade see {@link CascadeModel}
+	 * @param type
+	 * @param cascade
 	 * @param maxLength
 	 * @param nullable
+	 * @param creatable
 	 * @param updatable
+	 * @param repeatable
 	 * @param scale
 	 * @param defaultValue
 	 * @param autoValue
 	 */
 	public FieldImpl(String name, String physicalName,
-			String description, Entity ownEntity, Type type, CascadeModel cascade, int maxLength, boolean nullable, boolean updatable,
+			String description, Entity ownEntity, Type type, CascadeModel cascade, int maxLength,
+			boolean nullable, boolean creatable, boolean updatable, boolean repeatable,
 			int scale, Object defaultValue, boolean autoValue) {
 		super(name, physicalName, description);
 
@@ -59,6 +64,7 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 		this.cascadeModel = cascade;
 		
 		this.nullable = nullable;
+		this.creatable = creatable;
 		this.updatable = updatable;
 		
 		this.decimalScale = scale;
@@ -71,6 +77,12 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 			return EntityImpl.EMPTY_ENTITY_ARRAY;
 		}
 		return referenceSet.toArray(new Entity[referenceSet.size()]);
+	}
+	
+	@Override
+	public Entity getReferenceEntity() {
+		Entity[] e = getReferenceEntities();
+		return e.length == 0 ? null : e[0];
 	}
 	
 	public Entity getOwnEntity() {
@@ -92,9 +104,19 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	public boolean isNullable() {
 		return nullable;
 	}
+	
+	@Override
+	public boolean isCreatable() {
+		return creatable;
+	}
 
 	public boolean isUpdatable() {
 		return updatable;
+	}
+	
+	@Override
+	public boolean isRepeatable() {
+		return repeatable;
 	}
 	
 	public boolean isAutoValue() {

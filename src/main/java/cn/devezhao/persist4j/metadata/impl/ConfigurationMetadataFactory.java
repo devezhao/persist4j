@@ -233,7 +233,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				FieldImpl fieldImpl = new FieldImpl(
 						field.getName(), field.getPhysicalName(), field.getDescription(), 
 						entity, field.getType(), field.getCascadeModel(), field.getMaxLength(),
-						field.isNullable(), field.isUpdatable(),
+						field.isNullable(), field.isCreatable(), field.isUpdatable(), field.isRepeatable(),
 						field.getDecimalScale(), field.getDefaultValue(), field.isAutoValue());
 				
 				fieldMap.put(field.getName(), fieldImpl);
@@ -284,7 +284,9 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		Validate.notNull(type);
 		
 		boolean n = Boolean.parseBoolean(fNode.valueOf("@nullable"));
+		boolean c = Boolean.parseBoolean(fNode.valueOf("@creatable"));
 		boolean u = Boolean.parseBoolean(fNode.valueOf("@updatable"));
+		boolean r = Boolean.parseBoolean(fNode.valueOf("@repeatable"));
 		int maxLength = FieldType.NO_NEED_LENGTH;
 		if (StringUtils.isBlank( fNode.valueOf("@max-length") )) {
 			if (type == FieldType.STRING) {
@@ -297,7 +299,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		
 		if (type == FieldType.PRIMARY) {
-			n = u = false;
+			n = c = u = r = false;
 			maxLength = ID.getIDGenerator().getLength();
 		}
 		
@@ -318,12 +320,13 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		String desc = fNode.valueOf("@description");
 		String defaultValue = fNode.valueOf("@default-value");
 		boolean auto = Boolean.parseBoolean(fNode.valueOf("@auto-value"));
-		if (auto && type != FieldType.LONG) {
+		if (auto) {
+			n = c = u = r = false;
 			type = FieldType.LONG;
 		}
 		
 		Field field = new FieldImpl(
-				name, pName, desc, own, type, cascade, maxLength, n, u,
+				name, pName, desc, own, type, cascade, maxLength, n, c, u, r,
 				decimalScale, defaultValue, auto);
 		
 		String refs = fNode.valueOf("@ref-entity");

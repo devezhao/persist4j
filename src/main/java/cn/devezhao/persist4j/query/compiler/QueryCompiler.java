@@ -454,7 +454,7 @@ public class QueryCompiler implements Serializable {
 		
 		String[] joined = path.split("\\.");
 		
-		if (path.charAt(0) == FORCE_JOIN_PREFIX) {  // eg. ^SalesOrder.totalAmount ^t2Reference
+		if (path.charAt(0) == FORCE_JOIN_PREFIX) {  // eg. ^SalesOrder.totalAmount , ^t2Reference
 			if (joined.length == 2) {
 				Entity joinEntity = sqlExecutorContext.getEntity( joined[0].substring(1) );
 				Field referenceTo = null;

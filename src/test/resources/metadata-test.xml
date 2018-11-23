@@ -19,9 +19,15 @@
 		<field name="tBinary" type="binary" description="二进制数据"/>
 	</entity>
 	
-	<entity name="Test2" type-code="101">
+	<entity name="Test2" type-code="102">
 		<field name="t2Primary" type="primary" description="主键" />
 		<field name="t2Reference" type="reference" ref-entity="TestAllType" description="引用"/>
 		<field name="t2Int" type="int"/>
+	</entity>
+	
+	<entity name="Test3" type-code="103">
+		<field name="t3Primary" type="primary" description="主键" />
+		<field name="t1Reference" type="reference" ref-entity="TestAllType" description="引用"/>
+		<field name="t2Reference" type="reference" ref-entity="Test2" description="引用"/>
 	</entity>
 </metadata-config>

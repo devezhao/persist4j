@@ -104,7 +104,7 @@ public class ID implements Serializable {
 	 * @param id
 	 */
 	private ID(String id) {
-		this.id = id;
+		this.id = id.toLowerCase();
 		this.entityCode = Integer.valueOf(id.substring(0, 3));
 	}
 

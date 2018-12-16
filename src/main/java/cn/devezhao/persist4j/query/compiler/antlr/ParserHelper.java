@@ -25,7 +25,12 @@ public class ParserHelper {
 				|| ttype == AjQLParserTokenTypes.MAX
 				|| ttype == AjQLParserTokenTypes.AVG
 				|| ttype == AjQLParserTokenTypes.SUM
-				|| ttype == AjQLParserTokenTypes.COUNT;
+				|| ttype == AjQLParserTokenTypes.COUNT
+				|| ttype == AjQLParserTokenTypes.DATE_FORMAT;
+	}
+	
+	public static boolean isAggregatorMode(int ttype) {
+		return ttype == AjQLParserTokenTypes.DATE_FORMAT;
 	}
 
 	public static boolean isOperator(int ttype) {

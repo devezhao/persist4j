@@ -71,7 +71,10 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		if (StringUtils.isBlank(nameFieldName)) {
 			nameFieldName = primaryFieldName;
 		}
-		return getField(nameFieldName);
+		if (containsField(nameFieldName)) {
+			return getField(nameFieldName);
+		}
+		return null;
 	}
 
 	public Field getPrimaryField() {

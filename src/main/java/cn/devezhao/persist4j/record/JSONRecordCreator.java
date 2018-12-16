@@ -178,7 +178,7 @@ public class JSONRecordCreator implements RecordCreator {
 		if (notNulls.isEmpty()) {
 			return;
 		}
-		throw new FieldValueException("Muse not been null. Entity [ " + entity.getName() 
+		throw new FieldValueException("Must not been null. Entity [ " + entity.getName() 
 				+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[notNulls.size()]), ", ") + " ]");
 	}
 }

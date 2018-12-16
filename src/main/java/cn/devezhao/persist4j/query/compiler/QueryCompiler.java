@@ -146,9 +146,14 @@ public class QueryCompiler implements Serializable {
 			}
 			
 			if (ParserHelper.isAggregator(item.getType())) {
-				AST col = item.getFirstChild();
-				aJF = bindJoinField(aJTree, entity, col, SelectItemType.Aggregator);
+				AST column = item.getFirstChild();
+				aJF = bindJoinField(aJTree, entity, column, SelectItemType.Aggregator);
 				aJF.setAggregator(item.getText());
+				
+				if (ParserHelper.isAggregatorMode(item.getType())) {
+					String mode = column.getNextSibling().getNextSibling().getText();  // [, '%Y']
+					aJF.setAggregatorMode(mode);
+				}
 			} else {
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Field);
 			}
@@ -186,11 +191,11 @@ public class QueryCompiler implements Serializable {
 		}
 		
 		if (filter != null) {
-			String string = filter.evaluate(this.rootEntity);
+			String fstrs = filter.evaluate(this.rootEntity);
 			// patch #whereClause()
-			string = "where " + ( (where == null) ? string : "1=1 and " + string );
+			fstrs = "where " + ( (where == null) ? fstrs : "1=1 and " + fstrs );
 				
-			AjQLParser parser = ParserHelper.createAjQLParser(string);
+			AjQLParser parser = ParserHelper.createAjQLParser(fstrs);
 			try {
 				parser.whereClause();
 			} catch (Exception ex) {
@@ -222,7 +227,11 @@ public class QueryCompiler implements Serializable {
 			switch (aJF.getType()) {
 			case Aggregator:
 				aJF.as(columnIncrease, sqlExecutorContext.getDialect());
-				clause = aJF.getAggregator() + "( " + aJF.getName() + " ) as ";
+				if (aJF.getAggregatorMode() != null) {
+					clause = aJF.getAggregator() + "( " + aJF.getName() + ", '" + aJF.getAggregatorMode() + "' ) as ";
+				} else {
+					clause = aJF.getAggregator() + "( " + aJF.getName() + " ) as ";
+				}
 				clause += JoinTree.COLUMN_ALIAS_PREFIX + columnIncrease;
 				break;
 			default:
@@ -417,7 +426,12 @@ public class QueryCompiler implements Serializable {
 			default:
 				if (ParserHelper.isAggregator(ttype)) {  // Only for group
 					aJF = getJoinField(next.getFirstChild(), sqlExecutorContext.getDialect());
-					clause.append(next.getText()).append("( ").append(aJF.getName()).append(" ) ");
+					clause.append(next.getText()).append("( ");
+					if (aJF.getAggregatorMode() != null) {
+						clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append("' ) ");
+					} else {
+						clause.append(aJF.getName()).append(" ) ");
+					}
 				} 
 				else {  /*if (ParserLeader.isInIgnoreValue(ttype) || ParserLeader.isInIgnore(ttype))*/  // for others
 					clause.append(next.getText()).append(' ');

@@ -232,11 +232,14 @@ public class AjqlResultImpl implements Result {
 		for (SelectItem item : selectItems) {
 			if (item.getType() == SelectItemType.Aggregator) {
 				Editor editor = null;
-				Type ftype = item.getField().getType();
-				if ("count".equalsIgnoreCase(((JoinField) item).getAggregator())) {
+				Type type = item.getField().getType();
+				String agger = ((JoinField) item).getAggregator();
+				if ("COUNT".equalsIgnoreCase(agger)) {
 					editor = FieldType.LONG.getFieldEditor();
+				} else if ("DATE_FORMAT".equalsIgnoreCase(agger)) {
+					editor = FieldType.STRING.getFieldEditor();
 				} else {
-					editor = ftype.getFieldEditor();
+					editor = type.getFieldEditor();
 				}
 				
 				row[item.getIndex()] = editor.get(rs, item.getIndex() + 1);

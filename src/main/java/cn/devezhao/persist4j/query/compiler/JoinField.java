@@ -25,6 +25,7 @@ public class JoinField implements SelectItem {
 	private String full = null;
 	
 	private String aggre;
+	private String aggreMode;
 
 	JoinField(JoinNode tableNode, Field field, String fieldPath, SelectItemType type) {
 		this.tableNode = tableNode;
@@ -70,13 +71,19 @@ public class JoinField implements SelectItem {
 	// --------------------------------------------------------------------- 
 	
 	protected void setAggregator(String aggre) {
-		if (this.aggre != null)
-			throw new IllegalStateException("Aggregator was set");
 		this.aggre = aggre;
 	}
 	
 	public String getAggregator() {
 		return aggre;
+	}
+	
+	protected void setAggregatorMode(String mode) {
+		this.aggreMode = mode;
+	}
+	
+	public String getAggregatorMode() {
+		return aggreMode;
 	}
 	
 	protected String as(int increase, Dialect dialect) {

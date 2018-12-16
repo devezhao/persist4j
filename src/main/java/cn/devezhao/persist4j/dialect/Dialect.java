@@ -25,7 +25,7 @@ public abstract class Dialect implements Serializable {
 	protected static final Log LOG = LogFactory.getLog(Dialect.class);
 
 	// mysql, sql server, and others
-	protected static final char[] QUOTED = { '`', '`', '[', ']'};
+	protected static final char[] QUOTED = { '`', '`', '[', ']', '"'};
 
 	// types of system
 	final private Set<Type> fieldTypes = new HashSet<Type>();

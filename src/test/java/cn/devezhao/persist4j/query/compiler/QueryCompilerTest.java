@@ -69,4 +69,16 @@ public class QueryCompilerTest extends Compiler {
 		sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
 	}
+	
+	@Test
+	public void testDateFormat() {
+		String ajql = "select date_format(tDate,'%Y') from TestAllType";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+		
+		ajql = "select date_format(tDate,'%Y') from TestAllType group by date_format(tDate,'%Y')";
+		sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+		
+	}
 }

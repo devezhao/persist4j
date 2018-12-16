@@ -33,6 +33,7 @@ tokens {
 	AVG = "avg";
 	SUM = "sum";
 	COUNT = "count";
+	DATE_FORMAT = "date_format";
 	
 	IS = "is";
 	NOT = "not";
@@ -86,7 +87,7 @@ orderByClause
 	;
 
 groupByClause
-	: GROUP^ BY column (COMMA column)*
+	: GROUP^ BY (aggregateHasMode | column) (COMMA (aggregateHasMode | column))*
 	;
 
 havingClause
@@ -109,9 +110,14 @@ dbObject
 	: IDENT
 	;
 
+aggregateHasMode
+	: DATE_FORMAT^ LPAREN! column COMMA constantSimple RPAREN!
+	;
+	
 aggregate
 	: (MIN^ | MAX^ | AVG^ | SUM^) LPAREN! column RPAREN!
 	| COUNT^ LPAREN! (STAR | column) RPAREN!
+	| aggregateHasMode
 	;
 
 simpleCondition

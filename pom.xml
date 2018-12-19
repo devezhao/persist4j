@@ -94,6 +94,7 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.41</version>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>oracle</groupId>
 			<artifactId>ojdbc8</artifactId>
@@ -101,5 +102,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/ojdbc8.jar</systemPath>
 		</dependency>
+		-->
 	</dependencies>
 </project>

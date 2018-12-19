@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -45,7 +46,7 @@ public class StandardRecord implements Record {
 	final private Entity entity;
 	final private ID editor;
 
-	protected Map<String, Object> recordMap = new HashMap<String, Object>();
+	protected Map<String, Object> recordMap = new CaseInsensitiveMap<>();
 
 	/**
 	 * Serializable

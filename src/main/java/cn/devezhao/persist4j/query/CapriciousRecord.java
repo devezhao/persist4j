@@ -66,9 +66,9 @@ public class CapriciousRecord extends StandardRecord {
 	@Override
 	protected Object getObject(String key, Class<?> clazz) {
 		Entity e = getEntity();
-		if (e.containsField(key))
+		if (e.containsField(key)) {
 			return super.getObject(key, clazz);
-
+		}
 		return recordMap.get(key);
 	}
 
@@ -76,14 +76,15 @@ public class CapriciousRecord extends StandardRecord {
 	 * 
 	 */
 	protected void complete() {
-		if (idLabel.isEmpty())
+		if (idLabel.isEmpty()) {
 			return;
-		for (Iterator<Map.Entry<String, Object>> iter = idLabel.entrySet()
-				.iterator(); iter.hasNext();) {
+		}
+		for (Iterator<Map.Entry<String, Object>> iter = idLabel.entrySet().iterator(); iter.hasNext(); ) {
 			Map.Entry<String, Object> e = iter.next();
 			ID id = getID(e.getKey());
-			if (id != null)
+			if (id != null) {
 				id.setLabel(e.getValue().toString());
+			}
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package cn.devezhao.persist4j.query;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -10,6 +9,7 @@ import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
+import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
@@ -20,7 +20,7 @@ public class CapriciousRecord extends StandardRecord {
 
 	private static final long serialVersionUID = 5113799283331109208L;
 	
-	private final Map<String, Object> idLabel = new HashMap<String, Object>();
+	private final Map<String, Object> idLabel = new CaseInsensitiveMap<>();
 	private SelectItem[] selectItems;
 
 	/**

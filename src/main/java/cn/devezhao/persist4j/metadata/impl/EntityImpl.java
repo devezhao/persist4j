@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.StringUtils;
 
 import cn.devezhao.commons.ByteUtils;
@@ -13,6 +12,7 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.BaseMetaObject;
 import cn.devezhao.persist4j.metadata.MetadataException;
+import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 
 /**
  * 实体
@@ -31,7 +31,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private String primaryFieldName;
 	private String nameFieldName;
 	
-	private Map<String, Field> fieldMap = new CaseInsensitiveMap<String, Field>();
+	private Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
 	private List<Field> referenceTo = new ArrayList<Field>();
 	
 	private Entity masterEntity;
@@ -126,7 +126,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		EntityImpl clone = (EntityImpl) super.clone();
-		clone.fieldMap = new CaseInsensitiveMap<String, Field>(this.fieldMap);
+		clone.fieldMap = new CaseInsensitiveMap<Field>(this.fieldMap);
 		clone.referenceTo = new ArrayList<Field>(this.referenceTo);
 		return clone;
 	}

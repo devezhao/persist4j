@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -28,6 +27,7 @@ import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.metadata.CascadeModel;
 import cn.devezhao.persist4j.metadata.MetadataException;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
+import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import cn.devezhao.persist4j.util.StringHelper;
 import cn.devezhao.persist4j.util.XmlHelper;
 
@@ -48,7 +48,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	volatile
 	private boolean refreshLocked = false;
 	
-	volatile private Map<String, Integer> name2TypeMap = new CaseInsensitiveMap<String, Integer>();
+	volatile private Map<String, Integer> name2TypeMap = new CaseInsensitiveMap<>();
 	volatile private Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 	volatile private Document configDocument = null;
 	
@@ -227,7 +227,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		EntityImpl entity = new EntityImpl(
 				name, pName, description, Integer.parseInt(tCode), nameField);
 		
-		Map<String, Field> fieldMap = new CaseInsensitiveMap<String, Field>();
+		Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
 		if (parent != null && !"false".equals(eNode.valueOf("@parent"))) {
 			for (Field field : parent.getFields()) {
 				FieldImpl fieldImpl = new FieldImpl(

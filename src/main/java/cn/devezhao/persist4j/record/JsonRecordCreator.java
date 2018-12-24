@@ -39,7 +39,7 @@ import cn.devezhao.persist4j.engine.StandardRecord;
  * @author zhaofang123@gmail.com
  * @since 08/01/2018
  */
-public class JSONRecordCreator implements RecordCreator {
+public class JsonRecordCreator implements RecordCreator {
 
 	private static final Log LOG = LogFactory.getLog(XmlRecordCreator.class);
 
@@ -63,7 +63,7 @@ public class JSONRecordCreator implements RecordCreator {
 	 * @param editor
 	 * @param source
 	 */
-	public JSONRecordCreator(Entity entity, JSONObject source) {
+	public JsonRecordCreator(Entity entity, JSONObject source) {
 		this(entity, source, null);
 	}
 	
@@ -73,7 +73,7 @@ public class JSONRecordCreator implements RecordCreator {
 	 * @param source
 	 * @param editor
 	 */
-	public JSONRecordCreator(Entity entity, JSONObject source, ID editor) {
+	public JsonRecordCreator(Entity entity, JSONObject source, ID editor) {
 		Validate.notNull(entity);
 		Validate.notNull(source);
 		this.entity = entity;

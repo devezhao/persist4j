@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -181,7 +180,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 							Editor editor = field.getType().getFieldEditor();
 							Object value = record.getObjectValue(field.getName());
 							
-							if (value == ObjectUtils.NULL) {
+							if (NullValue.is(value)) {
 								pstmt.setNull(index++, managerFactory.getDialect().getSQLType(editor.getType()));
 							} else if (field.getType() == FieldType.DOUBLE
 									&& field.getDecimalScale() != FieldType.DEFAULT_DECIMAL_SCALE) {

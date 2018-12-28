@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -238,7 +239,9 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				
 				fieldMap.put(field.getName(), fieldImpl);
 				
-				if (field.getType() == FieldType.REFERENCE) {
+				// 复制父级的字段
+				if (field.getType() == FieldType.REFERENCE 
+						|| field.getType() == FieldType.ANY_REFERENCE || field.getType() == FieldType.REFERENCE_LIST) {
 					REFFIELD_REFS.put(fieldImpl, REFFIELD_REFS.get(field));
 				}
 			}
@@ -263,15 +266,15 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	/**
-	 * @param fNode
-	 * @param own
+	 * @param node
+	 * @param ownEntity
 	 * @param fieldSchemaNameOptimize
 	 * @return
 	 */
-	private Field buildField(Node fNode, Entity own, boolean fieldSchemaNameOptimize) {
-		String name = fNode.valueOf("@name");
+	private Field buildField(Node node, Entity ownEntity, boolean fieldSchemaNameOptimize) {
+		String name = node.valueOf("@name");
 		namingPolicy(name, "field");
-		String pName = fNode.valueOf("@physical-name");
+		String pName = node.valueOf("@physical-name");
 		if (StringUtils.isEmpty(pName)) {
 			pName = name;
 			if (fieldSchemaNameOptimize) {
@@ -280,60 +283,63 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		namingPolicy(pName, "field physical ");
 		
-		Type type = dialect.getFieldType(fNode.valueOf("@type"));
+		Type type = dialect.getFieldType(node.valueOf("@type"));
 		Validate.notNull(type);
 		
-		boolean n = Boolean.parseBoolean(fNode.valueOf("@nullable"));
-		boolean c = Boolean.parseBoolean(fNode.valueOf("@creatable"));
-		boolean u = Boolean.parseBoolean(fNode.valueOf("@updatable"));
-		boolean r = Boolean.parseBoolean(fNode.valueOf("@repeatable"));
+		boolean N = Boolean.parseBoolean(node.valueOf("@nullable"));
+		boolean C = Boolean.parseBoolean(node.valueOf("@creatable"));
+		boolean U = Boolean.parseBoolean(node.valueOf("@updatable"));
+		boolean R = Boolean.parseBoolean(node.valueOf("@repeatable"));
 		int maxLength = FieldType.NO_NEED_LENGTH;
-		if (StringUtils.isBlank( fNode.valueOf("@max-length") )) {
+		if (StringUtils.isBlank( node.valueOf("@max-length") )) {
 			if (type == FieldType.STRING) {
 				maxLength = FieldType.DEFAULT_STRING_LENGTH;
 			} else if (type == FieldType.TEXT) {
 				maxLength = FieldType.DEFAULT_TEXT_LENGTH;
 			}
 		} else {
-			maxLength = Integer.parseInt( fNode.valueOf("@max-length") );
+			maxLength = Integer.parseInt( node.valueOf("@max-length") );
 		}
 		
 		if (type == FieldType.PRIMARY) {
-			n = c = u = r = false;
+			N = C = U = R = false;
 			maxLength = ID.getIDGenerator().getLength();
 		}
 		
 		CascadeModel cascade = null;
 		if (type == FieldType.REFERENCE) {
-			cascade = CascadeModel.parse(fNode.valueOf("@cascade"));
+			cascade = CascadeModel.parse(node.valueOf("@cascade"));
 			maxLength = ID.getIDGenerator().getLength();
 		}
 		
 		int decimalScale = 0;
 		if (type == FieldType.DECIMAL || type == FieldType.DOUBLE) {
 			decimalScale = Integer.parseInt( 
-					StringUtils.defaultIfEmpty(fNode.valueOf("@decimal-scale"), FieldType.DEFAULT_DECIMAL_SCALE + "") );
+					StringUtils.defaultIfEmpty(node.valueOf("@decimal-scale"), FieldType.DEFAULT_DECIMAL_SCALE + "") );
 		} else {
 			decimalScale = 0;
 		}
 		
-		String desc = fNode.valueOf("@description");
-		String defaultValue = fNode.valueOf("@default-value");
-		boolean auto = Boolean.parseBoolean(fNode.valueOf("@auto-value"));
+		String desc = node.valueOf("@description");
+		String defaultValue = node.valueOf("@default-value");
+		boolean auto = Boolean.parseBoolean(node.valueOf("@auto-value"));
 		if (auto) {
-			n = c = u = r = false;
+			N = C = U = R = false;
 			type = FieldType.LONG;
 		}
 		
 		Field field = new FieldImpl(
-				name, pName, desc, own, type, cascade, maxLength, n, c, u, r,
+				name, pName, desc, ownEntity, type, cascade, maxLength, N, C, U, R,
 				decimalScale, defaultValue, auto);
 		
-		String refs = fNode.valueOf("@ref-entity");
+		String refs = node.valueOf("@ref-entity");
 		if (type == FieldType.REFERENCE) {
 			Validate.notEmpty(refs, 
 					"reference field [ " + field + " ] must have attribute ref-entity");
-			REFFIELD_REFS.put(field, refs.split("\\,"));
+			REFFIELD_REFS.put(field, new String[] { refs });
+		} else if (type == FieldType.ANY_REFERENCE || type == FieldType.REFERENCE_LIST) {
+			REFFIELD_REFS.put(field,
+					StringUtils.isBlank(refs) ? new String[] { AnyEntity.FLAG } : refs.split("\\,"));
 		}
 		return field;
 	}
@@ -350,8 +356,8 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	final private static Entity ANY_ENTITY = new AnyEntity();
-	final private Map<Field, String[]> REFFIELD_REFS = new HashMap<Field, String[]>();
-	final private Map<String, String> SM_MAPPING = new HashMap<String, String>();
+	final private Map<Field, String[]> REFFIELD_REFS = new ConcurrentHashMap<>();
+	final private Map<String, String> SM_MAPPING = new ConcurrentHashMap<>();
 	/**
 	 * 最终的
 	 */
@@ -364,15 +370,15 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				continue;
 			}
 			
-			if (field.getType() == FieldType.REFERENCE) {
-				String eName = e.getValue()[0];
-				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntityNoLock(eName);
-				field.addReference(entity);
-				continue;
-			}
+//			if (field.getType() == FieldType.REFERENCE) {
+//				String eName = e.getValue()[0];
+//				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntityNoLock(eName);
+//				field.addReference(entity);
+//				continue;
+//			}
 			
 			for (String eName : e.getValue()) {
-				Entity entity = getEntityNoLock(eName);
+				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntityNoLock(eName);
 				field.addReference(entity);
 			}
 		}

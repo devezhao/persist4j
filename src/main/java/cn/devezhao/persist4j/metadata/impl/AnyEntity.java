@@ -1,7 +1,7 @@
 package cn.devezhao.persist4j.metadata.impl;
 
 /**
- * 
+ * 任意引用字段指向的实体
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, 2010-6-28
@@ -15,6 +15,6 @@ public final class AnyEntity extends EntityImpl {
 	/**
 	 */
 	public AnyEntity() {
-		super("*", null, null, 0, null);
+		super(FLAG, null, null, 0, null);
 	}
 }

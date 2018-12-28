@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -251,7 +250,7 @@ public class StandardRecord implements Record {
 	
 	public Object setNull(String key) {
 		Object old = recordMap.get(key);
-		recordMap.put(key, ObjectUtils.NULL);
+		recordMap.put(key, new NullValue());
 		return old;
 	}
 
@@ -273,20 +272,22 @@ public class StandardRecord implements Record {
 	// -------------------------------------------------------------------------------------
 
 	protected void setObject(String key, Object value) {
-		if (!entity.containsField(key))
+		if (!entity.containsField(key)) {
 			throw new MetadataException("No such field " + key + " in entity " + entity.getName());
-		if (value == null)
+		}
+		if (value == null) {
 			return;
+		}
 		
 		Field field = entity.getField(key);
-		if (field.getType() == FieldType.REFERENCE) {
+		if (field.getType() == FieldType.REFERENCE ||
+				field.getType() == FieldType.ANY_REFERENCE || field.getType() == FieldType.REFERENCE_LIST) {
 			checkReferenceValue(field, value);
 		}
 
 		if (LOG.isDebugEnabled()) {
 			if (recordMap.containsKey(key)) {
-				LOG.warn("update field [" + key + "] value. " +
-						"OLD: " + recordMap.get(key) + ", NEW: " + value);
+				LOG.warn("update field [" + key + "] value. OLD: " + recordMap.get(key) + ", NEW: " + value);
 			}
 		}
 		recordMap.put(key, value);
@@ -299,42 +300,42 @@ public class StandardRecord implements Record {
 		}
 
 		Object v = recordMap.get(key);
-		if (v == null) {
+		if (v == null || NullValue.is(v)) {
 			return null;
-		}
-
-		if (clazz.isAssignableFrom(v.getClass())) {
+		} else if (clazz.isAssignableFrom(v.getClass())) {
 			return v;
 		}
-		if (v == ObjectUtils.NULL) {
-			return null;
-		}
+		
 		throw new PersistException(
 				"can't cast field [ " + key + " ] value type " + v.getClass() + " to " + clazz);
 	}
 	
 	protected void checkReferenceValue(Field field, Object value) {
-		Entity[] eList = field.getReferenceEntities();
-		if (eList[0] instanceof AnyEntity)
+		Entity[] referenceEntities = field.getReferenceEntities();
+		if (referenceEntities[0] instanceof AnyEntity) {
 			return;
+		}
 		
-		ID[] refIds = null;
+		ID[] idList = null;
 		if (value.getClass() == ID[].class) {
-			refIds = (ID[]) value;
+			idList = (ID[]) value;
 		} else {
-			refIds = new ID[] { (ID) value };
+			idList = new ID[] { (ID) value };
 		}
 
-		for (ID refId : refIds) {
-			boolean badId = true;
-			for (Entity e : eList) {
-				if (e.getEntityCode().intValue() == refId.getEntityCode().intValue()) {
-					badId = false;
+		for (ID id : idList) {
+			int idType = id.getEntityCode().intValue();
+			boolean idInvalid = true;
+			for (Entity e : referenceEntities) {
+				if (e.getEntityCode().intValue() == idType) {
+					idInvalid = false;
 					break;
 				}
 			}
 			
-			if (badId) throw new FieldValueException("Field " + field + " value [ " + refId + " ] is wrong. can't reference non-specify record of entity");
+			if (idInvalid) {
+				throw new FieldValueException("Field " + field + " value [ " + id + " ] is wrong. can't reference non-specify record of entity");
+			}
 		}
 	}
 }

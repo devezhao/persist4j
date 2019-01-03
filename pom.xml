@@ -30,7 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<argLine>-Dfile.encoding=UTF-8</argLine>
 		<skipTests>true</skipTests>
-		<spring.version>4.3.18.RELEASE</spring.version>
+		<spring.version>4.3.21.RELEASE</spring.version>
 	</properties>
 
 	<build>
@@ -100,7 +100,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.41</version>
+			<version>5.1.47</version>
 		</dependency>
 		<!--
 		<dependency>

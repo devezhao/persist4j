@@ -241,8 +241,9 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 				Map.Entry<Field, ID[]> e = iter.next();
 				Field cField = e.getKey();
 				
-				// TODO 迭代级联
-				if (cField.getType() == FieldType.REFERENCE) {
+				// TODO 不支持迭代级联删除
+				
+				if (cField.getType() == FieldType.REFERENCE || cField.getType() == FieldType.ANY_REFERENCE) {
 					String formatted = null;
 					if (cField.getCascadeModel() == CascadeModel.Delete) {
 						formatted = "delete from {0} where {1} = ''{2}''";
@@ -312,12 +313,14 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	private ID[] getReferenceToIds(Field referenceToField, ID masterId) {
 		String sql = null;
 		Entity own = referenceToField.getOwnEntity();
-		if (referenceToField.getType() == FieldType.REFERENCE) {
+		if (referenceToField.getType() == FieldType.REFERENCE || referenceToField.getType() == FieldType.ANY_REFERENCE) {
 			sql = MessageFormat.format("select {0} from {1} where {2} = ''{3}'' and {2} is not null",
 					quote(own.getPrimaryField().getPhysicalName()),
 					quote(own.getPhysicalName()),
 					quote(referenceToField.getPhysicalName()),
 					masterId.toLiteral());
+		} else {
+			return ID.EMPTY_ID_ARRAY;
 		}
 		
 		List<ID> ids = new ArrayList<ID>();

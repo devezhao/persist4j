@@ -307,7 +307,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		
 		CascadeModel cascade = null;
-		if (type == FieldType.REFERENCE) {
+		if (type == FieldType.REFERENCE || type == FieldType.ANY_REFERENCE) {
 			cascade = CascadeModel.parse(node.valueOf("@cascade"));
 			maxLength = ID.getIDGenerator().getLength();
 		}
@@ -334,7 +334,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		String refs = node.valueOf("@ref-entity");
 		if (type == FieldType.REFERENCE) {
-			Validate.notEmpty(refs, 
+			Validate.notEmpty(refs,
 					"reference field [ " + field + " ] must have attribute ref-entity");
 			REFFIELD_REFS.put(field, new String[] { refs });
 		} else if (type == FieldType.ANY_REFERENCE || type == FieldType.REFERENCE_LIST) {

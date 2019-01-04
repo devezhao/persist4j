@@ -52,7 +52,7 @@ public class RecordVisitor {
 		Type ft = field.getType();
 		Object pVal = null;
 		
-		if (FieldType.PRIMARY.equals(ft) || FieldType.REFERENCE.equals(ft)) {
+		if (FieldType.PRIMARY.equals(ft) || FieldType.REFERENCE.equals(ft) || FieldType.ANY_REFERENCE.equals(ft)) {
 			pVal = ID.valueOf(value);
 		} else if (FieldType.INT.equals(ft) || FieldType.SMALL_INT.equals(ft)) {
 			pVal = NumberUtils.toInt(value);
@@ -90,7 +90,7 @@ public class RecordVisitor {
 		String pVal = null;
 		
 		if (FieldType.PRIMARY.equals(ft) 
-				|| FieldType.REFERENCE.equals(ft)) {
+				|| FieldType.REFERENCE.equals(ft) || FieldType.ANY_REFERENCE.equals(ft)) {
 			pVal = ((ID) value).toLiteral();
 		} else if (FieldType.INT.equals(ft) 
 				|| FieldType.SMALL_INT.equals(ft)

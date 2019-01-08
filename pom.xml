@@ -23,7 +23,7 @@
 		<url>https://github.com/devezhao/persist4j</url>
 		<connection>scm:git:git://github.com/devezhao/persist4j.git</connection>
 		<developerConnection>scm:git:git@github.com:devezhao/persist4j.git</developerConnection>
-		<tag>devezhao-persist4j-1.0.0</tag>
+		<tag>persist4j-1.1.0</tag>
 	</scm>
 
 	<properties>

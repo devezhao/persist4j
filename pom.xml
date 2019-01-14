@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.github.devezhao</groupId>
 			<artifactId>commons</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>646d283ce8</version>
 		</dependency>
 		<dependency>
 			<groupId>antlr</groupId>

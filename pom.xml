@@ -5,7 +5,7 @@
 
 	<groupId>cn.devezhao</groupId>
 	<artifactId>persist4j</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.2.1</version>
 	<packaging>jar</packaging>
 
 	<name>persist4j</name>
@@ -23,7 +23,6 @@
 		<url>https://github.com/devezhao/persist4j</url>
 		<connection>scm:git:git://github.com/devezhao/persist4j.git</connection>
 		<developerConnection>scm:git:git@github.com:devezhao/persist4j.git</developerConnection>
-		<tag>persist4j-1.2.0</tag>
 	</scm>
 
 	<properties>
@@ -65,7 +64,7 @@
 		<dependency>
 			<groupId>com.github.devezhao</groupId>
 			<artifactId>commons</artifactId>
-			<version>646d283ce8</version>
+			<version>1.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>antlr</groupId>

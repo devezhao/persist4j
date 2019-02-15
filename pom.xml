@@ -7,7 +7,7 @@
 	<artifactId>persist4j</artifactId>
 	<version>1.2.1</version>
 	<packaging>jar</packaging>
-
+	
 	<name>persist4j</name>
 	<url>https://github.com/devezhao/persist4j</url>
 
@@ -18,12 +18,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
-	<scm>
-		<url>https://github.com/devezhao/persist4j</url>
-		<connection>scm:git:git://github.com/devezhao/persist4j.git</connection>
-		<developerConnection>scm:git:git@github.com:devezhao/persist4j.git</developerConnection>
-	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,7 +31,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -94,7 +88,7 @@
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.9.5.2</version>
+			<version>0.9.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

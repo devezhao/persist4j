@@ -1,6 +1,5 @@
 // $ANTLR 2.7.7 (2006-11-01): "ajql.g" -> "AjQLLexer.java"$
 
-// $Id$
 package cn.devezhao.persist4j.query.compiler.antlr;
 
 import java.io.InputStream;
@@ -23,7 +22,7 @@ import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
 import antlr.collections.impl.BitSet;
 
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
+@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes, TokenStream {
 	public AjQLLexer(InputStream in) {
 		this(new ByteBuffer(in));
@@ -42,32 +41,34 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		caseSensitiveLiterals = false;
 		setCaseSensitive(false);
 		literals = new Hashtable();
-		literals.put(new ANTLRHashString("count", this), new Integer(20));
-		literals.put(new ANTLRHashString("sum", this), new Integer(19));
-		literals.put(new ANTLRHashString("min", this), new Integer(17));
-		literals.put(new ANTLRHashString("false", this), new Integer(30));
-		literals.put(new ANTLRHashString("true", this), new Integer(29));
+		literals.put(new ANTLRHashString("count", this), new Integer(22));
+		literals.put(new ANTLRHashString("sum", this), new Integer(21));
+		literals.put(new ANTLRHashString("min", this), new Integer(19));
+		literals.put(new ANTLRHashString("false", this), new Integer(32));
+		literals.put(new ANTLRHashString("true", this), new Integer(31));
+		literals.put(new ANTLRHashString("rollup", this), new Integer(17));
 		literals.put(new ANTLRHashString("and", this), new Integer(8));
 		literals.put(new ANTLRHashString("asc", this), new Integer(11));
 		literals.put(new ANTLRHashString("desc", this), new Integer(12));
 		literals.put(new ANTLRHashString("select", this), new Integer(4));
-		literals.put(new ANTLRHashString("exists", this), new Integer(27));
+		literals.put(new ANTLRHashString("exists", this), new Integer(29));
 		literals.put(new ANTLRHashString("distinct", this), new Integer(5));
 		literals.put(new ANTLRHashString("group", this), new Integer(13));
 		literals.put(new ANTLRHashString("where", this), new Integer(7));
-		literals.put(new ANTLRHashString("avg", this), new Integer(18));
+		literals.put(new ANTLRHashString("avg", this), new Integer(20));
 		literals.put(new ANTLRHashString("order", this), new Integer(10));
-		literals.put(new ANTLRHashString("in", this), new Integer(25));
-		literals.put(new ANTLRHashString("null", this), new Integer(24));
+		literals.put(new ANTLRHashString("in", this), new Integer(27));
+		literals.put(new ANTLRHashString("null", this), new Integer(26));
 		literals.put(new ANTLRHashString("having", this), new Integer(15));
-		literals.put(new ANTLRHashString("date_format", this), new Integer(21));
+		literals.put(new ANTLRHashString("date_format", this), new Integer(23));
 		literals.put(new ANTLRHashString("or", this), new Integer(9));
-		literals.put(new ANTLRHashString("between", this), new Integer(28));
-		literals.put(new ANTLRHashString("max", this), new Integer(16));
+		literals.put(new ANTLRHashString("between", this), new Integer(30));
+		literals.put(new ANTLRHashString("max", this), new Integer(18));
 		literals.put(new ANTLRHashString("from", this), new Integer(6));
-		literals.put(new ANTLRHashString("is", this), new Integer(22));
-		literals.put(new ANTLRHashString("like", this), new Integer(26));
-		literals.put(new ANTLRHashString("not", this), new Integer(23));
+		literals.put(new ANTLRHashString("is", this), new Integer(24));
+		literals.put(new ANTLRHashString("like", this), new Integer(28));
+		literals.put(new ANTLRHashString("with", this), new Integer(16));
+		literals.put(new ANTLRHashString("not", this), new Integer(25));
 		literals.put(new ANTLRHashString("by", this), new Integer(14));
 	}
 
@@ -482,19 +483,19 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		{
 			mCOLON(false);
 			{
-				int _cnt92 = 0;
-				_loop92: do {
+				int _cnt94 = 0;
+				_loop94: do {
 					if ((_tokenSet_0.member(LA(1)))) {
 						mIDENT_LETTER(false);
 					} else {
-						if (_cnt92 >= 1) {
-							break _loop92;
+						if (_cnt94 >= 1) {
+							break _loop94;
 						} else {
 							throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 						}
 					}
 
-					_cnt92++;
+					_cnt94++;
 				} while (true);
 			}
 		}
@@ -586,11 +587,11 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 
 		mIDENT_START(false);
 		{
-			_loop95: do {
+			_loop97: do {
 				if ((_tokenSet_0.member(LA(1)))) {
 					mIDENT_LETTER(false);
 				} else {
-					break _loop95;
+					break _loop97;
 				}
 
 			} while (true);
@@ -697,19 +698,19 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		int _saveIndex;
 
 		{
-			int _cnt101 = 0;
-			_loop101: do {
+			int _cnt103 = 0;
+			_loop103: do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mDIGIT(false);
 				} else {
-					if (_cnt101 >= 1) {
-						break _loop101;
+					if (_cnt103 >= 1) {
+						break _loop103;
 					} else {
 						throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 					}
 				}
 
-				_cnt101++;
+				_cnt103++;
 			} while (true);
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
@@ -732,20 +733,20 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 			if ((LA(1) == '.')) {
 				mDOT(false);
 				{
-					int _cnt105 = 0;
-					_loop105: do {
+					int _cnt107 = 0;
+					_loop107: do {
 						if (((LA(1) >= '0' && LA(1) <= '9'))) {
 							mDIGIT(false);
 						} else {
-							if (_cnt105 >= 1) {
-								break _loop105;
+							if (_cnt107 >= 1) {
+								break _loop107;
 							} else {
 								throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(),
 										getColumn());
 							}
 						}
 
-						_cnt105++;
+						_cnt107++;
 					} while (true);
 				}
 			} else {
@@ -768,21 +769,21 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		int _saveIndex;
 
 		{
-			int _cnt108 = 0;
-			_loop108: do {
+			int _cnt110 = 0;
+			_loop110: do {
 				if ((_tokenSet_0.member(LA(1)))) {
 					mIDENT_LETTER(false);
 				} else if (((LA(1) >= '\u0080' && LA(1) <= '\ufffe'))) {
 					matchRange('\u0080', '\uFFFE');
 				} else {
-					if (_cnt108 >= 1) {
-						break _loop108;
+					if (_cnt110 >= 1) {
+						break _loop110;
 					} else {
 						throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 					}
 				}
 
-				_cnt108++;
+				_cnt110++;
 			} while (true);
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
@@ -804,28 +805,28 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		match('\'');
 		text.setLength(_saveIndex);
 		{
-			_loop113: do {
-				boolean synPredMatched112 = false;
+			_loop115: do {
+				boolean synPredMatched114 = false;
 				if (((LA(1) == '\'') && (LA(2) == '\''))) {
-					int _m112 = mark();
-					synPredMatched112 = true;
+					int _m114 = mark();
+					synPredMatched114 = true;
 					inputState.guessing++;
 					try {
 						{
 							mESCqs(false);
 						}
 					} catch (RecognitionException pe) {
-						synPredMatched112 = false;
+						synPredMatched114 = false;
 					}
-					rewind(_m112);
+					rewind(_m114);
 					inputState.guessing--;
 				}
-				if (synPredMatched112) {
+				if (synPredMatched114) {
 					mESCqs(false);
 				} else if ((_tokenSet_3.member(LA(1)))) {
 					matchNot('\'');
 				} else {
-					break _loop113;
+					break _loop115;
 				}
 
 			} while (true);

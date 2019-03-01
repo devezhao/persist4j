@@ -388,9 +388,21 @@ public class QueryCompiler implements Serializable {
 	private String compileGroupByClause(AST by, AST having) {
 		StringBuilder clause = new StringBuilder();
 		clause.append( compileByClause(by, "group by ") );
+		AST with = null;
 		if (having != null) {
 			clause/*.append(' ')*/.append( compileByClause(having, "having ") );
+			with = having.getNextSibling();
+		} else {
+			with = by.getNextSibling();
 		}
+		
+		if (with != null && with.getType() == AjQLParserTokenTypes.WITH) {
+			AST rollup = with.getFirstChild();
+			if (rollup != null && rollup.getType() == AjQLParserTokenTypes.ROLLUP) {
+				clause.append("with rollup");
+			}
+		}
+		
 		return clause.toString();
 	}
 	

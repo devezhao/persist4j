@@ -2,7 +2,6 @@
 // `java -cp antlr-2.7.7.jar antlr.Tool ajql.g`
 
 header {
-// $Id$
 package cn.devezhao.persist4j.query.compiler.antlr;
 }
 
@@ -27,6 +26,8 @@ tokens {
 	GROUP = "group";
 	BY = "by";
 	HAVING = "having";
+	WITH = "with";
+	ROLLUP = "rollup";
 	
 	MAX = "max";
 	MIN = "min";
@@ -67,7 +68,7 @@ queryRule
 	: selectClause 
 	  fromClause 
 	  (whereClause)? 
-	  (groupByClause (havingClause)?)?
+	  (groupByClause (havingClause)? (rollupClause)?)?
 	;
 
 selectClause
@@ -92,6 +93,10 @@ groupByClause
 
 havingClause
 	: HAVING^ simpleCondition
+	;
+
+rollupClause
+	: WITH^ ROLLUP
 	;
 
 selectList

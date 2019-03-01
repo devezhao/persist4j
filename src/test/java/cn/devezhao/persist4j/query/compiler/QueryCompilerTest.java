@@ -10,6 +10,17 @@ import org.junit.Test;
 public class QueryCompilerTest extends Compiler {
 	
 	@Test
+	public void testWithRollup() throws Exception {
+		String ajql = "select tString, count(tString) from TestAllType group by tString with rollup";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+		
+		ajql = "select tString, count(tString) from TestAllType group by tString having(count(tString) > 1) with rollup";
+		sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
+	}
+	
+	@Test
 	public void testDistinct() {
 		String ajql = "select distinct tString from TestAllType where tString is null";
 		String sql = compile(ajql);

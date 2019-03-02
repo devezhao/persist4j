@@ -399,7 +399,7 @@ public class QueryCompiler implements Serializable {
 		if (with != null && with.getType() == AjQLParserTokenTypes.WITH) {
 			AST rollup = with.getFirstChild();
 			if (rollup != null && rollup.getType() == AjQLParserTokenTypes.ROLLUP) {
-				clause.append("with rollup");
+				clause.append("with rollup ");
 			}
 		}
 		

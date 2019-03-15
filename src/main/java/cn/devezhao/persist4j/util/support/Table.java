@@ -154,7 +154,7 @@ public class Table {
 	 * @param sql
 	 * @param noZeroDate
 	 */
-	private void generateFieldDDL(Field field, StringBuilder sql, boolean noZeroDate) {
+	public void generateFieldDDL(Field field, StringBuilder sql, boolean noZeroDate) {
 		String column = field.getPhysicalName();
 		String type = dialect.getColumnType(field.getType().getMask());
 		if (field.getType() == FieldType.DOUBLE) {
@@ -218,7 +218,10 @@ public class Table {
 		}
 	}
 	
-	// 索引
+	/**
+	 * @param isUIX
+	 * @return
+	 */
 	protected String[] genIndexDDL(boolean isUIX) {
 		if (indexList == null || indexList.isEmpty()) {
 			return new String[0];

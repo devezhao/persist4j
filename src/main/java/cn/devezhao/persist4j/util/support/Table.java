@@ -15,6 +15,7 @@ import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
 
 /**
+ * 生成建表语句
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, 06/23/08
@@ -26,17 +27,41 @@ public class Table {
 	private Dialect dialect;
 	private List<?> indexList;
 	
+	/**
+	 * @param entity
+	 * @param dialect
+	 */
 	public Table(Entity entity, Dialect dialect) {
 		this(entity, dialect, null);
 	}
 	
+	/**
+	 * @param entity
+	 * @param dialect
+	 * @param indexList
+	 */
 	public Table(Entity entity, Dialect dialect, List<?> indexList) {
 		this.entity = entity;
 		this.dialect = dialect;
 		this.indexList = indexList;
 	}
-
+	
+	/**
+	 * @param dropExists
+	 * @param createFk
+	 * @return
+	 */
 	public String[] generateDDL(boolean dropExists, boolean createFk) {
+		return generateDDL(dropExists, createFk, false);
+	}
+
+	/**
+	 * @param dropExists
+	 * @param createFk
+	 * @param noZeroDate MySQL5.7+
+	 * @return
+	 */
+	public String[] generateDDL(boolean dropExists, boolean createFk, boolean noZeroDate) {
 		List<String> sqls = new ArrayList<String>();
 		
 		StringBuilder sql = new StringBuilder();
@@ -68,7 +93,7 @@ public class Table {
 			}
 			
 			sql.append("\n  ");
-			generateFieldDDL(field, sql);
+			generateFieldDDL(field, sql, noZeroDate);
 			sql.append(",");
 		}
 		
@@ -127,9 +152,9 @@ public class Table {
 	/**
 	 * @param field
 	 * @param sql
-	 * @param belong
+	 * @param noZeroDate
 	 */
-	public void generateFieldDDL(Field field, StringBuilder sql) {
+	private void generateFieldDDL(Field field, StringBuilder sql, boolean noZeroDate) {
 		String column = field.getPhysicalName();
 		String type = dialect.getColumnType(field.getType().getMask());
 		if (field.getType() == FieldType.DOUBLE) {
@@ -145,14 +170,20 @@ public class Table {
 			}
 		}
 
+		String zeroDate = noZeroDate ? "1000-01-01 00:00:00" : "0000-00-00 00:00:00";
+		
 		String canNull = "";  // "DEFAULT NULL";
 		if (!field.isNullable()) {
 			canNull = " not null";
 			if (field.getType() == FieldType.TIMESTAMP) {
-				canNull += " default '0000-00-00 00:00:00'";
+				canNull += String.format(" default '%s'", zeroDate);
+			} else if (field.getType() == FieldType.DATE) {
+				canNull += String.format(" default '%s'", zeroDate.split(" ")[0]);
 			}
 		} else if (field.getType() == FieldType.TIMESTAMP) {
-			canNull += " null default '0000-00-00 00:00:00'";
+			canNull += String.format(" default '%s'", zeroDate);
+		} else if (field.getType() == FieldType.DATE) {
+			canNull += String.format(" default '%s'", zeroDate.split(" ")[0]);
 		}
 		
 		// 自增值

@@ -147,7 +147,8 @@ public class Table {
 	public void generateFieldDDL(Field field, StringBuilder sql) {
 		String column = field.getPhysicalName();
 		String type = dialect.getColumnType(field.getType().getMask());
-		if (field.getType() == FieldType.DOUBLE) {
+		if (field.getType() == FieldType.DOUBLE
+				|| field.getType() == FieldType.DECIMAL) {
 			type = String.format(type, field.getDecimalScale());
 		}
 		

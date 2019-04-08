@@ -18,10 +18,12 @@ public class OracleDialect extends Dialect {
 		final String idt = String.format("CHAR(%d)", ID.getIDGenerator().getLength());
 		registerColumnType(FieldType.PRIMARY.getMask(), idt, Types.CHAR);
 		registerColumnType(FieldType.REFERENCE.getMask(), idt, Types.CHAR);
+		registerColumnType(FieldType.ANY_REFERENCE.getMask(), idt, Types.CHAR);
+		registerColumnType(FieldType.REFERENCE_LIST.getMask(), "VARCHAR2(420)", Types.CHAR);
 		registerColumnType(FieldType.INT.getMask(), "INT", Types.INTEGER);
 		registerColumnType(FieldType.SMALL_INT.getMask(), "SMALLINT", Types.SMALLINT);
-		registerColumnType(FieldType.DOUBLE.getMask(), "NUMBER(19, 4)", Types.NUMERIC);
-		registerColumnType(FieldType.DECIMAL.getMask(), "NUMBER(19, 4)", Types.NUMERIC);
+		registerColumnType(FieldType.DOUBLE.getMask(), "NUMBER(19, 8)", Types.NUMERIC);
+		registerColumnType(FieldType.DECIMAL.getMask(), "NUMBER(19, 8)", Types.NUMERIC);
 		registerColumnType(FieldType.LONG.getMask(), "LONG", Types.BIGINT);
 		registerColumnType(FieldType.CHAR.getMask(), "CHAR(1)", Types.CHAR);
 		registerColumnType(FieldType.STRING.getMask(), "VARCHAR2(%d)", Types.VARCHAR);

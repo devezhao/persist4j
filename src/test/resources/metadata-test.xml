@@ -6,8 +6,8 @@
 		<field name="tReference" type="reference" ref-entity="TestAllType" description="引用"/>
 		<field name="tInt" type="int"/>
 		<field name="tSmallInt" type="small-int"/>
-		<field name="tDouble" type="double"/>
-		<field name="tDecimal" type="decimal"/>
+		<field name="tDouble" type="double" decimal-scale="6"/>
+		<field name="tDecimal" type="decimal" decimal-scale="7" />
 		<field name="tLong" type="long"/>
 		<field name="tDate" type="date" description="日期"/>
 		<field name="tTimestamp" type="timestamp" description="日期时间"/>

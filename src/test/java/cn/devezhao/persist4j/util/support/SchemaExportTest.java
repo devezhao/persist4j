@@ -9,7 +9,6 @@ import com.mysql.jdbc.Driver;
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
-import cn.devezhao.persist4j.dialect.OracleDialect;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
 
@@ -36,7 +35,7 @@ public class SchemaExportTest {
 	
 	@Test
 	public void testGenDDL() throws Exception {
-		Dialect dialect = new OracleDialect();
+		Dialect dialect = new MySQL5Dialect();
 		MetadataFactory metadata = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
 		
 		Entity entity = metadata.getEntity("TestAllType");

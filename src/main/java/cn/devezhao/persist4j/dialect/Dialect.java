@@ -74,7 +74,7 @@ public abstract class Dialect implements Serializable {
 	
 	protected void registerColumnType(int mask, String columnType, int sqlType) {
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Register column(sql) type <" + mask + ':' + columnType + ">");
+			LOG.info("Register column(sql) type <" + mask + ':' + columnType + ">");
 		}
 		columnTypes.put(mask, columnType);
 		field2columnMapping.put(mask, sqlType);

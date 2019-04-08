@@ -25,7 +25,7 @@ public class MySQL5Dialect extends Dialect {
 		registerColumnType(FieldType.INT.getMask(), "int(11)", Types.INTEGER);
 		registerColumnType(FieldType.SMALL_INT.getMask(), "smallint(6)", Types.SMALLINT);
 		registerColumnType(FieldType.DOUBLE.getMask(), "double(19, %d)", Types.DOUBLE);
-		registerColumnType(FieldType.DECIMAL.getMask(), "decimal(19, %d)", Types.DECIMAL);
+		registerColumnType(FieldType.DECIMAL.getMask(), "decimal(29, %d)", Types.DECIMAL);
 		registerColumnType(FieldType.LONG.getMask(), "bigint(20)", Types.BIGINT);
 		registerColumnType(FieldType.CHAR.getMask(), "char(1)", Types.CHAR);
 		registerColumnType(FieldType.STRING.getMask(), "varchar(%d)", Types.VARCHAR);

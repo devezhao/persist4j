@@ -90,6 +90,12 @@ public class QueryCompilerTest extends Compiler {
 		ajql = "select date_format(tDate,'%Y') from TestAllType group by date_format(tDate,'%Y')";
 		sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
-		
+	}
+	
+	@Test
+	public void testDateFormatGroupMutil() {
+		String ajql = "select tDate, DATE_FORMAT(tDate,'%Y'),DATE_FORMAT(tDate,'%Y-%M') from TestAllType group by DATE_FORMAT(tDate,'%Y'),DATE_FORMAT(tDate,'%Y-%M')";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
 	}
 }

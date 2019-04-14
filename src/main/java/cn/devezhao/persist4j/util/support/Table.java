@@ -169,10 +169,8 @@ public class Table {
 			} else if (field.getType() == FieldType.DATE) {
 				canNull += " default '0000-00-00'";
 			}
-		} else if (field.getType() == FieldType.TIMESTAMP) {
-			canNull += " null default '0000-00-00 00:00:00'";
-		} else if (field.getType() == FieldType.DATE) {
-			canNull += " null default '0000-00-00'";
+		} else if (field.getType() == FieldType.TIMESTAMP || field.getType() == FieldType.DATE) {
+			canNull += " null default null";
 		}
 		
 		// 自增值

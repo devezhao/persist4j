@@ -668,25 +668,23 @@ public class QueryCompiler implements Serializable {
 		if (aJF == null) {
 			throw new CompileException("Unknow JoinField in clause [ " + item.getType() + ", " + item.getText() + " ]");
 		}
-		if (aJF.getName() == null) {
-			aJF.as(-1, dialect);  // compile
-		}
 		
-		// reset aggregator and mode
+		// Use clone
+		JoinField clone = new JoinField(aJF, null);
 		if (aggregator != null) {
-			aJF.setAggregator(aggregator.getText());
+			clone.setAggregator(aggregator.getText());
 			if (ParserHelper.hasAggregatorMode(aggregator.getType())) {
 				String mode = item.getNextSibling().getNextSibling().getText();  // [, '%Y']
-				aJF.setAggregatorMode(mode);
+				clone.setAggregatorMode(mode);
 			} else {
-				aJF.setAggregatorMode(null);
+				clone.setAggregatorMode(null);
 			}
 		} else {
-			aJF.setAggregator(null);
-			aJF.setAggregatorMode(null);
+			clone.setAggregator(null);
+			clone.setAggregatorMode(null);
 		}
-		
-		return aJF;
+		clone.as(-1, dialect);  // compile
+		return clone;
 	}
 	
 	/**

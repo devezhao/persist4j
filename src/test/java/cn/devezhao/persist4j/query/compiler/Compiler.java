@@ -24,6 +24,20 @@ public class Compiler {
 		PersistManagerFactory persistManagerFactory = new PersistManagerFactoryImpl(null, dialect, metadataFactory);
 		QueryCompiler queryCompiler = new QueryCompiler(ajql);
 		String rawSql = queryCompiler.compile(persistManagerFactory.getSQLExecutorContext());
+		queryCompiler.getSelectItems();
 		return rawSql;
+	}
+	
+	/**
+	 * @param ajql
+	 * @return
+	 */
+	protected QueryCompiler createCompiler(String ajql) {
+		Dialect dialect = new MySQL5Dialect();
+		MetadataFactory metadataFactory = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
+		PersistManagerFactory persistManagerFactory = new PersistManagerFactoryImpl(null, dialect, metadataFactory);
+		QueryCompiler queryCompiler = new QueryCompiler(ajql);
+		queryCompiler.compile(persistManagerFactory.getSQLExecutorContext());
+		return queryCompiler;
 	}
 }

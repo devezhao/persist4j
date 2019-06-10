@@ -102,14 +102,13 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testKeywords() throws Exception {
-		String ajql = "select sum(sum) from Test3";
+		String ajql = "select 'sum' from Test3";
 		String sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
 		
-		ajql = "select sum(count) from Test3";
+		ajql = "select sum('count') from Test3";
 		sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
-		assertEquals(sql, "select date_format( _t0.`T_DATE`, '%Y' ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) group by date_format( _t0.`T_DATE`, '%Y' )");
 	}
 	
 	@Test

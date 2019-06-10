@@ -100,21 +100,44 @@ public class QueryCompiler implements Serializable {
 		return compiledSql;
 	}
 	
+	/**
+	 * 获取查询主实体
+	 * 
+	 * @return
+	 */
 	public Entity getRootEntity() {
 		throwIfUncompile();
 		return rootEntity;
 	}
 	
+	/**
+	 * 获取查询项（字段）
+	 * 
+	 * @return
+	 * @throws IllegalStateException
+	 */
 	public SelectItem[] getSelectItems() throws IllegalStateException {
 		throwIfUncompile();
 		return selectList.toArray(new SelectItem[selectList.size()]);
 	}
 	
+	/**
+	 * 获取编译好的 SQL
+	 * 
+	 * @return
+	 * @throws IllegalStateException
+	 */
 	public String getCompiledSql() throws IllegalStateException {
 		throwIfUncompile();
 		return compiledSql;
 	}
 	
+	/**
+	 * 获取入参
+	 * 
+	 * @return
+	 * @throws IllegalStateException
+	 */
 	public Map<String, ParameterItem> getParameters() throws IllegalStateException {
 		throwIfUncompile();
 		return parameters;
@@ -122,6 +145,13 @@ public class QueryCompiler implements Serializable {
 	
 	// ----------------------------------------------------------- Compile
 	
+	/**
+	 * 主编译方法
+	 * 
+	 * @param select
+	 * @param filter
+	 * @return
+	 */
 	private String compileQuery(AST select, Filter filter) {
 		AST from = select.getNextSibling();
 		if (LOG.isDebugEnabled()) {
@@ -148,9 +178,9 @@ public class QueryCompiler implements Serializable {
 			if (ParserHelper.isAggregator(item.getType())) {
 				AST column = item.getFirstChild();
 				aJF = bindJoinField(aJTree, entity, column, SelectItemType.Aggregator);
-				aJF.setAggregator(item.getText());
 				
-				if (ParserHelper.isAggregatorMode(item.getType())) {
+				aJF.setAggregator(item.getText());
+				if (ParserHelper.hasAggregatorMode(item.getType())) {
 					String mode = column.getNextSibling().getNextSibling().getText();  // [, '%Y']
 					aJF.setAggregatorMode(mode);
 				}
@@ -265,7 +295,7 @@ public class QueryCompiler implements Serializable {
 				
 				switch (ttype) {
 				case AjQLParserTokenTypes.IDENT:
-					aJF = getJoinField(next, sqlExecutorContext.getDialect());
+					aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
 					clause.append(aJF.getName());
 					break;
 				case AjQLParserTokenTypes.QUOTED_STRING:
@@ -310,10 +340,16 @@ public class QueryCompiler implements Serializable {
 		return sql.toString().trim();
 	}
 	
+	/**
+	 * 编译 IN 子语句
+	 * 
+	 * @param in
+	 * @return
+	 */
 	private String compileInClause(AST in) {
 		AST next = in.getFirstChild();
 		StringBuilder clause = new StringBuilder();
-		JoinField aJF = getJoinField(next, sqlExecutorContext.getDialect());
+		JoinField aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
 		clause.append(aJF.getName());
 		if (next.getNextSibling().getType() == AjQLParserTokenTypes.NOT) {
 			clause.append(" not");
@@ -350,6 +386,12 @@ public class QueryCompiler implements Serializable {
 		return clause.append(" )").toString();
 	}
 	
+	/**
+	 * 编译 EXISTS 子语句
+	 * @param exists
+	 * @param root
+	 * @return
+	 */
 	private String compileExistsClause(AST exists, JoinNode root) {
 		StringBuilder clause = new StringBuilder();
 		clause.append("exists ( ");
@@ -385,6 +427,13 @@ public class QueryCompiler implements Serializable {
 		return clause.append(" )").toString();
 	}
 	
+	/**
+	 * 编译 GROUP BY 子语句
+	 * 
+	 * @param by
+	 * @param having
+	 * @return
+	 */
 	private String compileGroupByClause(AST by, AST having) {
 		StringBuilder clause = new StringBuilder();
 		clause.append( compileByClause(by, "group by ") );
@@ -406,10 +455,23 @@ public class QueryCompiler implements Serializable {
 		return clause.toString();
 	}
 	
+	/**
+	 * 编译 ORDER BY 子语句
+	 * 
+	 * @param by
+	 * @return
+	 */
 	private String compileOrderByClause(AST by) {
 		return compileByClause(by, "order by ").toString();
 	}
 	
+	/**
+	 * 编译 [ORDER|GROYP] BY 子语句
+	 * 
+	 * @param ast
+	 * @param who
+	 * @return
+	 */
 	private StringBuilder compileByClause(AST ast, String who) {
 		StringBuilder clause = new StringBuilder(who);
 		
@@ -428,7 +490,7 @@ public class QueryCompiler implements Serializable {
 				clause.insert(clause.length() - 1, ',');
 				break;
 			case AjQLParserTokenTypes.IDENT:
-				aJF = getJoinField(next, sqlExecutorContext.getDialect());
+				aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
 				clause.append(aJF.getName()).append(' ');
 				break;
 			case AjQLParserTokenTypes.ASC:
@@ -436,8 +498,9 @@ public class QueryCompiler implements Serializable {
 				clause.append(next.getText()).append(' ');
 				break;
 			default:
-				if (ParserHelper.isAggregator(ttype)) {  // Only for group
-					aJF = getJoinField(next.getFirstChild(), sqlExecutorContext.getDialect());
+				if (ParserHelper.isAggregator(ttype)) {  // Only for group-by
+					AST item = next.getFirstChild();
+					aJF = getJoinField(item, next, sqlExecutorContext.getDialect());
 					clause.append(next.getText()).append("( ");
 					if (aJF.getAggregatorMode() != null) {
 						clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append("' ) ");
@@ -453,11 +516,21 @@ public class QueryCompiler implements Serializable {
 		return clause;
 	}
 	
+	/**
+	 * 获取连接（join）字段
+	 * 
+	 * @param tree
+	 * @param entity
+	 * @param item
+	 * @param type
+	 * @return
+	 */
 	private JoinField bindJoinField(JoinTree tree, Entity entity, AST item, SelectItemType type) {
-		String itemName = item.getText();
+		final String itemName = item.getText();
 		JoinField ifExists = joinFieldMap.get(itemName);
 		if (ifExists != null) {
-			return new JoinField(ifExists, type);
+			JoinField clone = new JoinField(ifExists, type);
+			return clone;
 		}
 		
 		String path = itemName;
@@ -507,10 +580,10 @@ public class QueryCompiler implements Serializable {
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
-			throw new CompileException("Force join must has 2 node");
+			throw new CompileException("Force join must has two nodes");
 		}
 		
-		if (joined.length == 1) {  // did not to join
+		if (joined.length == 1) {  // No joins
 			Field field = entity.getField(joined[0]);
 			Validate.notNull(field, "Unknow field [ " + joined[0] + " ] in entity [ " + entity.getName() + " ]");
 			JoinField aJF = new JoinField(tree.getRootJoinNode(), field, itemName, type);
@@ -548,13 +621,24 @@ public class QueryCompiler implements Serializable {
 		throw new CompileException("Unknow error on bind JoinField");
 	}
 	
+	/**
+	 * 获取引用字段的引用实体
+	 * 
+	 * @param field
+	 * @return
+	 */
 	private Entity getReferenceEntity(Field field) {
 		if (FieldType.REFERENCE != field.getType()) {
 			throw new CompileException(field + " does not support joins");
 		}
-		return field.getReferenceEntities()[0];
+		return field.getReferenceEntity();
 	}
 	
+	/**
+	 * @param ast
+	 * @param aJTree
+	 * @param entity
+	 */
 	private void findFields(AST ast, JoinTree aJTree, Entity entity) {
 		if (ast == null) {
 			return;
@@ -573,23 +657,47 @@ public class QueryCompiler implements Serializable {
 		} while ((ast = ast.getNextSibling()) != null);
 	}
 	
-	private JoinField getJoinField(AST jAst, Dialect dialect) {
-		JoinField aJF = joinFieldMap.get(jAst.getText());
+	/**
+	 * @param item
+	 * @param aggregator
+	 * @param dialect
+	 * @return
+	 */
+	private JoinField getJoinField(AST item, AST aggregator, Dialect dialect) {
+		JoinField aJF = joinFieldMap.get(item.getText());
 		if (aJF == null) {
-			throw new CompileException("Unknow JoinField in clause [ " + jAst.getType() + ", " + jAst.getText() + " ]");
+			throw new CompileException("Unknow JoinField in clause [ " + item.getType() + ", " + item.getText() + " ]");
 		}
-		if (aJF.getName() == null) {
-			aJF.as(-1, dialect);
+		
+		// Use clone
+		JoinField clone = new JoinField(aJF, null);
+		if (aggregator != null) {
+			clone.setAggregator(aggregator.getText());
+			if (ParserHelper.hasAggregatorMode(aggregator.getType())) {
+				String mode = item.getNextSibling().getNextSibling().getText();  // [, '%Y']
+				clone.setAggregatorMode(mode);
+			} else {
+				clone.setAggregatorMode(null);
+			}
+		} else {
+			clone.setAggregator(null);
+			clone.setAggregatorMode(null);
 		}
-		return aJF;
+		clone.as(-1, dialect);  // compile
+		return clone;
 	}
 	
+	/**
+	 */
 	private void throwIfUncompile() {
 		if (this.compiledSql == null) {
 			throw new IllegalStateException("uncompile");
 		}
 	}
 	
+	/**
+	 * @param ex
+	 */
 	private void handleParseException(Exception ex) {
 		if (ex instanceof ParserException) {
 			Throwable cause = ex.getCause();
@@ -598,7 +706,7 @@ public class QueryCompiler implements Serializable {
 					+ cause.getClass().getName() + ": " + ex.getCause() + " ]", ex.getCause());
 		}
 		throw new CompileException("Parse AjQL error", ex);
-	} 
+	}
 	
 	// ----------------------------------------------------------- Just for Neste SQL
 	

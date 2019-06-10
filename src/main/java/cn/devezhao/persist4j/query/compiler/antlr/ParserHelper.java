@@ -29,7 +29,7 @@ public class ParserHelper {
 				|| ttype == AjQLParserTokenTypes.DATE_FORMAT;
 	}
 	
-	public static boolean isAggregatorMode(int ttype) {
+	public static boolean hasAggregatorMode(int ttype) {
 		return ttype == AjQLParserTokenTypes.DATE_FORMAT;
 	}
 

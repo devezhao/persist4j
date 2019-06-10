@@ -18,14 +18,14 @@ public class JoinField implements SelectItem {
 	private final String fieldPath;
 	private final SelectItemType type;
 
-	private String fName;
-	private String fAlias;
+	private String name;
+	private String alias;
 	private Integer index;
 	
-	private String full = null;
+	private String fullPath = null;
 	
-	private String aggre;
-	private String aggreMode;
+	private String aggregator;
+	private String aggregatorMode;
 
 	JoinField(JoinNode tableNode, Field field, String fieldPath, SelectItemType type) {
 		this.tableNode = tableNode;
@@ -48,11 +48,11 @@ public class JoinField implements SelectItem {
 	}
 
 	public String getName() {
-		return fName;
+		return name;
 	}
 	
 	public String getAlias() {
-		return fAlias;
+		return alias;
 	}
 	
 	public int getIndex() {
@@ -71,35 +71,41 @@ public class JoinField implements SelectItem {
 	// --------------------------------------------------------------------- 
 	
 	protected void setAggregator(String aggre) {
-		this.aggre = aggre;
+		this.aggregator = aggre;
 	}
 	
 	public String getAggregator() {
-		return aggre;
+		return aggregator;
 	}
 	
 	protected void setAggregatorMode(String mode) {
-		this.aggreMode = mode;
+		this.aggregatorMode = mode;
 	}
 	
 	public String getAggregatorMode() {
-		return aggreMode;
+		return aggregatorMode;
 	}
 	
 	protected String as(int increase, Dialect dialect) {
-		if (full != null) {
-			return full;
+		if (fullPath != null) {
+			return fullPath;
 		}
 		
 		index = increase;
-		fName = String.format("%s.%s", 
+		name = String.format("%s.%s", 
 				tableNode.getAlias(), dialect.quote(field.getPhysicalName()));
-		fAlias = JoinTree.COLUMN_ALIAS_PREFIX + index;
-		return (full = fName + " as " + fAlias);
+		alias = JoinTree.COLUMN_ALIAS_PREFIX + index;
+		return (fullPath = name + " as " + alias);
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("[%s->%s->%s]", fieldPath, fName, fAlias);
+		if (getAggregator() != null) {
+			return String.format("%s%s[%s->%s->%s]", 
+					getAggregator(), (getAggregatorMode() == null ? "" : ("," + getAggregatorMode())),
+					fieldPath, name, alias);
+		} else {
+			return String.format("[%s->%s->%s]", fieldPath, name, alias);
+		}
 	}
 }

@@ -31,5 +31,8 @@
 		<field name="t3Primary" type="primary" description="主键" />
 		<field name="t1Reference" type="reference" ref-entity="TestAllType" description="引用"/>
 		<field name="t2Reference" type="reference" ref-entity="Test2" description="引用"/>
+		<field name="sum" type="double"/>
+		<field name="count" type="double"/>
 	</entity>
+	
 </metadata-config>

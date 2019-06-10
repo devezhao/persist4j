@@ -90,6 +90,16 @@ public class QueryCompilerTest extends Compiler {
 		ajql = "select date_format(tDate,'%Y') from TestAllType group by date_format(tDate,'%Y')";
 		sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
+	}
+	
+	@Test
+	public void testKeywords() throws Exception {
+		String ajql = "select sum(sum) from Test3";
+		String sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
 		
+		ajql = "select sum(count) from Test3";
+		sql = compile(ajql);
+		System.out.println(ajql + "\n>>\n" + sql);
 	}
 }

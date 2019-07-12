@@ -355,7 +355,6 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		entityMap.put(entity.getEntityCode(), entity);
 	}
 	
-	final private static Entity ANY_ENTITY = new AnyEntity();
 	final private Map<Field, String[]> REFFIELD_REFS = new ConcurrentHashMap<>();
 	final private Map<String, String> SM_MAPPING = new ConcurrentHashMap<>();
 	/**
@@ -370,16 +369,15 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				continue;
 			}
 			
-//			if (field.getType() == FieldType.REFERENCE) {
-//				String eName = e.getValue()[0];
-//				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntityNoLock(eName);
-//				field.addReference(entity);
-//				continue;
-//			}
-			
-			for (String eName : e.getValue()) {
-				Entity entity = (AnyEntity.FLAG.equals(eName)) ? ANY_ENTITY : getEntityNoLock(eName);
-				field.addReference(entity);
+			// 任意引用，引用所有实体
+			if (AnyEntity.FLAG.equals(e.getValue()[0])) {
+				for (Entity entity : entityMap.values()) {
+					field.addReference(entity);
+				}
+			} else {
+				for (String eName : e.getValue()) {
+					field.addReference(getEntityNoLock(eName));
+				}
 			}
 		}
 		REFFIELD_REFS.clear();

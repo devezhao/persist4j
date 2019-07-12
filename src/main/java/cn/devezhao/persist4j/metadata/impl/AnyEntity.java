@@ -11,10 +11,9 @@ public final class AnyEntity extends EntityImpl {
 	private static final long serialVersionUID = 1666508270744579952L;
 	
 	public static final String FLAG = "*";
-	
-	/**
-	 */
-	public AnyEntity() {
+
+	@Deprecated
+	protected AnyEntity() {
 		super(FLAG, null, null, 0, null);
 	}
 }

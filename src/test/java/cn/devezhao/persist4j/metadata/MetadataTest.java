@@ -16,7 +16,7 @@ import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
 public class MetadataTest {
 
 	@Test
-	public void testtAnyReference() throws Exception {
+	public void testAnyReference() throws Exception {
 		Dialect dialect = new MySQL5Dialect();
 		MetadataFactory metadataFactory = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
 		
@@ -26,5 +26,16 @@ public class MetadataTest {
 		
 		Field anyReference2 = allTypes.getField("tanyreference2");
 		System.out.println(anyReference2.getType() + " : " + StringUtils.join(anyReference2.getReferenceEntities(), " | "));
+	}
+	
+	@Test
+	public void testReferenceToFields() throws Exception {
+		Dialect dialect = new MySQL5Dialect();
+		MetadataFactory metadataFactory = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
+		
+		Entity test = metadataFactory.getEntity(102);
+		for (Field field : test.getReferenceToFields()) {
+			System.out.println(field);
+		}
 	}
 }

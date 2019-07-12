@@ -20,7 +20,6 @@ import cn.devezhao.persist4j.PersistException;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.MetadataException;
-import cn.devezhao.persist4j.metadata.impl.AnyEntity;
 import cn.devezhao.persist4j.record.FieldValueException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 
@@ -345,11 +344,6 @@ public class StandardRecord implements Record {
 	}
 	
 	protected void checkReferenceValue(Field field, Object value) {
-		Entity[] referenceEntities = field.getReferenceEntities();
-		if (referenceEntities[0] instanceof AnyEntity) {
-			return;
-		}
-		
 		ID[] idList = null;
 		if (value.getClass() == ID[].class) {
 			idList = (ID[]) value;
@@ -357,6 +351,7 @@ public class StandardRecord implements Record {
 			idList = new ID[] { (ID) value };
 		}
 
+		Entity[] referenceEntities = field.getReferenceEntities();
 		for (ID id : idList) {
 			int idType = id.getEntityCode().intValue();
 			boolean idInvalid = true;

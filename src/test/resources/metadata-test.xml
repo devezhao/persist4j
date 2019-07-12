@@ -17,7 +17,7 @@
 		<field name="tBool" type="bool" description="布尔"/>
 		<field name="tNtext" type="ntext" description="超大文本"/>
 		<field name="tBinary" type="binary" description="二进制数据"/>
-		<field name="tAnyReference" type="any-reference" description="任意引用"/>
+		<field name="tAnyReference" type="any-reference" ref-entity="*" description="任意引用"/>
 		<field name="tAnyReference2" type="any-reference" ref-entity="Test2,Test3" description="任意引用"/>
 	</entity>
 	

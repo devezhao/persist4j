@@ -1,8 +1,10 @@
 package cn.devezhao.persist4j.metadata.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +34,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private String nameFieldName;
 	
 	private Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
+	private Set<String> fieldSorted = new LinkedHashSet<>();
 	private List<Field> referenceTo = new ArrayList<Field>();
 	
 	private Entity masterEntity;
@@ -66,7 +69,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	public Field[] getFields() {
 		return fieldMap.values().toArray(new Field[fieldMap.size()]);
 	}
-
+	
 	public Field getNameField() {
 		if (StringUtils.isBlank(nameFieldName)) {
 			nameFieldName = primaryFieldName;
@@ -131,8 +134,12 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		return clone;
 	}
 
+	/**
+	 * @param field
+	 */
 	protected void addField(Field field) {
 		fieldMap.put(field.getName(), field);
+		fieldSorted.add(field.getName());
 		if (field.getType() == FieldType.PRIMARY) {
 			primaryFieldName = field.getName();
 			if (nameFieldName == null) {
@@ -141,10 +148,23 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
+	public Set<String> getFieldSorted() {
+		return fieldSorted;
+	}
+	
+	/**
+	 * @param field
+	 */
 	protected void addReferenceTo(Field field) {
 		referenceTo.add(field);
 	}
 	
+	/**
+	 * @param master
+	 */
 	protected void setMasterEntity(Entity master) {
 		this.masterEntity = master;
 		((EntityImpl) master).slaveEntity = this;

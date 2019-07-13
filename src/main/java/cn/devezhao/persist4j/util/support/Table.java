@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
@@ -13,6 +14,7 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
+import cn.devezhao.persist4j.metadata.impl.EntityImpl;
 
 /**
  * 建表语句
@@ -70,9 +72,9 @@ public class Table {
 		String PK = "";
 		List<Object[]> FKs = new ArrayList<Object[]>();
 		
-		Field[] fields = entity.getFields();
-		for (int i = 0, j = fields.length; i < j; i++) {
-			Field field = fields[i];
+		Set<String> fields = ((EntityImpl) entity).getFieldSorted();
+		for (String fs : fields) {
+			Field field = entity.getField(fs);
 			String column = field.getPhysicalName();
 			if (field.getType() == FieldType.PRIMARY) {
 				PK = column;

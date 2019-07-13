@@ -3,13 +3,14 @@ package cn.devezhao.persist4j.query;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
+
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
-import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>

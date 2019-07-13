@@ -3,6 +3,7 @@ package cn.devezhao.persist4j.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Test;
 
 /**
@@ -18,6 +19,7 @@ public class CaseInsensitiveMapTest {
 
 		map1.put("Abc", "1");
 		map2.put("Abc", "1");
+		map2.put("aBc", "11");
 		map1.put("Abcd", "2");
 		map2.put("Abcd", "2");
 		

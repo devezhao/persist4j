@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -28,7 +29,6 @@ import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.metadata.CascadeModel;
 import cn.devezhao.persist4j.metadata.MetadataException;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
-import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import cn.devezhao.persist4j.util.StringHelper;
 import cn.devezhao.persist4j.util.XmlHelper;
 

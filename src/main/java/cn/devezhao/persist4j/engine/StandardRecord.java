@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -298,7 +297,7 @@ public class StandardRecord implements Record {
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
 		}
-		o.recordMap = new HashMap<String, Object>(this.recordMap);
+		o.recordMap = new CaseInsensitiveMap<>(this.recordMap);
 		return o;
 	}
 	

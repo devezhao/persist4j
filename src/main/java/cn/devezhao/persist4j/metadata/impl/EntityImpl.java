@@ -55,10 +55,12 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		this.nameFieldName = nameField;
 	}
 
+	@Override
 	public boolean containsField(String aName) {
 		return fieldMap.containsKey(aName);
 	}
 
+	@Override
 	public Field getField(String aName) {
 		if (!containsField(aName)) {
 			throw new MetadataException("No such field [ " + aName + " ] in entity [ " + getName() + " ]");
@@ -66,10 +68,12 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		return fieldMap.get(aName);
 	}
 
+	@Override
 	public Field[] getFields() {
 		return fieldMap.values().toArray(new Field[fieldMap.size()]);
 	}
 	
+	@Override
 	public Field getNameField() {
 		if (StringUtils.isBlank(nameFieldName)) {
 			nameFieldName = primaryFieldName;
@@ -80,19 +84,34 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		return null;
 	}
 
+	@Override
 	public Field getPrimaryField() {
 		return getField(primaryFieldName);
 	}
 
+	@Override
 	public Integer getEntityCode() {
 		return typeCode;
 	}
 
+	@Override
 	public Field[] getReferenceToFields() {
-		if (referenceTo.isEmpty()) {
-			return EMPTY_FIELD_ARRAY;
+		return getReferenceToFields(false);
+	}
+	
+	@Override
+	public Field[] getReferenceToFields(boolean excludeNReference) {
+		if (excludeNReference) {
+			List<Field> excluded = new ArrayList<Field>();
+			for (Field rt : referenceTo) {
+				if (rt.getType() == FieldType.REFERENCE) {
+					excluded.add(rt);
+				}
+			}
+			return excluded.toArray(new Field[excluded.size()]);
+		} else {
+			return referenceTo.toArray(new Field[referenceTo.size()]);
 		}
-		return referenceTo.toArray(new Field[referenceTo.size()]);
 	}
 	
 	@Override

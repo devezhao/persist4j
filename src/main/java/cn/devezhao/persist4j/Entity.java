@@ -63,6 +63,14 @@ public interface Entity extends BaseMeta {
 	Field[] getReferenceToFields();
 	
 	/**
+	 * 获取引用到此实体的所有字段
+	 * 
+	 * @param excludeNReference 是否排除多引用
+	 * @return
+	 */
+	Field[] getReferenceToFields(boolean excludeNReference);
+	
+	/**
 	 * 获取主实体（如有）
 	 * 
 	 * @return

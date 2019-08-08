@@ -31,4 +31,11 @@ public interface BaseMeta extends Serializable {
 	 * @return
 	 */
 	String getDescription();
+	
+	/**
+	 * 扩展属性（便于实现自定义的效果）
+	 * 
+	 * @return
+	 */
+	String getExtraAttrs();
 }

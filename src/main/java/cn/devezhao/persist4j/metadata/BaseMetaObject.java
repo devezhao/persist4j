@@ -1,7 +1,7 @@
 package cn.devezhao.persist4j.metadata;
 
 /**
- * 
+ * 元数据基础
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Jan 20, 2009
@@ -12,24 +12,39 @@ public abstract class BaseMetaObject implements BaseMeta {
 	
 	final private String name;
 	final private String physicalName;
-	final private String description;
+	private String description;
+	private String extraAttrs;
 
-	public BaseMetaObject(String name, String physicalName, String description) {
+	/**
+	 * @param name
+	 * @param physicalName
+	 * @param description
+	 */
+	public BaseMetaObject(String name, String physicalName, String description, String extraAttrs) {
 		this.name = name;
 		this.physicalName = physicalName;
 		this.description = description;
+		this.extraAttrs = extraAttrs;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getPhysicalName() {
 		return physicalName;
 	}
 	
+	@Override
 	public String getDescription() {
 		return description;
+	}
+	
+	@Override
+	public String getExtraAttrs() {
+		return extraAttrs;
 	}
 
 	@Override

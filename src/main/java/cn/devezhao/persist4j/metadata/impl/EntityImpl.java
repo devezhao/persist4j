@@ -17,8 +17,6 @@ import cn.devezhao.persist4j.metadata.BaseMetaObject;
 import cn.devezhao.persist4j.metadata.MetadataException;
 
 /**
- * 实体
- * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 4, 2009
  * @version $Id: EntityImpl.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
@@ -47,10 +45,20 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	 * @param typeCode
 	 * @param nameField
 	 */
-	public EntityImpl(String name, String physicalName,
-			String description, int typeCode, String nameField) {
-		super(name, physicalName, description);
-
+	public EntityImpl(String name, String physicalName, String description, int typeCode, String nameField) {
+		this(name, physicalName, description, typeCode, nameField, null);
+	}
+	
+	/**
+	 * @param name
+	 * @param physicalName
+	 * @param description
+	 * @param typeCode
+	 * @param nameField
+	 * @param extraAttrs
+	 */
+	public EntityImpl(String name, String physicalName, String description, int typeCode, String nameField, String extraAttrs) {
+		super(name, physicalName, description, extraAttrs);
 		this.typeCode = typeCode;
 		this.nameFieldName = nameField;
 	}

@@ -172,23 +172,23 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		Element root = document.getRootElement();
 		schemaNameOptimize = BooleanUtils.toBoolean(root.valueOf("@schema-name-optimize"));
 		
-		Entity common = null;
+		Entity globalCommon = null;
 		String allParent = root.valueOf("@default-parent");
 		if (!StringUtils.isBlank(allParent)) {
-			common = buildEntity(root.selectSingleNode(String.format("entity[@name='%s']", allParent)), null);
+			globalCommon = buildEntity(root.selectSingleNode(String.format("entity[@name='%s']", allParent)), null);
 			if (LOG.isInfoEnabled()) {
-				LOG.info("default entity [ " + common + " ] will injecting all entity");
+				LOG.info("Default entity [ " + globalCommon + " ] will merge into all entities");
 			}
-			commonEntityName = common.getName();
+			commonEntityName = globalCommon.getName();
 		}
 		
 		for (Object o : root.selectNodes("//entity")) {
 			Node e = (Node) o;
-			if (common != null && common.getName().equals(e.valueOf("@name"))) {
+			if (globalCommon != null && globalCommon.getName().equals(e.valueOf("@name"))) {
 				continue;
 			}
 			
-			Entity entity = buildEntity(e, common);
+			Entity entity = buildEntity(e, globalCommon);
 			registerEntity(entity);
 		}
 		
@@ -219,6 +219,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		String nameField = eNode.valueOf("@name-field");
 		String description = eNode.valueOf("@description");
+		String extraAttrs = eNode.valueOf("@extra-attrs");
 		
 		String master = eNode.valueOf("@master");
 		if (StringUtils.isNotBlank(master)) {
@@ -226,7 +227,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		
 		EntityImpl entity = new EntityImpl(
-				name, pName, description, Integer.parseInt(tCode), nameField);
+				name, pName, description, Integer.parseInt(tCode), nameField, extraAttrs);
 		
 		Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
 		if (parent != null && !"false".equals(eNode.valueOf("@parent"))) {
@@ -328,9 +329,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			type = FieldType.LONG;
 		}
 		
+		String extraAttrs = node.valueOf("@extra-attrs");
+		
 		Field field = new FieldImpl(
 				name, pName, desc, ownEntity, type, cascade, maxLength, N, C, U, R,
-				decimalScale, defaultValue, auto);
+				decimalScale, defaultValue, auto, extraAttrs);
 		
 		String refs = node.valueOf("@ref-entity");
 		if (type == FieldType.REFERENCE) {

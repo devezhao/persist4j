@@ -1,9 +1,10 @@
 package cn.devezhao.persist4j.util;
 
-import java.util.HashMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Map;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Test;
 
 /**
@@ -14,28 +15,19 @@ public class CaseInsensitiveMapTest {
 
 	@Test
 	public void testMap() throws Exception {
-		Map<String, String> map1 = new HashMap<>();
-		Map<String, String> map2 = new CaseInsensitiveMap<>();
+		Map<String, String> map = new CaseInsensitiveMap<>();
 
-		map1.put("Abc", "1");
-		map2.put("Abc", "1");
-		map2.put("aBc", "11");
-		map1.put("Abcd", "2");
-		map2.put("Abcd", "2");
+		map.put("abc", "1");
+		map.put("Abc", "11");
+		map.put("AbC", "111");
+		map.put("abcd", "2");
+		map.remove("ABCd");
 		
-		System.out.println(map1.containsKey("abc"));  // false
-		System.out.println(map2.containsKey("abc"));  // true
+		System.out.println(map.keySet());
+		System.out.println(map.entrySet());
 		
-		System.out.println(map1.get("abc"));  // null
-		System.out.println(map2.get("abc"));  // 1
-		
-		System.out.println(map1);
-		System.out.println(map2);
-		
-		System.out.println(map1.remove("abc"));  // null
-		System.out.println(map2.remove("abc"));  // 1
-		
-		System.out.println(map1);
-		System.out.println(map2);
+		assertEquals(map.entrySet().size(), map.size());
+		assertFalse(map.containsKey("abcd"));
+		assertEquals(map.get("abc"), "111");
 	}
 }

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +20,7 @@ import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.MetadataException;
 import cn.devezhao.persist4j.record.FieldValueException;
+import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 
 /**
  * 记录对象

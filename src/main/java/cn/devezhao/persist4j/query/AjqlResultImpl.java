@@ -299,7 +299,7 @@ public class AjqlResultImpl implements Result {
 	
 	// build a record for the row data
 	Record bindRecord(Object[] row) {
-		CapriciousRecord record = new CapriciousRecord(
+		QueryedRecord record = new QueryedRecord(
 				query.getQueryCompiler().getRootEntity(), 
 				query.getPersistManagerFactory().getSQLExecutorContext());
 		

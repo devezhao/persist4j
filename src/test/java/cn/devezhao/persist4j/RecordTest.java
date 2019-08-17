@@ -1,5 +1,7 @@
 package cn.devezhao.persist4j;
 
+import java.util.Iterator;
+
 import org.junit.Test;
 
 import cn.devezhao.persist4j.dialect.Dialect;
@@ -25,6 +27,9 @@ public class RecordTest {
 		Record record = new StandardRecord(allTypes);
 		record.setID("tAnyReference2", ID.newId(102));
 		record.setID("tAnyReference2", ID.newId(103));
-		record.setID("tAnyReference2", ID.newId(104));
+		
+		for (Iterator<String> iter = record.getAvailableFieldIterator(); iter.hasNext(); ) {
+			System.out.println(iter.next());
+		}
 	}
 }

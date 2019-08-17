@@ -3,21 +3,22 @@ package cn.devezhao.persist4j.query;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
+import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 
 /**
+ * 查询出的记录
+ * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Mar 8, 2009
  * @version $Id: CapriciousRecord.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
  */
-public class CapriciousRecord extends StandardRecord {
+public class QueryedRecord extends StandardRecord {
 
 	private static final long serialVersionUID = 5113799283331109208L;
 	
@@ -27,11 +28,11 @@ public class CapriciousRecord extends StandardRecord {
 	/**
 	 * Serializable
 	 */
-	protected CapriciousRecord() {
+	protected QueryedRecord() {
 		super();
 	}
 	
-	protected CapriciousRecord(Entity entity, SqlExecutorContext context) {
+	protected QueryedRecord(Entity entity, SqlExecutorContext context) {
 		super(entity, null);
 	}
 	

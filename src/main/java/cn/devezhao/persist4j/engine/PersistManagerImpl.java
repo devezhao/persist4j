@@ -102,15 +102,18 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 								value = record.getObjectValue(field.getName());
 							}
 							
-							if (field.getType() == FieldType.DOUBLE
+							if (NullValue.is(value)) {
+								pstmt.setNull(index, managerFactory.getDialect().getSQLType(editor.getType()));
+							} else if (field.getType() == FieldType.DOUBLE
 									&& field.getDecimalScale() != FieldType.DEFAULT_DECIMAL_SCALE) {
-								((DoubleEditor) editor).set(pstmt, index++, value, field.getDecimalScale());
+								((DoubleEditor) editor).set(pstmt, index, value, field.getDecimalScale());
 							} else if (field.getType() == FieldType.DECIMAL
 									&& field.getDecimalScale() != FieldType.DEFAULT_DECIMAL_SCALE) {
-								((DecimalEditor) editor).set(pstmt, index++, value, field.getDecimalScale());
+								((DecimalEditor) editor).set(pstmt, index, value, field.getDecimalScale());
 							} else {
-								editor.set(pstmt, index++, value);
+								editor.set(pstmt, index, value);
 							}
+							index++;
 						} catch (Exception ex) {
 							throw new PersistException(field.getOwnEntity().getName() + "#" + field.getName(), ex);
 						}

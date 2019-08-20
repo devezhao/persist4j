@@ -35,13 +35,14 @@ import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.StandardRecord;
 
 /**
+ * JSON 记录解析
  * 
  * @author zhaofang123@gmail.com
  * @since 08/01/2018
  */
 public class JsonRecordCreator implements RecordCreator {
 
-	private static final Log LOG = LogFactory.getLog(XmlRecordCreator.class);
+	private static final Log LOG = LogFactory.getLog(JsonRecordCreator.class);
 
 	public static final String META_FIELD = "metadata";
 	
@@ -80,8 +81,19 @@ public class JsonRecordCreator implements RecordCreator {
 		this.source = source;
 		this.editor = editor;
 	}
-
+	
+	/**
+	 * @return
+	 */
 	public Record create() {
+		return create(true);
+	}
+
+	/**
+	 * @param ignoreNullValue 忽略空值（仅在新建时有效）
+	 * @return
+	 */
+	public Record create(boolean ignoreNullValue) {
 		Record record = new StandardRecord(entity, editor);
 		boolean isNew = true;
 		
@@ -117,13 +129,18 @@ public class JsonRecordCreator implements RecordCreator {
 			
 			Object value = e.getValue();
 			if (value == null || StringUtils.isEmpty(value.toString())) {
-				value = null;
 				if (isNew) {
 					if (!field.isNullable() && !field.isAutoValue()) {
 						throw new FieldValueException(entity.getName() + '#' + field.getName() + " must not be null");
 					}
+					
+					// 不忽略空值
+					if (!ignoreNullValue) {
+						record.setNull(fileName);
+					}
 					continue;
 				}
+				value = null;
 			}
 			setValue(field, value == null ? null : value.toString(), record);
 		}

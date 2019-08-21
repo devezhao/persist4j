@@ -131,6 +131,11 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	public Entity getSlaveEntity() {
 		return slaveEntity;
 	}
+	
+	@Override
+	public String[] getFieldNames() {
+		return fieldMap.keySet().toArray(new String[0]);
+	}
 
 	@Override
 	public int hashCode() {

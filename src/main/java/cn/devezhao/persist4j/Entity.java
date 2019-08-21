@@ -83,4 +83,12 @@ public interface Entity extends BaseMeta {
 	 * @return
 	 */
 	Entity getSlaveEntity();
+	
+	/**
+	 * 获取字段名称
+	 * 
+	 * @return
+	 * @see #getFields()
+	 */
+	String[] getFieldNames();
 }

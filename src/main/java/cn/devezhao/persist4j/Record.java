@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.NullValue;
 
@@ -248,7 +250,12 @@ public interface Record extends Cloneable, Serializable {
 	Iterator<String> getAvailableFieldIterator();
 
 	/**
-	 * @return
+	 * @return Anothers Record
 	 */
 	Record clone();
+	
+	/**
+	 * @return JSON K/V
+	 */
+	JSON serialize();
 }

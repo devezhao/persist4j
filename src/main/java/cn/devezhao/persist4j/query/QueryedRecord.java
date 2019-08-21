@@ -26,7 +26,7 @@ public class QueryedRecord extends StandardRecord {
 	private SelectItem[] selectItems;
 
 	/**
-	 * Serializable
+	 * for Serializable
 	 */
 	protected QueryedRecord() {
 		super();
@@ -75,9 +75,9 @@ public class QueryedRecord extends StandardRecord {
 	}
 
 	/**
-	 * 
+	 * 完成后整理数据结构
 	 */
-	protected void complete() {
+	protected void completeAfter() {
 		if (idLabel.isEmpty()) {
 			return;
 		}

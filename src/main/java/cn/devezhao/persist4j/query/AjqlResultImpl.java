@@ -310,7 +310,7 @@ public class AjqlResultImpl implements Result {
 			record.setObject(item.getFieldPath(), v);
 		}
 		record.setSelectItems(query.getSelectItems());
-		record.complete();
+		record.completeAfter();
 		return record;
 	}
 	

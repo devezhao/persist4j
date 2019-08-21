@@ -53,15 +53,27 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		this.managerFactory = managerFactory;
 	}
 
+	@Override
 	public PersistManagerFactory getPersistManagerFactory() {
 		return managerFactory;
 	}
-
+	
+	@Override
 	public Record save(final Record record) throws DataAccessException {
 		Validate.isTrue(record.getPrimary() == null);
-		
 		Entity e = record.getEntity();
-		final ID eId = ID.newId(e.getEntityCode());
+		return saveInternal(record, ID.newId(e.getEntityCode()));
+	}
+
+	/**
+	 * @param record
+	 * @param recordeId
+	 * @return
+	 * @throws DataAccessException
+	 */
+	public Record saveInternal(final Record record, final ID recordeId) throws DataAccessException {
+		Validate.isTrue(recordeId != null);
+		final Entity e = record.getEntity();
 		
 		StringBuilder insert = new StringBuilder("insert into ");
 		insert.append(quote(e.getPhysicalName())).append(" ( ").append(quote(e.getPrimaryField().getPhysicalName()));
@@ -82,7 +94,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		insert = null;
 		
 		int affected = 0;
-		final List<String> refsSqls = new ArrayList<String>();
 		try {
 			affected = execute(new StatementCallback(){
 				public String getSql() {
@@ -97,7 +108,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 						
 						try {
 							if (field.getType() == FieldType.PRIMARY) {
-								value = eId;
+								value = recordeId;
 							} else {
 								value = record.getObjectValue(field.getName());
 							}
@@ -122,22 +133,17 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 				}
 			});
 			
-			if (!refsSqls.isEmpty()) {
-				int[] batchExec = executeBatch(refsSqls.toArray(new String[refsSqls.size()]));
-				for (int be : batchExec) {
-					affected += be;
-				}
-			}
 		} catch (SQLException sqlex) {
 			throw SqlExceptionConverter.convert(sqlex, "#INSERT", sql);
 		}
 		
 		LOG.debug("total affected " + affected + " rows");
 		
-		record.setID(e.getPrimaryField().getName(), eId);
+		record.setID(e.getPrimaryField().getName(), recordeId);
 		return record;
 	}
 
+	@Override
 	public Record update(final Record record) throws DataAccessException {
 		Validate.notNull(record.getPrimary());
 		
@@ -207,10 +213,12 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		return record;
 	}
 
+	@Override
 	public Record saveOrUpdate(Record record) throws DataAccessException {
 		return (record.getPrimary() == null) ? save(record) : update(record);
 	}
 
+	@Override
 	public int delete(final ID id) throws DataAccessException {
 		Validate.notNull(id);
 		
@@ -251,7 +259,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 					if (cField.getCascadeModel() == CascadeModel.Delete) {
 						formatted = "delete from {0} where {1} = ''{2}''";
 					} else if (cField.getCascadeModel() == CascadeModel.RemoveLinks) {
-						// set {1} = null, but some column can not be null
 						if (cField.isNullable()) {
 							formatted = "update {0} set {1} = NULL where {1} = ''{2}''";
 						} else {
@@ -288,6 +295,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		return affected;
 	}
 
+	@Override
 	public int[] delete(ID[] ids) throws DataAccessException {
 		int[] rowsAffected = new int[ids.length];
 		
@@ -306,8 +314,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	protected void releaseConnection(Connection connect) {
 		SqlHelper.close(connect, managerFactory.getDataSource());
 	}
-	
-	// ----------------------------------------------------------------------------------------
 	
 	private String quote(String ident) {
 		return this.managerFactory.getDialect().quote(ident);

@@ -347,7 +347,7 @@ public class StandardRecord implements Record {
 		}
 		
 		Object value = recordMap.get(key);
-		Class<?> valueClazz = value.getClass();
+		Class<?> valueClazz = value == null ? null : value.getClass();
 		if (value == null || NullValue.is(value)) {
 			return null;
 		} else if (matchsClazz.isAssignableFrom(valueClazz)) {

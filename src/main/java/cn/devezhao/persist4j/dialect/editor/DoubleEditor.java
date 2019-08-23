@@ -31,13 +31,17 @@ public class DoubleEditor extends AbstractFieldEditor {
 	
 	public void set(PreparedStatement pstmt, int index, Object value, int scale)
 			throws SQLException {
-		Double v = (Double) value;
-		if (Double.isInfinite(v) || Double.isNaN(v)) {
-			v = new Double(0);
+		BigDecimal decimalValue = null;
+		if (value instanceof BigDecimal) {
+			decimalValue = (BigDecimal) value;
+		} else {
+			decimalValue = BigDecimal.valueOf((Double) value);
 		}
-		v = BigDecimal.valueOf(v)
-				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP).doubleValue();
-		pstmt.setDouble(index, v);
+		
+		Double doubleValue = decimalValue
+				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP)
+				.doubleValue();
+		pstmt.setDouble(index, doubleValue);
 	}
 	
 	@Override

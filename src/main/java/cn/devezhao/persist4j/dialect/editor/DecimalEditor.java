@@ -31,13 +31,14 @@ public class DecimalEditor extends AbstractFieldEditor {
 	
 	public void set(PreparedStatement pstmt, int index, Object value, int scale)
 			throws SQLException {
-		if (value.getClass() == Double.class) {
-			value = new BigDecimal((Double) value);
+		if (value instanceof Double) {
+			value = BigDecimal.valueOf((Double) value);
 		}
 		
-		BigDecimal value2 = (BigDecimal) value;
-		value2 = value2.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP);
-		pstmt.setBigDecimal(index, value2);
+		BigDecimal decimalValue = (BigDecimal) value;
+		decimalValue = decimalValue
+				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP);
+		pstmt.setBigDecimal(index, decimalValue);
 	}
 
 	@Override

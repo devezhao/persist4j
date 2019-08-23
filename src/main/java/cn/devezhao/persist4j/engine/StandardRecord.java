@@ -153,6 +153,17 @@ public class StandardRecord implements Record {
 	}
 	
 	@Override
+	public Long getLong(String key) {
+		return (Long) getObject(key, Long.class);
+	}
+	
+	@Override
+	public Record setLong(String key, Long value) {
+		setObject(key, value);
+		return this;
+	}
+	
+	@Override
 	public Double getDouble(String key) {
 		return (Double) getObject(key, Double.class);
 	}
@@ -170,17 +181,6 @@ public class StandardRecord implements Record {
 	
 	@Override
 	public Record setDecimal(String key, BigDecimal value) {
-		setObject(key, value);
-		return this;
-	}
-	
-	@Override
-	public Long getLong(String key) {
-		return (Long) getObject(key, Long.class);
-	}
-	
-	@Override
-	public Record setLong(String key, Long value) {
 		setObject(key, value);
 		return this;
 	}
@@ -209,7 +209,7 @@ public class StandardRecord implements Record {
 
 	@Override
 	public Reader getReader(String key) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -308,9 +308,11 @@ public class StandardRecord implements Record {
 	public JSON serialize() {
 		return new JSONObject(this.recordMap);
 	}
-	
-	// --
 
+	/**
+	 * @param key
+	 * @param value
+	 */
 	protected void setObject(String key, Object value) {
 		if (!entity.containsField(key)) {
 			throw new MetadataException("No such field " + key + " in entity " + entity.getName());
@@ -333,23 +335,46 @@ public class StandardRecord implements Record {
 		recordMap.put(key, value);
 	}
 
-	protected Object getObject(String key, Class<?> clazz) {
+	/**
+	 * @param key
+	 * @param clazz
+	 * @return
+	 */
+	protected Object getObject(String key, Class<?> matchsClazz) {
 		if (!entity.containsField(key)) {
 			throw new MetadataException(
 					"No such field [ " + key + " ] in entity [ " + entity.getName() + " ]");
 		}
-
-		Object v = recordMap.get(key);
-		if (v == null || NullValue.is(v)) {
+		
+		Object value = recordMap.get(key);
+		Class<?> valueClazz = value.getClass();
+		if (value == null || NullValue.is(value)) {
 			return null;
-		} else if (clazz.isAssignableFrom(v.getClass())) {
-			return v;
+		} else if (matchsClazz.isAssignableFrom(valueClazz)) {
+			return value;
+		}
+		
+		// Long Integer 兼容
+		if (Long.class.isAssignableFrom(matchsClazz) && Integer.class.isAssignableFrom(valueClazz)) {
+			return ((Integer) value).longValue();
+		} else if (Integer.class.isAssignableFrom(matchsClazz)  && Long.class.isAssignableFrom(valueClazz)) {
+			return ((Long) value).intValue();
+		}
+		// Double BigDecimal 兼容
+		if (Double.class.isAssignableFrom(matchsClazz) && BigDecimal.class.isAssignableFrom(valueClazz)) {
+			return ((BigDecimal) value).doubleValue();
+		} else if (BigDecimal.class.isAssignableFrom(matchsClazz)  && Double.class.isAssignableFrom(valueClazz)) {
+			return BigDecimal.valueOf((Double) value);
 		}
 		
 		throw new PersistException(
-				"Can't cast field [ " + key + " ] value type " + v.getClass() + " to " + clazz);
+				"Can't cast field [ " + key + " ] value type " + value.getClass() + " to " + matchsClazz);
 	}
 	
+	/**
+	 * @param field
+	 * @param value
+	 */
 	protected void checkReferenceValue(Field field, Object value) {
 		ID[] idList = null;
 		if (value.getClass() == ID[].class) {
@@ -358,19 +383,20 @@ public class StandardRecord implements Record {
 			idList = new ID[] { (ID) value };
 		}
 
-		Entity[] referenceEntities = field.getReferenceEntities();
+		Entity[] refEntities = field.getReferenceEntities();
 		for (ID id : idList) {
 			int idType = id.getEntityCode().intValue();
 			boolean idInvalid = true;
-			for (Entity e : referenceEntities) {
-				if (e.getEntityCode().intValue() == idType) {
+			for (Entity entity : refEntities) {
+				if (entity.getEntityCode().intValue() == idType) {
 					idInvalid = false;
 					break;
 				}
 			}
 			
 			if (idInvalid) {
-				throw new FieldValueException("Field " + field + " value [ " + id + " ] is wrong. can't reference non-specify record of entity");
+				throw new FieldValueException(
+						"Field " + field + " value [ " + id + " ] is wrong. can't reference non-specify record of entity");
 			}
 		}
 	}

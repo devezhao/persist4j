@@ -1,5 +1,6 @@
 package cn.devezhao.persist4j;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -31,5 +32,24 @@ public class RecordTest {
 		for (Iterator<String> iter = record.getAvailableFieldIterator(); iter.hasNext(); ) {
 			System.out.println(iter.next());
 		}
+	}
+	
+	@Test
+	public void testTypeCompatible() throws Exception {
+		Dialect dialect = new MySQL5Dialect();
+		MetadataFactory metadataFactory = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
+		Entity allTypes = metadataFactory.getEntity(100);
+		
+		Record record = new StandardRecord(allTypes);
+		
+		record.setInt("tLong", 123);
+		System.out.println(record.getInt("tLong"));
+		record.setLong("tInt", 123L);
+		System.out.println(record.getLong("tInt"));
+		
+		record.setDecimal("tDouble", BigDecimal.valueOf(123.123d));
+		System.out.println(record.getDouble("tDouble"));
+		record.setDouble("tDecimal", 123.123D);
+		System.out.println(record.getDecimal("tDecimal"));
 	}
 }

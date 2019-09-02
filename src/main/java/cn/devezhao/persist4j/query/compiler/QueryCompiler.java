@@ -216,7 +216,7 @@ public class QueryCompiler implements Serializable {
 				break;
 			}
 			
-			findFields(next, aJTree, entity);
+			findJoinFields(next, aJTree, entity);
 			next = next.getNextSibling();
 		}
 		
@@ -233,7 +233,7 @@ public class QueryCompiler implements Serializable {
 			}
 			
 			AST nood = parser.getAST();
-			findFields(nood, aJTree, entity);
+			findJoinFields(nood, aJTree, entity);
 			
 			if (where == null) {
 				where = nood;
@@ -313,6 +313,9 @@ public class QueryCompiler implements Serializable {
 					paramIndex++;
 					text = (text.charAt(0) == '?') ? paramIndex + "" : text;
 					parameters.put( text, new ParameterItem(text, paramIndex, aJF.getField()) );
+					break;
+				case AjQLParserTokenTypes.MATCH:
+					clause.append(compileMatchClause(next, aJTree.getRootJoinNode()));
 					break;
 				default:
 					if (ParserHelper.isInIgnore(ttype)) {
@@ -517,6 +520,51 @@ public class QueryCompiler implements Serializable {
 	}
 	
 	/**
+	 * 编译 MATCH ... AGAINST
+	 * 
+	 * @param match
+	 * @param root
+	 * @return
+	 */
+	private StringBuilder compileMatchClause(AST match, JoinNode root) {
+		StringBuilder clause = new StringBuilder();
+		clause.append("macth ( ");
+		
+		AST next = match.getFirstChild();
+		int lastType = -1;
+		do {
+			String text = next.getText();
+			int type = next.getType();
+			switch (type) {
+			case AjQLParserTokenTypes.IDENT:
+				if (lastType == AjQLParserTokenTypes.IDENT) {
+					clause.append(", ");
+				}
+				JoinField aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
+				clause.append(aJF.getName());
+				break;
+			case AjQLParserTokenTypes.AGAINST:
+				clause.append(" ) against ( ");
+				break;
+			case AjQLParserTokenTypes.QUOTED_STRING:
+				clause.append('\'').append(text).append('\'');
+				break;
+			case AjQLParserTokenTypes.BOOLEAN:
+				clause.append(" in boolean mode");
+				break;
+			default:
+				LOG.warn("Unknow token in match clause [ " + type + ":" + text + " ]");
+				clause.append(text);
+				break;
+			}
+			
+			lastType = type;
+			
+		} while ((next = next.getNextSibling()) != null);
+		return clause.append(" )");
+	}
+	
+	/**
 	 * 获取连接（join）字段
 	 * 
 	 * @param tree
@@ -639,7 +687,7 @@ public class QueryCompiler implements Serializable {
 	 * @param aJTree
 	 * @param entity
 	 */
-	private void findFields(AST ast, JoinTree aJTree, Entity entity) {
+	private void findJoinFields(AST ast, JoinTree aJTree, Entity entity) {
 		if (ast == null) {
 			return;
 		}
@@ -648,12 +696,16 @@ public class QueryCompiler implements Serializable {
 		do {
 			AST node = ast;
 			if (node.getType() != AjQLParserTokenTypes.IDENT) {
+				boolean isMatch = node.getType() == AjQLParserTokenTypes.MATCH;
 				node = node.getFirstChild();
 				if (node == null || node.getType() != AjQLParserTokenTypes.IDENT) {
 					continue;
 				}
+				
+				if (isMatch) ast = node;
 			}
 			bindJoinField(aJTree, entity, node, SelectItemType.Field);
+			
 		} while ((ast = ast.getNextSibling()) != null);
 	}
 	

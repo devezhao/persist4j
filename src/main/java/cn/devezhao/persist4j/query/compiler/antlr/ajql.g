@@ -1,3 +1,4 @@
+// Manual: https://www.antlr2.org/doc/antlr_2_7_5_ChineseVer.pdf
 // Usage: 
 // `java -cp antlr-2.7.7.jar antlr.Tool ajql.g`
 
@@ -46,6 +47,11 @@ tokens {
 	
 	TRUE = "true";
 	FALSE = "false";
+	
+	MATCH = "match";
+	AGAINST = "against";
+	BOOLEAN = "boolean";
+	MODE = "mode";
 }
 
 statement
@@ -98,6 +104,10 @@ havingClause
 rollupClause
 	: WITH^ ROLLUP
 	;
+	
+matchClause
+	: MATCH^ LPAREN! column (COMMA! column)* RPAREN! AGAINST LPAREN! QUOTED_STRING (IN! BOOLEAN MODE!)? RPAREN!
+	;
 
 selectList
 	: selectItem (COMMA! selectItem)*
@@ -142,6 +152,7 @@ simplePredicate
 		  RPAREN! )
 		)
 	  ) | (NOT)? EXISTS^ LPAREN! (selectStatement) RPAREN!
+	    | matchClause
 	)
 	;
 

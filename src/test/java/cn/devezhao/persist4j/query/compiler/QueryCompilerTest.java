@@ -128,4 +128,11 @@ public class QueryCompilerTest extends Compiler {
 		System.out.println(">> RAW SQL\n" + compiler.getCompiledSql());
 		assertEquals(compiler.getCompiledSql(), "select count( _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where _t0.`T_PRIMARY` = '0000'");
 	}
+	
+	@Test
+	public void testFulltextMatch() {
+		String ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tPrimary,tDate,tDouble) against ('123 abc NB' in boolean mode)";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
+	}
 }

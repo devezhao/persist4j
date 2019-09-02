@@ -50,12 +50,13 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 
 		this.ownEntity = ownEntity;
 		this.type = type;
-		this.maxLength = maxLength;
 		this.cascadeModel = cascade;
+		this.maxLength = maxLength;
 
 		this.nullable = nullable;
 		this.creatable = creatable;
 		this.updatable = updatable;
+		this.repeatable = repeatable;
 
 		this.decimalScale = scale;
 		this.defaultValue = defaultValue;

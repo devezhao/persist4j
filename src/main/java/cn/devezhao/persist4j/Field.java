@@ -77,7 +77,7 @@ public interface Field extends BaseMeta {
 	boolean isNullable();
 	
 	/**
-	 * 是否可重复
+	 * 是否可重复。注意：保留字段，系统不会针对此属性做处理
 	 * 
 	 * @return
 	 */

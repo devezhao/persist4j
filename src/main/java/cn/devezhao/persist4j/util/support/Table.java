@@ -175,15 +175,17 @@ public class Table {
 			canNull += " null default null";
 		}
 		
+		String defaultValue = field.getDefaultValue() != null ? field.getDefaultValue().toString() : null;
+		
 		// 自增值
 		if (field.isAutoValue()) {
 			canNull += " auto_increment";  // MS-SQL !?
-		} else if (StringUtils.isNotBlank((String) field.getDefaultValue())) {  // 默认值
+		} else if (defaultValue != null) {  // 默认值
 			if (canNull.contains("default")) {
 				canNull = canNull.split("default")[0];
-				canNull += " " + field.getDefaultValue().toString().replaceAll("'", "") + "'";
+				canNull += " " + defaultValue.replaceAll("'", "") + "'";
 			} else {
-				canNull += " default '" + field.getDefaultValue().toString().replaceAll("'", "") + "'";
+				canNull += " default '" + defaultValue.replaceAll("'", "") + "'";
 			}
 		}
 		

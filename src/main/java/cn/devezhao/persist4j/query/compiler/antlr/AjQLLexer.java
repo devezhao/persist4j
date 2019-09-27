@@ -115,6 +115,11 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 						theRetToken = _returnToken;
 						break;
 					}
+					case '!': {
+						mBNAND(true);
+						theRetToken = _returnToken;
+						break;
+					}
 					case ',': {
 						mCOMMA(true);
 						theRetToken = _returnToken;
@@ -153,6 +158,9 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 							theRetToken = _returnToken;
 						} else if ((LA(1) == '<') && (LA(2) == '>')) {
 							mSQL_NE(true);
+							theRetToken = _returnToken;
+						} else if ((LA(1) == '&') && (LA(2) == '&')) {
+							mBAND(true);
 							theRetToken = _returnToken;
 						} else if ((LA(1) == ':') && (_tokenSet_0.member(LA(2)))) {
 							mNAMED_PARAM(true);
@@ -380,6 +388,38 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		_returnToken = _token;
 	}
 
+	public final void mBAND(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype;
+		Token _token = null;
+		int _begin = text.length();
+		_ttype = BAND;
+		int _saveIndex;
+
+		match("&&");
+		if (_createToken && _token == null && _ttype != Token.SKIP) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
+		}
+		_returnToken = _token;
+	}
+
+	public final void mBNAND(boolean _createToken)
+			throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype;
+		Token _token = null;
+		int _begin = text.length();
+		_ttype = BNAND;
+		int _saveIndex;
+
+		match("!&");
+		if (_createToken && _token == null && _ttype != Token.SKIP) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length() - _begin));
+		}
+		_returnToken = _token;
+	}
+
 	public final void mDOT(boolean _createToken)
 			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
@@ -487,19 +527,19 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		{
 			mCOLON(false);
 			{
-				int _cnt98 = 0;
-				_loop98: do {
+				int _cnt100 = 0;
+				_loop100: do {
 					if ((_tokenSet_0.member(LA(1)))) {
 						mIDENT_LETTER(false);
 					} else {
-						if (_cnt98 >= 1) {
-							break _loop98;
+						if (_cnt100 >= 1) {
+							break _loop100;
 						} else {
 							throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 						}
 					}
 
-					_cnt98++;
+					_cnt100++;
 				} while (true);
 			}
 		}
@@ -591,11 +631,11 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 
 		mIDENT_START(false);
 		{
-			_loop101: do {
+			_loop103: do {
 				if ((_tokenSet_0.member(LA(1)))) {
 					mIDENT_LETTER(false);
 				} else {
-					break _loop101;
+					break _loop103;
 				}
 
 			} while (true);
@@ -702,19 +742,19 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		int _saveIndex;
 
 		{
-			int _cnt107 = 0;
-			_loop107: do {
+			int _cnt109 = 0;
+			_loop109: do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mDIGIT(false);
 				} else {
-					if (_cnt107 >= 1) {
-						break _loop107;
+					if (_cnt109 >= 1) {
+						break _loop109;
 					} else {
 						throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 					}
 				}
 
-				_cnt107++;
+				_cnt109++;
 			} while (true);
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
@@ -737,20 +777,20 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 			if ((LA(1) == '.')) {
 				mDOT(false);
 				{
-					int _cnt111 = 0;
-					_loop111: do {
+					int _cnt113 = 0;
+					_loop113: do {
 						if (((LA(1) >= '0' && LA(1) <= '9'))) {
 							mDIGIT(false);
 						} else {
-							if (_cnt111 >= 1) {
-								break _loop111;
+							if (_cnt113 >= 1) {
+								break _loop113;
 							} else {
 								throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(),
 										getColumn());
 							}
 						}
 
-						_cnt111++;
+						_cnt113++;
 					} while (true);
 				}
 			} else {
@@ -773,21 +813,21 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		int _saveIndex;
 
 		{
-			int _cnt114 = 0;
-			_loop114: do {
+			int _cnt116 = 0;
+			_loop116: do {
 				if ((_tokenSet_0.member(LA(1)))) {
 					mIDENT_LETTER(false);
 				} else if (((LA(1) >= '\u0080' && LA(1) <= '\ufffe'))) {
 					matchRange('\u0080', '\uFFFE');
 				} else {
-					if (_cnt114 >= 1) {
-						break _loop114;
+					if (_cnt116 >= 1) {
+						break _loop116;
 					} else {
 						throw new NoViableAltForCharException((char) LA(1), getFilename(), getLine(), getColumn());
 					}
 				}
 
-				_cnt114++;
+				_cnt116++;
 			} while (true);
 		}
 		if (_createToken && _token == null && _ttype != Token.SKIP) {
@@ -809,28 +849,28 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		match('\'');
 		text.setLength(_saveIndex);
 		{
-			_loop119: do {
-				boolean synPredMatched118 = false;
+			_loop121: do {
+				boolean synPredMatched120 = false;
 				if (((LA(1) == '\'') && (LA(2) == '\''))) {
-					int _m118 = mark();
-					synPredMatched118 = true;
+					int _m120 = mark();
+					synPredMatched120 = true;
 					inputState.guessing++;
 					try {
 						{
 							mESCqs(false);
 						}
 					} catch (RecognitionException pe) {
-						synPredMatched118 = false;
+						synPredMatched120 = false;
 					}
-					rewind(_m118);
+					rewind(_m120);
 					inputState.guessing--;
 				}
-				if (synPredMatched118) {
+				if (synPredMatched120) {
 					mESCqs(false);
 				} else if ((_tokenSet_3.member(LA(1)))) {
 					matchNot('\'');
 				} else {
-					break _loop119;
+					break _loop121;
 				}
 
 			} while (true);

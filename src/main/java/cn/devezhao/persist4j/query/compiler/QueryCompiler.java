@@ -289,11 +289,12 @@ public class QueryCompiler implements Serializable {
 			JoinField aJF = null;
 			
 			next = where.getFirstChild();
+			int prevType = 0;
 			do {
-				int ttype = next.getType();
+				int type = next.getType();
 				String text = next.getText();
 				
-				switch (ttype) {
+				switch (type) {
 				case AjQLParserTokenTypes.IDENT:
 					aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
 					clause.append(aJF.getName());
@@ -317,15 +318,27 @@ public class QueryCompiler implements Serializable {
 				case AjQLParserTokenTypes.MATCH:
 					clause.append(compileMatchClause(next, aJTree.getRootJoinNode()));
 					break;
+				case AjQLParserTokenTypes.BAND: 
+					clause.append('&');
+					break;
+				case AjQLParserTokenTypes.BNAND: 
+					clause.append('&');
+					break;
 				default:
-					if (ParserHelper.isInIgnore(ttype)) {
+					if (ParserHelper.isInIgnore(type)) {
 						clause.append(text);
+						
+						// 按位取反
+						if (prevType == AjQLParserTokenTypes.BNAND) {
+							clause.append(" = 0");
+						}
 					} else {
-						LOG.warn("Unknow token: <" + ttype + ", " + text + ">");
+						LOG.warn("Unknow token: <" + type + ", " + text + ">");
 					}
 				}
 				
 				clause.append(' ');
+				prevType = type;
 			} while ((next = next.getNextSibling()) != null);
 			
 			sql.append(clause);

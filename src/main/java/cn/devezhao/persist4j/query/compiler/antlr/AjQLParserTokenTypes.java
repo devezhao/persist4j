@@ -57,13 +57,15 @@ public interface AjQLParserTokenTypes {
 	int LE = 53;
 	int GE = 54;
 	int SQL_NE = 55;
-	int DOT = 56;
-	int COLON = 57;
-	int IDENT_START = 58;
-	int IDENT_LETTER = 59;
-	int DIGIT = 60;
-	int INT = 61;
-	int NUM = 62;
-	int ESCqs = 63;
-	int WS = 64;
+	int BAND = 56;
+	int BNAND = 57;
+	int DOT = 58;
+	int COLON = 59;
+	int IDENT_START = 60;
+	int IDENT_LETTER = 61;
+	int DIGIT = 62;
+	int INT = 63;
+	int NUM = 64;
+	int ESCqs = 65;
+	int WS = 66;
 }

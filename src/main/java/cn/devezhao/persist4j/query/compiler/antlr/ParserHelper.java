@@ -41,7 +41,9 @@ public class ParserHelper {
 				|| ttype == AjQLParserTokenTypes.GE
 				|| ttype == AjQLParserTokenTypes.SQL_NE
 				|| ttype == AjQLParserTokenTypes.LIKE
-				|| ttype == AjQLParserTokenTypes.BETWEEN;
+				|| ttype == AjQLParserTokenTypes.BETWEEN
+				|| ttype == AjQLParserTokenTypes.BAND
+				|| ttype == AjQLParserTokenTypes.BNAND;
 	}
 	
 	public static boolean isInIgnoreValue(int ttype) {

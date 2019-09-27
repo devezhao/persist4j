@@ -135,4 +135,12 @@ public class QueryCompilerTest extends Compiler {
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
 	}
+	
+	@Test
+	public void testBAnd() {
+		String ajql = "select tPrimary from TestAllType where (tInt !& 1) and tInt && 1";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals(compiler.getCompiledSql(), "select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where ( _t0.`T_INT` & 1 = 0 ) and _t0.`T_INT` & 1");
+	}
 }

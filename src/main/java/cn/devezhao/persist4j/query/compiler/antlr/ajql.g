@@ -192,7 +192,7 @@ binaryOperator
 	;
 
 comparisonOperator
-	: EQ | LT | GT | LE | GE | SQL_NE | BETWEEN
+	: EQ | LT | GT | LE | GE | SQL_NE | BETWEEN | BAND | BNAND
 	;
 
 // LEXER **********************************************************************************
@@ -219,6 +219,8 @@ GT: '>';
 LE: "<=";
 GE: ">=";
 SQL_NE: "<>";
+BAND: "&&";
+BNAND: "!&";
 
 DOT: '.';
 COMMA: ',';

@@ -116,7 +116,7 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 						break;
 					}
 					case '!': {
-						mBNAND(true);
+						mNBAND(true);
 						theRetToken = _returnToken;
 						break;
 					}
@@ -404,12 +404,12 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		_returnToken = _token;
 	}
 
-	public final void mBNAND(boolean _createToken)
+	public final void mNBAND(boolean _createToken)
 			throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype;
 		Token _token = null;
 		int _begin = text.length();
-		_ttype = BNAND;
+		_ttype = NBAND;
 		int _saveIndex;
 
 		match("!&");

@@ -1254,7 +1254,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 								case GE:
 								case SQL_NE:
 								case BAND:
-								case BNAND: {
+								case NBAND: {
 									comparisonOperator();
 									astFactory.addASTChild(currentAST, returnAST);
 									expression();
@@ -1472,11 +1472,11 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
-			case BNAND: {
+			case NBAND: {
 				AST tmp80_AST = null;
 				tmp80_AST = astFactory.create(LT(1));
 				astFactory.addASTChild(currentAST, tmp80_AST);
-				match(BNAND);
+				match(NBAND);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
@@ -1765,7 +1765,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			"\"count\"", "\"date_format\"", "\"is\"", "\"not\"", "\"null\"", "\"in\"", "\"like\"", "\"exists\"",
 			"\"between\"", "\"true\"", "\"false\"", "\"match\"", "\"against\"", "\"boolean\"", "\"mode\"", "COMMA",
 			"LPAREN", "RPAREN", "QUOTED_STRING", "IDENT", "STAR", "LITERAL", "NAMED_PARAM", "QUESTION_MARK", "PLUS",
-			"MINUS", "DIVIDE", "MOD", "EQ", "LT", "GT", "LE", "GE", "SQL_NE", "BAND", "BNAND", "DOT", "COLON",
+			"MINUS", "DIVIDE", "MOD", "EQ", "LT", "GT", "LE", "GE", "SQL_NE", "BAND", "NBAND", "DOT", "COLON",
 			"IDENT_START", "IDENT_LETTER", "DIGIT", "INT", "NUM", "ESCqs", "WS" };
 
 	protected void buildTokenTypeASTClassMap() {

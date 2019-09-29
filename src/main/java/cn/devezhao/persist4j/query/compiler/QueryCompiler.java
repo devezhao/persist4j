@@ -319,17 +319,15 @@ public class QueryCompiler implements Serializable {
 					clause.append(compileMatchClause(next, aJTree.getRootJoinNode()));
 					break;
 				case AjQLParserTokenTypes.BAND: 
-					clause.append('&');
-					break;
-				case AjQLParserTokenTypes.BNAND: 
+				case AjQLParserTokenTypes.NBAND: 
 					clause.append('&');
 					break;
 				default:
 					if (ParserHelper.isInIgnore(type)) {
 						clause.append(text);
 						
-						// 按位取反
-						if (prevType == AjQLParserTokenTypes.BNAND) {
+						// 按位取反 a % b = 0
+						if (prevType == AjQLParserTokenTypes.NBAND) {
 							clause.append(" = 0");
 						}
 					} else {

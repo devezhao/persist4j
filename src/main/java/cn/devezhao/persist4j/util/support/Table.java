@@ -180,7 +180,7 @@ public class Table {
 		// 自增值
 		if (field.isAutoValue()) {
 			canNull += " auto_increment";  // MS-SQL !?
-		} else if (defaultValue != null) {  // 默认值
+		} else if (defaultValue != null && StringUtils.isNotBlank(defaultValue.toString())) {  // 默认值
 			if (canNull.contains("default")) {
 				canNull = canNull.split("default")[0];
 				canNull += " " + defaultValue.replaceAll("'", "") + "'";

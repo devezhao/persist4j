@@ -2,6 +2,7 @@ package cn.devezhao.persist4j.dialect;
 
 import java.io.Serializable;
 
+import cn.devezhao.persist4j.dialect.editor.AnyReferenceEditor;
 import cn.devezhao.persist4j.dialect.editor.BinaryEditor;
 import cn.devezhao.persist4j.dialect.editor.BoolEditor;
 import cn.devezhao.persist4j.dialect.editor.CharEditor;
@@ -12,7 +13,6 @@ import cn.devezhao.persist4j.dialect.editor.IntEditor;
 import cn.devezhao.persist4j.dialect.editor.LongEditor;
 import cn.devezhao.persist4j.dialect.editor.NTextEditor;
 import cn.devezhao.persist4j.dialect.editor.PrimaryEditor;
-import cn.devezhao.persist4j.dialect.editor.AnyReferenceEditor;
 import cn.devezhao.persist4j.dialect.editor.ReferenceEditor;
 import cn.devezhao.persist4j.dialect.editor.ReferenceListEditor;
 import cn.devezhao.persist4j.dialect.editor.SmallIntEditor;

@@ -131,8 +131,12 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testFulltextMatch() {
-		String ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tPrimary,tDate,tDouble) against ('123 abc NB' in boolean mode)";
+		String ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tText) against ('123 abc NB')";
 		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
+		
+		ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tText) against ('123 abc NB' in boolean mode)";
+		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
 	}
 	

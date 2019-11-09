@@ -96,6 +96,6 @@
  field-list				- 字段列表
 -->
 <!ATTLIST index
-	type   				(key | unique) "key"
+	type   				(key | unique | fulltext) "key"
 	field-list		    CDATA #REQUIRED
 >

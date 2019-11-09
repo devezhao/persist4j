@@ -230,7 +230,8 @@ public class Table {
 			}
 			
 			String fieldList = el.attributeValue("field-list");
-			String indexName = ("unique".equals(type) ? "UIX" : "IX") + (++idxIndex) + '_' + entity.getPhysicalName();
+			String indexName = ("unique".equals(type) ? "UIX" : ("fulltext".equals(type) ? "FIX" : "IX"))
+					+ (++idxIndex) + '_' + entity.getPhysicalName();
 			
 			List<String> fpNames = new LinkedList<String>();
 			for (String f : fieldList.split("\\,")) {
@@ -238,8 +239,8 @@ public class Table {
 			}
 			String colNames = StringUtils.join(fpNames.iterator(), ", ");
 			
-			uix.add(("unique".equals(type) ? "unique " : "") + "index "
-					+ dialect.quote(indexName) + " (" + colNames + ")");
+			uix.add(("unique".equals(type) ? "unique " : ("fulltext".equals(type) ? "fulltext " : ""))
+					+ "index " + dialect.quote(indexName) + " (" + colNames + ")");
 		}
 		return uix.toArray(new String[0]);
 	}

@@ -1,6 +1,9 @@
 package cn.devezhao.persist4j.util.support;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
 import org.junit.Test;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -37,9 +40,12 @@ public class SchemaExportTest {
 	public void testGenDDL() throws Exception {
 		Dialect dialect = new MySQL5Dialect();
 		MetadataFactory metadata = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
+		Element cfgRoot = ((ConfigurationMetadataFactory) metadata).getConfigDocument().getRootElement();
 		
 		Entity entity = metadata.getEntity("TestAllType");
-		String[] sqls = new Table(entity, dialect).generateDDL(false, false);
+		List<?> ix = cfgRoot.selectSingleNode("//entity[@name='" + entity.getName() + "']").selectNodes("index");
+		
+		String[] sqls = new Table(entity, dialect, ix).generateDDL(false, false);
 		System.out.println(StringUtils.join(sqls, "\n"));
 	}
 }

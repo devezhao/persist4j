@@ -549,8 +549,7 @@ public class QueryCompiler implements Serializable {
 	private String compileMatchClause(AST match, AST field, JoinNode root) {
 		JoinField aJF = getJoinField(field, null, sqlExecutorContext.getDialect());
 		AST query = match.getNextSibling();
-		// in boolean mode
-		return String.format("match (%s) against ('%s')",
+		return String.format("match (%s) against ('%s' in boolean mode)",
 				aJF.getName(),
 				query.getText());
 	}

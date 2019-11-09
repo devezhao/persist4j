@@ -49,9 +49,6 @@ tokens {
 	FALSE = "false";
 	
 	MATCH = "match";
-	AGAINST = "against";
-	BOOLEAN = "boolean";
-	MODE = "mode";
 }
 
 statement
@@ -104,10 +101,6 @@ havingClause
 rollupClause
 	: WITH^ ROLLUP
 	;
-	
-matchClause
-	: MATCH^ LPAREN! column (COMMA! column)* RPAREN! AGAINST^ LPAREN! QUOTED_STRING (IN! BOOLEAN MODE!)? RPAREN!
-	;
 
 selectList
 	: selectItem (COMMA! selectItem)*
@@ -152,7 +145,6 @@ simplePredicate
 		  RPAREN! )
 		)
 	  ) | (NOT)? EXISTS^ LPAREN! (selectStatement) RPAREN!
-	    | matchClause
 	)
 	;
 
@@ -192,7 +184,7 @@ binaryOperator
 	;
 
 comparisonOperator
-	: EQ | LT | GT | LE | GE | SQL_NE | BETWEEN | BAND | NBAND
+	: EQ | LT | GT | LE | GE | SQL_NE | BETWEEN | BAND | NBAND | MATCH
 	;
 
 // LEXER **********************************************************************************

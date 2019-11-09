@@ -290,9 +290,15 @@ public class QueryCompiler implements Serializable {
 			
 			next = where.getFirstChild();
 			int prevType = 0;
+			AST lastField = null;
 			do {
 				int type = next.getType();
 				String text = next.getText();
+				
+				if (next.getNextSibling() != null && next.getNextSibling().getType() == AjQLParserTokenTypes.MATCH) {
+					lastField = next;
+					continue;
+				}
 				
 				switch (type) {
 				case AjQLParserTokenTypes.IDENT:
@@ -316,7 +322,9 @@ public class QueryCompiler implements Serializable {
 					parameters.put( text, new ParameterItem(text, paramIndex, aJF.getField()) );
 					break;
 				case AjQLParserTokenTypes.MATCH:
-					clause.append(compileMatchClause(next, aJTree.getRootJoinNode()));
+					clause.append(compileMatchClause(next, lastField, aJTree.getRootJoinNode()));
+					lastField = null;
+					next = next.getNextSibling();
 					break;
 				case AjQLParserTokenTypes.BAND: 
 				case AjQLParserTokenTypes.NBAND: 
@@ -337,7 +345,7 @@ public class QueryCompiler implements Serializable {
 				
 				clause.append(' ');
 				prevType = type;
-			} while ((next = next.getNextSibling()) != null);
+			} while (next != null && (next = next.getNextSibling()) != null);
 			
 			sql.append(clause);
 			clause = null;
@@ -534,45 +542,14 @@ public class QueryCompiler implements Serializable {
 	 * 编译 MATCH ... AGAINST
 	 * 
 	 * @param match
+	 * @param field
 	 * @param root
 	 * @return
 	 */
-	private StringBuilder compileMatchClause(AST match, JoinNode root) {
-		StringBuilder clause = new StringBuilder();
-		clause.append("macth ( ");
-		
-		AST next = match.getFirstChild();
-		int lastType = -1;
-		do {
-			String text = next.getText();
-			int type = next.getType();
-			switch (type) {
-			case AjQLParserTokenTypes.IDENT:
-				if (lastType == AjQLParserTokenTypes.IDENT) {
-					clause.append(", ");
-				}
-				JoinField aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
-				clause.append(aJF.getName());
-				break;
-			case AjQLParserTokenTypes.AGAINST:
-				clause.append(" ) against ( ");
-				break;
-			case AjQLParserTokenTypes.QUOTED_STRING:
-				clause.append('\'').append(text).append('\'');
-				break;
-			case AjQLParserTokenTypes.BOOLEAN:
-				clause.append(" in boolean mode");
-				break;
-			default:
-				LOG.warn("Unknow token in match clause [ " + type + ":" + text + " ]");
-				clause.append(text);
-				break;
-			}
-			
-			lastType = type;
-			
-		} while ((next = next.getNextSibling()) != null);
-		return clause.append(" )");
+	private String compileMatchClause(AST match, AST field, JoinNode root) {
+		return String.format("macth (%s) against ('%s')",
+				getJoinField(field, null, sqlExecutorContext.getDialect()).getName(),
+				match.getNextSibling().getText());
 	}
 	
 	/**
@@ -707,13 +684,10 @@ public class QueryCompiler implements Serializable {
 		do {
 			AST node = ast;
 			if (node.getType() != AjQLParserTokenTypes.IDENT) {
-				boolean isMatch = node.getType() == AjQLParserTokenTypes.MATCH;
 				node = node.getFirstChild();
 				if (node == null || node.getType() != AjQLParserTokenTypes.IDENT) {
 					continue;
 				}
-				
-				if (isMatch) ast = node;
 			}
 			bindJoinField(aJTree, entity, node, SelectItemType.Field);
 			

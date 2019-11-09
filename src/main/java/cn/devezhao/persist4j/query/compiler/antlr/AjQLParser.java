@@ -367,9 +367,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				case NULL:
 				case TRUE:
 				case FALSE:
+				case IDENT:
 				case LPAREN:
 				case QUOTED_STRING:
-				case IDENT:
 				case LITERAL:
 				case NAMED_PARAM:
 				case QUESTION_MARK:
@@ -474,9 +474,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				case NULL:
 				case TRUE:
 				case FALSE:
+				case IDENT:
 				case LPAREN:
 				case QUOTED_STRING:
-				case IDENT:
 				case LITERAL:
 				case NAMED_PARAM:
 				case QUESTION_MARK:
@@ -511,9 +511,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 							case NULL:
 							case TRUE:
 							case FALSE:
+							case IDENT:
 							case LPAREN:
 							case QUOTED_STRING:
-							case IDENT:
 							case LITERAL:
 							case NAMED_PARAM:
 							case QUESTION_MARK:
@@ -608,13 +608,13 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			selectItem();
 			astFactory.addASTChild(currentAST, returnAST);
 			{
-				_loop33: do {
+				_loop29: do {
 					if ((LA(1) == COMMA)) {
 						match(COMMA);
 						selectItem();
 						astFactory.addASTChild(currentAST, returnAST);
 					} else {
-						break _loop33;
+						break _loop29;
 					}
 
 				} while (true);
@@ -664,7 +664,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			subSimpleCondition();
 			astFactory.addASTChild(currentAST, returnAST);
 			{
-				_loop44: do {
+				_loop40: do {
 					if ((LA(1) == AND || LA(1) == OR)) {
 						{
 							switch (LA(1)) {
@@ -690,7 +690,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 						subSimpleCondition();
 						astFactory.addASTChild(currentAST, returnAST);
 					} else {
-						break _loop44;
+						break _loop40;
 					}
 
 				} while (true);
@@ -721,9 +721,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			case NULL:
 			case TRUE:
 			case FALSE:
+			case IDENT:
 			case LPAREN:
 			case QUOTED_STRING:
-			case IDENT:
 			case LITERAL:
 			case NAMED_PARAM:
 			case QUESTION_MARK:
@@ -849,74 +849,6 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		returnAST = column_AST;
 	}
 
-	public final void matchClause() throws RecognitionException, TokenStreamException {
-
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST matchClause_AST = null;
-
-		try { // for error handling
-			AST tmp30_AST = null;
-			tmp30_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp30_AST);
-			match(MATCH);
-			match(LPAREN);
-			column();
-			astFactory.addASTChild(currentAST, returnAST);
-			{
-				_loop29: do {
-					if ((LA(1) == COMMA)) {
-						match(COMMA);
-						column();
-						astFactory.addASTChild(currentAST, returnAST);
-					} else {
-						break _loop29;
-					}
-
-				} while (true);
-			}
-			match(RPAREN);
-			AST tmp34_AST = null;
-			tmp34_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp34_AST);
-			match(AGAINST);
-			match(LPAREN);
-			AST tmp36_AST = null;
-			tmp36_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp36_AST);
-			match(QUOTED_STRING);
-			{
-				switch (LA(1)) {
-				case IN: {
-					match(IN);
-					AST tmp38_AST = null;
-					tmp38_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp38_AST);
-					match(BOOLEAN);
-					match(MODE);
-					break;
-				}
-				case RPAREN: {
-					break;
-				}
-				default: {
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				}
-			}
-			match(RPAREN);
-			matchClause_AST = (AST) currentAST.root;
-		} catch (RecognitionException ex) {
-			if (inputState.guessing == 0) {
-				reportError(ex);
-				recover(ex, _tokenSet_14);
-			} else {
-				throw ex;
-			}
-		}
-		returnAST = matchClause_AST;
-	}
-
 	public final void aggregate() throws RecognitionException, TokenStreamException {
 
 		returnAST = null;
@@ -932,30 +864,30 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				{
 					switch (LA(1)) {
 					case MIN: {
-						AST tmp41_AST = null;
-						tmp41_AST = astFactory.create(LT(1));
-						astFactory.makeASTRoot(currentAST, tmp41_AST);
+						AST tmp30_AST = null;
+						tmp30_AST = astFactory.create(LT(1));
+						astFactory.makeASTRoot(currentAST, tmp30_AST);
 						match(MIN);
 						break;
 					}
 					case MAX: {
-						AST tmp42_AST = null;
-						tmp42_AST = astFactory.create(LT(1));
-						astFactory.makeASTRoot(currentAST, tmp42_AST);
+						AST tmp31_AST = null;
+						tmp31_AST = astFactory.create(LT(1));
+						astFactory.makeASTRoot(currentAST, tmp31_AST);
 						match(MAX);
 						break;
 					}
 					case AVG: {
-						AST tmp43_AST = null;
-						tmp43_AST = astFactory.create(LT(1));
-						astFactory.makeASTRoot(currentAST, tmp43_AST);
+						AST tmp32_AST = null;
+						tmp32_AST = astFactory.create(LT(1));
+						astFactory.makeASTRoot(currentAST, tmp32_AST);
 						match(AVG);
 						break;
 					}
 					case SUM: {
-						AST tmp44_AST = null;
-						tmp44_AST = astFactory.create(LT(1));
-						astFactory.makeASTRoot(currentAST, tmp44_AST);
+						AST tmp33_AST = null;
+						tmp33_AST = astFactory.create(LT(1));
+						astFactory.makeASTRoot(currentAST, tmp33_AST);
 						match(SUM);
 						break;
 					}
@@ -972,17 +904,17 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				break;
 			}
 			case COUNT: {
-				AST tmp47_AST = null;
-				tmp47_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp47_AST);
+				AST tmp36_AST = null;
+				tmp36_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp36_AST);
 				match(COUNT);
 				match(LPAREN);
 				{
 					switch (LA(1)) {
 					case STAR: {
-						AST tmp49_AST = null;
-						tmp49_AST = astFactory.create(LT(1));
-						astFactory.addASTChild(currentAST, tmp49_AST);
+						AST tmp38_AST = null;
+						tmp38_AST = astFactory.create(LT(1));
+						astFactory.addASTChild(currentAST, tmp38_AST);
 						match(STAR);
 						break;
 					}
@@ -992,9 +924,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 					case NULL:
 					case TRUE:
 					case FALSE:
+					case IDENT:
 					case LPAREN:
 					case QUOTED_STRING:
-					case IDENT:
 					case LITERAL:
 					case NAMED_PARAM:
 					case QUESTION_MARK:
@@ -1044,14 +976,14 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			subExpression();
 			astFactory.addASTChild(currentAST, returnAST);
 			{
-				_loop66: do {
-					if ((_tokenSet_15.member(LA(1)))) {
+				_loop62: do {
+					if ((_tokenSet_14.member(LA(1)))) {
 						binaryOperator();
 						astFactory.addASTChild(currentAST, returnAST);
 						subExpression();
 						astFactory.addASTChild(currentAST, returnAST);
 					} else {
-						break _loop66;
+						break _loop62;
 					}
 
 				} while (true);
@@ -1060,7 +992,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_16);
+				recover(ex, _tokenSet_15);
 			} else {
 				throw ex;
 			}
@@ -1077,33 +1009,33 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		try { // for error handling
 			switch (LA(1)) {
 			case QUOTED_STRING: {
-				AST tmp51_AST = null;
-				tmp51_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp51_AST);
+				AST tmp40_AST = null;
+				tmp40_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp40_AST);
 				match(QUOTED_STRING);
 				constantSimple_AST = (AST) currentAST.root;
 				break;
 			}
 			case LITERAL: {
-				AST tmp52_AST = null;
-				tmp52_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp52_AST);
+				AST tmp41_AST = null;
+				tmp41_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp41_AST);
 				match(LITERAL);
 				constantSimple_AST = (AST) currentAST.root;
 				break;
 			}
 			case NAMED_PARAM: {
-				AST tmp53_AST = null;
-				tmp53_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp53_AST);
+				AST tmp42_AST = null;
+				tmp42_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp42_AST);
 				match(NAMED_PARAM);
 				constantSimple_AST = (AST) currentAST.root;
 				break;
 			}
 			case QUESTION_MARK: {
-				AST tmp54_AST = null;
-				tmp54_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp54_AST);
+				AST tmp43_AST = null;
+				tmp43_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp43_AST);
 				match(QUESTION_MARK);
 				constantSimple_AST = (AST) currentAST.root;
 				break;
@@ -1115,7 +1047,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_17);
+				recover(ex, _tokenSet_16);
 			} else {
 				throw ex;
 			}
@@ -1131,22 +1063,22 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 
 		try { // for error handling
 			{
-				if ((LA(1) == NOT) && (_tokenSet_18.member(LA(2)))) {
-					AST tmp55_AST = null;
-					tmp55_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp55_AST);
+				if ((LA(1) == NOT) && (_tokenSet_17.member(LA(2)))) {
+					AST tmp44_AST = null;
+					tmp44_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp44_AST);
 					match(NOT);
-				} else if ((_tokenSet_18.member(LA(1))) && (_tokenSet_19.member(LA(2)))) {
+				} else if ((_tokenSet_17.member(LA(1))) && (_tokenSet_18.member(LA(2)))) {
 				} else {
 					throw new NoViableAltException(LT(1), getFilename());
 				}
 
 			}
 			{
-				boolean synPredMatched49 = false;
-				if (((LA(1) == LPAREN) && (_tokenSet_18.member(LA(2))))) {
-					int _m49 = mark();
-					synPredMatched49 = true;
+				boolean synPredMatched45 = false;
+				if (((LA(1) == LPAREN) && (_tokenSet_17.member(LA(2))))) {
+					int _m45 = mark();
+					synPredMatched45 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -1155,23 +1087,23 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 							match(RPAREN);
 						}
 					} catch (RecognitionException pe) {
-						synPredMatched49 = false;
+						synPredMatched45 = false;
 					}
-					rewind(_m49);
+					rewind(_m45);
 					inputState.guessing--;
 				}
-				if (synPredMatched49) {
-					AST tmp56_AST = null;
-					tmp56_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp56_AST);
+				if (synPredMatched45) {
+					AST tmp45_AST = null;
+					tmp45_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp45_AST);
 					match(LPAREN);
 					simpleCondition();
 					astFactory.addASTChild(currentAST, returnAST);
-					AST tmp57_AST = null;
-					tmp57_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp57_AST);
+					AST tmp46_AST = null;
+					tmp46_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp46_AST);
 					match(RPAREN);
-				} else if ((_tokenSet_18.member(LA(1))) && (_tokenSet_20.member(LA(2)))) {
+				} else if ((_tokenSet_17.member(LA(1))) && (_tokenSet_19.member(LA(2)))) {
 					simplePredicate();
 					astFactory.addASTChild(currentAST, returnAST);
 				} else {
@@ -1183,7 +1115,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_14);
+				recover(ex, _tokenSet_20);
 			} else {
 				throw ex;
 			}
@@ -1199,15 +1131,160 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 
 		try { // for error handling
 			{
-				switch (LA(1)) {
-				case NOT:
-				case EXISTS: {
+				if ((_tokenSet_12.member(LA(1))) && (_tokenSet_21.member(LA(2)))) {
+					expression();
+					astFactory.addASTChild(currentAST, returnAST);
+				} else if ((_tokenSet_22.member(LA(1))) && (_tokenSet_23.member(LA(2)))) {
+					selectItem();
+					astFactory.addASTChild(currentAST, returnAST);
+					{
+						{
+							switch (LA(1)) {
+							case BETWEEN:
+							case MATCH:
+							case EQ:
+							case LT:
+							case GT:
+							case LE:
+							case GE:
+							case SQL_NE:
+							case BAND:
+							case NBAND: {
+								comparisonOperator();
+								astFactory.addASTChild(currentAST, returnAST);
+								expression();
+								astFactory.addASTChild(currentAST, returnAST);
+								break;
+							}
+							case IS: {
+								AST tmp47_AST = null;
+								tmp47_AST = astFactory.create(LT(1));
+								astFactory.addASTChild(currentAST, tmp47_AST);
+								match(IS);
+								{
+									switch (LA(1)) {
+									case NOT: {
+										AST tmp48_AST = null;
+										tmp48_AST = astFactory.create(LT(1));
+										astFactory.addASTChild(currentAST, tmp48_AST);
+										match(NOT);
+										break;
+									}
+									case NULL: {
+										break;
+									}
+									default: {
+										throw new NoViableAltException(LT(1), getFilename());
+									}
+									}
+								}
+								AST tmp49_AST = null;
+								tmp49_AST = astFactory.create(LT(1));
+								astFactory.addASTChild(currentAST, tmp49_AST);
+								match(NULL);
+								break;
+							}
+							case NOT:
+							case IN:
+							case LIKE: {
+								{
+									switch (LA(1)) {
+									case NOT: {
+										AST tmp50_AST = null;
+										tmp50_AST = astFactory.create(LT(1));
+										astFactory.addASTChild(currentAST, tmp50_AST);
+										match(NOT);
+										break;
+									}
+									case IN:
+									case LIKE: {
+										break;
+									}
+									default: {
+										throw new NoViableAltException(LT(1), getFilename());
+									}
+									}
+								}
+								{
+									switch (LA(1)) {
+									case LIKE: {
+										AST tmp51_AST = null;
+										tmp51_AST = astFactory.create(LT(1));
+										astFactory.addASTChild(currentAST, tmp51_AST);
+										match(LIKE);
+										AST tmp52_AST = null;
+										tmp52_AST = astFactory.create(LT(1));
+										astFactory.addASTChild(currentAST, tmp52_AST);
+										match(QUOTED_STRING);
+										break;
+									}
+									case IN: {
+										AST tmp53_AST = null;
+										tmp53_AST = astFactory.create(LT(1));
+										astFactory.makeASTRoot(currentAST, tmp53_AST);
+										match(IN);
+										match(LPAREN);
+										{
+											switch (LA(1)) {
+											case NULL:
+											case TRUE:
+											case FALSE:
+											case QUOTED_STRING:
+											case LITERAL:
+											case NAMED_PARAM:
+											case QUESTION_MARK: {
+												constant();
+												astFactory.addASTChild(currentAST, returnAST);
+												{
+													_loop55: do {
+														if ((LA(1) == COMMA)) {
+															AST tmp55_AST = null;
+															tmp55_AST = astFactory.create(LT(1));
+															astFactory.addASTChild(currentAST, tmp55_AST);
+															match(COMMA);
+															constant();
+															astFactory.addASTChild(currentAST, returnAST);
+														} else {
+															break _loop55;
+														}
+
+													} while (true);
+												}
+												break;
+											}
+											case SELECT: {
+												selectStatement();
+												astFactory.addASTChild(currentAST, returnAST);
+												break;
+											}
+											default: {
+												throw new NoViableAltException(LT(1), getFilename());
+											}
+											}
+										}
+										match(RPAREN);
+										break;
+									}
+									default: {
+										throw new NoViableAltException(LT(1), getFilename());
+									}
+									}
+								}
+								break;
+							}
+							default: {
+								throw new NoViableAltException(LT(1), getFilename());
+							}
+							}
+						}
+					}
+				} else if ((LA(1) == NOT || LA(1) == EXISTS)) {
 					{
 						switch (LA(1)) {
 						case NOT: {
-							AST tmp58_AST = null;
-							tmp58_AST = astFactory.create(LT(1));
-							astFactory.addASTChild(currentAST, tmp58_AST);
+							AST tmp57_AST = null;
+							tmp57_AST = astFactory.create(LT(1));
+							astFactory.addASTChild(currentAST, tmp57_AST);
 							match(NOT);
 							break;
 						}
@@ -1219,9 +1296,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 						}
 						}
 					}
-					AST tmp59_AST = null;
-					tmp59_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp59_AST);
+					AST tmp58_AST = null;
+					tmp58_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp58_AST);
 					match(EXISTS);
 					match(LPAREN);
 					{
@@ -1229,170 +1306,16 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 						astFactory.addASTChild(currentAST, returnAST);
 					}
 					match(RPAREN);
-					break;
+				} else {
+					throw new NoViableAltException(LT(1), getFilename());
 				}
-				case MATCH: {
-					matchClause();
-					astFactory.addASTChild(currentAST, returnAST);
-					break;
-				}
-				default:
-					if ((_tokenSet_12.member(LA(1))) && (_tokenSet_21.member(LA(2)))) {
-						expression();
-						astFactory.addASTChild(currentAST, returnAST);
-					} else if ((_tokenSet_22.member(LA(1))) && (_tokenSet_23.member(LA(2)))) {
-						selectItem();
-						astFactory.addASTChild(currentAST, returnAST);
-						{
-							{
-								switch (LA(1)) {
-								case BETWEEN:
-								case EQ:
-								case LT:
-								case GT:
-								case LE:
-								case GE:
-								case SQL_NE:
-								case BAND:
-								case NBAND: {
-									comparisonOperator();
-									astFactory.addASTChild(currentAST, returnAST);
-									expression();
-									astFactory.addASTChild(currentAST, returnAST);
-									break;
-								}
-								case IS: {
-									AST tmp62_AST = null;
-									tmp62_AST = astFactory.create(LT(1));
-									astFactory.addASTChild(currentAST, tmp62_AST);
-									match(IS);
-									{
-										switch (LA(1)) {
-										case NOT: {
-											AST tmp63_AST = null;
-											tmp63_AST = astFactory.create(LT(1));
-											astFactory.addASTChild(currentAST, tmp63_AST);
-											match(NOT);
-											break;
-										}
-										case NULL: {
-											break;
-										}
-										default: {
-											throw new NoViableAltException(LT(1), getFilename());
-										}
-										}
-									}
-									AST tmp64_AST = null;
-									tmp64_AST = astFactory.create(LT(1));
-									astFactory.addASTChild(currentAST, tmp64_AST);
-									match(NULL);
-									break;
-								}
-								case NOT:
-								case IN:
-								case LIKE: {
-									{
-										switch (LA(1)) {
-										case NOT: {
-											AST tmp65_AST = null;
-											tmp65_AST = astFactory.create(LT(1));
-											astFactory.addASTChild(currentAST, tmp65_AST);
-											match(NOT);
-											break;
-										}
-										case IN:
-										case LIKE: {
-											break;
-										}
-										default: {
-											throw new NoViableAltException(LT(1), getFilename());
-										}
-										}
-									}
-									{
-										switch (LA(1)) {
-										case LIKE: {
-											AST tmp66_AST = null;
-											tmp66_AST = astFactory.create(LT(1));
-											astFactory.addASTChild(currentAST, tmp66_AST);
-											match(LIKE);
-											AST tmp67_AST = null;
-											tmp67_AST = astFactory.create(LT(1));
-											astFactory.addASTChild(currentAST, tmp67_AST);
-											match(QUOTED_STRING);
-											break;
-										}
-										case IN: {
-											AST tmp68_AST = null;
-											tmp68_AST = astFactory.create(LT(1));
-											astFactory.makeASTRoot(currentAST, tmp68_AST);
-											match(IN);
-											match(LPAREN);
-											{
-												switch (LA(1)) {
-												case NULL:
-												case TRUE:
-												case FALSE:
-												case QUOTED_STRING:
-												case LITERAL:
-												case NAMED_PARAM:
-												case QUESTION_MARK: {
-													constant();
-													astFactory.addASTChild(currentAST, returnAST);
-													{
-														_loop59: do {
-															if ((LA(1) == COMMA)) {
-																AST tmp70_AST = null;
-																tmp70_AST = astFactory.create(LT(1));
-																astFactory.addASTChild(currentAST, tmp70_AST);
-																match(COMMA);
-																constant();
-																astFactory.addASTChild(currentAST, returnAST);
-															} else {
-																break _loop59;
-															}
 
-														} while (true);
-													}
-													break;
-												}
-												case SELECT: {
-													selectStatement();
-													astFactory.addASTChild(currentAST, returnAST);
-													break;
-												}
-												default: {
-													throw new NoViableAltException(LT(1), getFilename());
-												}
-												}
-											}
-											match(RPAREN);
-											break;
-										}
-										default: {
-											throw new NoViableAltException(LT(1), getFilename());
-										}
-										}
-									}
-									break;
-								}
-								default: {
-									throw new NoViableAltException(LT(1), getFilename());
-								}
-								}
-							}
-						}
-					} else {
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-				}
 			}
 			simplePredicate_AST = (AST) currentAST.root;
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_14);
+				recover(ex, _tokenSet_20);
 			} else {
 				throw ex;
 			}
@@ -1409,74 +1332,82 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		try { // for error handling
 			switch (LA(1)) {
 			case EQ: {
-				AST tmp72_AST = null;
-				tmp72_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp72_AST);
+				AST tmp61_AST = null;
+				tmp61_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp61_AST);
 				match(EQ);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case LT: {
-				AST tmp73_AST = null;
-				tmp73_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp73_AST);
+				AST tmp62_AST = null;
+				tmp62_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp62_AST);
 				match(LT);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case GT: {
-				AST tmp74_AST = null;
-				tmp74_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp74_AST);
+				AST tmp63_AST = null;
+				tmp63_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp63_AST);
 				match(GT);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case LE: {
-				AST tmp75_AST = null;
-				tmp75_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp75_AST);
+				AST tmp64_AST = null;
+				tmp64_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp64_AST);
 				match(LE);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case GE: {
-				AST tmp76_AST = null;
-				tmp76_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp76_AST);
+				AST tmp65_AST = null;
+				tmp65_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp65_AST);
 				match(GE);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case SQL_NE: {
-				AST tmp77_AST = null;
-				tmp77_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp77_AST);
+				AST tmp66_AST = null;
+				tmp66_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp66_AST);
 				match(SQL_NE);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case BETWEEN: {
-				AST tmp78_AST = null;
-				tmp78_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp78_AST);
+				AST tmp67_AST = null;
+				tmp67_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp67_AST);
 				match(BETWEEN);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case BAND: {
-				AST tmp79_AST = null;
-				tmp79_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp79_AST);
+				AST tmp68_AST = null;
+				tmp68_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp68_AST);
 				match(BAND);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case NBAND: {
-				AST tmp80_AST = null;
-				tmp80_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp80_AST);
+				AST tmp69_AST = null;
+				tmp69_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp69_AST);
 				match(NBAND);
+				comparisonOperator_AST = (AST) currentAST.root;
+				break;
+			}
+			case MATCH: {
+				AST tmp70_AST = null;
+				tmp70_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp70_AST);
+				match(MATCH);
 				comparisonOperator_AST = (AST) currentAST.root;
 				break;
 			}
@@ -1513,25 +1444,25 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				break;
 			}
 			case TRUE: {
-				AST tmp81_AST = null;
-				tmp81_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp81_AST);
+				AST tmp71_AST = null;
+				tmp71_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp71_AST);
 				match(TRUE);
 				constant_AST = (AST) currentAST.root;
 				break;
 			}
 			case FALSE: {
-				AST tmp82_AST = null;
-				tmp82_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp82_AST);
+				AST tmp72_AST = null;
+				tmp72_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp72_AST);
 				match(FALSE);
 				constant_AST = (AST) currentAST.root;
 				break;
 			}
 			case NULL: {
-				AST tmp83_AST = null;
-				tmp83_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp83_AST);
+				AST tmp73_AST = null;
+				tmp73_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp73_AST);
 				match(NULL);
 				constant_AST = (AST) currentAST.root;
 				break;
@@ -1543,7 +1474,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_17);
+				recover(ex, _tokenSet_16);
 			} else {
 				throw ex;
 			}
@@ -1569,9 +1500,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 				case NULL:
 				case TRUE:
 				case FALSE:
+				case IDENT:
 				case LPAREN:
 				case QUOTED_STRING:
-				case IDENT:
 				case LITERAL:
 				case NAMED_PARAM:
 				case QUESTION_MARK: {
@@ -1590,9 +1521,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 					break;
 				}
 				case LPAREN: {
-					AST tmp84_AST = null;
-					tmp84_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp84_AST);
+					AST tmp74_AST = null;
+					tmp74_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp74_AST);
 					match(LPAREN);
 					{
 						switch (LA(1)) {
@@ -1604,9 +1535,9 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 						case NULL:
 						case TRUE:
 						case FALSE:
+						case IDENT:
 						case LPAREN:
 						case QUOTED_STRING:
-						case IDENT:
 						case LITERAL:
 						case NAMED_PARAM:
 						case QUESTION_MARK:
@@ -1621,22 +1552,22 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 						}
 						}
 					}
-					AST tmp85_AST = null;
-					tmp85_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp85_AST);
+					AST tmp75_AST = null;
+					tmp75_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp75_AST);
 					match(RPAREN);
 					break;
 				}
 				default:
-					if ((_tokenSet_24.member(LA(1))) && (_tokenSet_17.member(LA(2)))) {
+					if ((_tokenSet_24.member(LA(1))) && (_tokenSet_16.member(LA(2)))) {
 						constant();
 						astFactory.addASTChild(currentAST, returnAST);
-					} else if ((_tokenSet_25.member(LA(1))) && (LA(2) == AND)) {
+					} else if (((LA(1) >= QUOTED_STRING && LA(1) <= QUESTION_MARK)) && (LA(2) == AND)) {
 						constantSimple();
 						astFactory.addASTChild(currentAST, returnAST);
-						AST tmp86_AST = null;
-						tmp86_AST = astFactory.create(LT(1));
-						astFactory.addASTChild(currentAST, tmp86_AST);
+						AST tmp76_AST = null;
+						tmp76_AST = astFactory.create(LT(1));
+						astFactory.addASTChild(currentAST, tmp76_AST);
 						match(AND);
 						constantSimple();
 						astFactory.addASTChild(currentAST, returnAST);
@@ -1649,7 +1580,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_17);
+				recover(ex, _tokenSet_16);
 			} else {
 				throw ex;
 			}
@@ -1666,41 +1597,41 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		try { // for error handling
 			switch (LA(1)) {
 			case PLUS: {
-				AST tmp87_AST = null;
-				tmp87_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp87_AST);
+				AST tmp77_AST = null;
+				tmp77_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp77_AST);
 				match(PLUS);
 				binaryOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case MINUS: {
-				AST tmp88_AST = null;
-				tmp88_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp88_AST);
+				AST tmp78_AST = null;
+				tmp78_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp78_AST);
 				match(MINUS);
 				binaryOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case STAR: {
-				AST tmp89_AST = null;
-				tmp89_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp89_AST);
+				AST tmp79_AST = null;
+				tmp79_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp79_AST);
 				match(STAR);
 				binaryOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case DIVIDE: {
-				AST tmp90_AST = null;
-				tmp90_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp90_AST);
+				AST tmp80_AST = null;
+				tmp80_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp80_AST);
 				match(DIVIDE);
 				binaryOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case MOD: {
-				AST tmp91_AST = null;
-				tmp91_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp91_AST);
+				AST tmp81_AST = null;
+				tmp81_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp81_AST);
 				match(MOD);
 				binaryOperator_AST = (AST) currentAST.root;
 				break;
@@ -1729,17 +1660,17 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		try { // for error handling
 			switch (LA(1)) {
 			case PLUS: {
-				AST tmp92_AST = null;
-				tmp92_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp92_AST);
+				AST tmp82_AST = null;
+				tmp82_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp82_AST);
 				match(PLUS);
 				unaryOperator_AST = (AST) currentAST.root;
 				break;
 			}
 			case MINUS: {
-				AST tmp93_AST = null;
-				tmp93_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp93_AST);
+				AST tmp83_AST = null;
+				tmp83_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp83_AST);
 				match(MINUS);
 				unaryOperator_AST = (AST) currentAST.root;
 				break;
@@ -1751,7 +1682,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 		} catch (RecognitionException ex) {
 			if (inputState.guessing == 0) {
 				reportError(ex);
-				recover(ex, _tokenSet_26);
+				recover(ex, _tokenSet_25);
 			} else {
 				throw ex;
 			}
@@ -1763,10 +1694,10 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			"\"distinct\"", "\"from\"", "\"where\"", "\"and\"", "\"or\"", "\"order\"", "\"asc\"", "\"desc\"",
 			"\"group\"", "\"by\"", "\"having\"", "\"with\"", "\"rollup\"", "\"max\"", "\"min\"", "\"avg\"", "\"sum\"",
 			"\"count\"", "\"date_format\"", "\"is\"", "\"not\"", "\"null\"", "\"in\"", "\"like\"", "\"exists\"",
-			"\"between\"", "\"true\"", "\"false\"", "\"match\"", "\"against\"", "\"boolean\"", "\"mode\"", "COMMA",
-			"LPAREN", "RPAREN", "QUOTED_STRING", "IDENT", "STAR", "LITERAL", "NAMED_PARAM", "QUESTION_MARK", "PLUS",
-			"MINUS", "DIVIDE", "MOD", "EQ", "LT", "GT", "LE", "GE", "SQL_NE", "BAND", "NBAND", "DOT", "COLON",
-			"IDENT_START", "IDENT_LETTER", "DIGIT", "INT", "NUM", "ESCqs", "WS" };
+			"\"between\"", "\"true\"", "\"false\"", "\"match\"", "COMMA", "IDENT", "LPAREN", "RPAREN", "STAR",
+			"QUOTED_STRING", "LITERAL", "NAMED_PARAM", "QUESTION_MARK", "PLUS", "MINUS", "DIVIDE", "MOD", "EQ", "LT",
+			"GT", "LE", "GE", "SQL_NE", "BAND", "NBAND", "DOT", "COLON", "IDENT_START", "IDENT_LETTER", "DIGIT", "INT",
+			"NUM", "ESCqs", "WS" };
 
 	protected void buildTokenTypeASTClassMap() {
 		tokenTypeToASTClassMap = null;
@@ -1780,14 +1711,14 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 
 	private static final long[] mk_tokenSet_1() {
-		long[] data = { 549755813890L, 0L };
+		long[] data = { 137438953474L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 
 	private static final long[] mk_tokenSet_2() {
-		long[] data = { 549755814914L, 0L };
+		long[] data = { 137438954498L, 0L };
 		return data;
 	}
 
@@ -1801,164 +1732,157 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 
 	private static final long[] mk_tokenSet_4() {
-		long[] data = { 549755823234L, 0L };
+		long[] data = { 137438962818L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
 
 	private static final long[] mk_tokenSet_5() {
-		long[] data = { 549755823106L, 0L };
+		long[] data = { 137438962690L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
 
 	private static final long[] mk_tokenSet_6() {
-		long[] data = { 549755913218L, 0L };
+		long[] data = { 137439052802L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
 
 	private static final long[] mk_tokenSet_7() {
-		long[] data = { 549755880450L, 0L };
+		long[] data = { 137439020034L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_7 = new BitSet(mk_tokenSet_7());
 
 	private static final long[] mk_tokenSet_8() {
-		long[] data = { 288165094175653826L, 0L };
+		long[] data = { 36020440539447234L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_8 = new BitSet(mk_tokenSet_8());
 
 	private static final long[] mk_tokenSet_9() {
-		long[] data = { 549755888642L, 0L };
+		long[] data = { 137439028226L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_9 = new BitSet(mk_tokenSet_9());
 
 	private static final long[] mk_tokenSet_10() {
-		long[] data = { 287105164966369346L, 0L };
+		long[] data = { 35888224266098754L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_10 = new BitSet(mk_tokenSet_10());
 
 	private static final long[] mk_tokenSet_11() {
-		long[] data = { 287105164966468674L, 0L };
+		long[] data = { 35888224266198082L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_11 = new BitSet(mk_tokenSet_11());
 
 	private static final long[] mk_tokenSet_12() {
-		long[] data = { 276258806038528L, 0L };
+		long[] data = { 34744205049856L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_12 = new BitSet(mk_tokenSet_12());
 
 	private static final long[] mk_tokenSet_13() {
-		long[] data = { 288230246749150546L, 0L };
+		long[] data = { 36028796465421650L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_13 = new BitSet(mk_tokenSet_13());
 
 	private static final long[] mk_tokenSet_14() {
-		long[] data = { 549755889410L, 0L };
+		long[] data = { 132216273240064L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_14 = new BitSet(mk_tokenSet_14());
 
 	private static final long[] mk_tokenSet_15() {
-		long[] data = { 1059929209176064L, 0L };
+		long[] data = { 35888224266207042L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_15 = new BitSet(mk_tokenSet_15());
 
 	private static final long[] mk_tokenSet_16() {
-		long[] data = { 287105164966477634L, 0L };
+		long[] data = { 36020440539447106L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_16 = new BitSet(mk_tokenSet_16());
 
 	private static final long[] mk_tokenSet_17() {
-		long[] data = { 288165094175653698L, 0L };
+		long[] data = { 34744792015872L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_17 = new BitSet(mk_tokenSet_17());
 
 	private static final long[] mk_tokenSet_18() {
-		long[] data = { 276267982939136L, 0L };
+		long[] data = { 36028779838924562L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_18 = new BitSet(mk_tokenSet_18());
 
 	private static final long[] mk_tokenSet_19() {
-		long[] data = { 288230118453503762L, 0L };
+		long[] data = { 36028779822393106L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_19 = new BitSet(mk_tokenSet_19());
 
 	private static final long[] mk_tokenSet_20() {
-		long[] data = { 288230109847037714L, 0L };
+		long[] data = { 137439028994L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_20 = new BitSet(mk_tokenSet_20());
 
 	private static final long[] mk_tokenSet_21() {
-		long[] data = { 1125631538571026L, 0L };
+		long[] data = { 140709638252306L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_21 = new BitSet(mk_tokenSet_21());
 
 	private static final long[] mk_tokenSet_22() {
-		long[] data = { 276258822579200L, 0L };
+		long[] data = { 34744221590528L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_22 = new BitSet(mk_tokenSet_22());
 
 	private static final long[] mk_tokenSet_23() {
-		long[] data = { 288229559554277648L, 0L };
+		long[] data = { 36028641846493456L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_23 = new BitSet(mk_tokenSet_23());
 
 	private static final long[] mk_tokenSet_24() {
-		long[] data = { 62678672343040L, 0L };
+		long[] data = { 8252846768128L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_24 = new BitSet(mk_tokenSet_24());
 
 	private static final long[] mk_tokenSet_25() {
-		long[] data = { 62672162783232L, 0L };
+		long[] data = { 8355925983232L, 0L };
 		return data;
 	}
 
 	public static final BitSet _tokenSet_25 = new BitSet(mk_tokenSet_25());
-
-	private static final long[] mk_tokenSet_26() {
-		long[] data = { 65152573505536L, 0L };
-		return data;
-	}
-
-	public static final BitSet _tokenSet_26 = new BitSet(mk_tokenSet_26());
 
 }

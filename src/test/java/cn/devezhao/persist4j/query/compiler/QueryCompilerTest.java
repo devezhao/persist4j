@@ -135,7 +135,7 @@ public class QueryCompilerTest extends Compiler {
 //		QueryCompiler compiler = createCompiler(ajql);
 //		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
 		
-		String ajql2 = "select tPrimary from TestAllType where tLong > 100 and match(tText) against ('123 abc NB') and tInt > 100";
+		String ajql2 = "select tPrimary from TestAllType where (tInt > 100 and tText match '123 abc NB')";
 		QueryCompiler compiler2 = createCompiler(ajql2);
 		System.out.println(ajql2 + "\n>> FULLTEXT MATCH\n" + compiler2.getCompiledSql());
 	}

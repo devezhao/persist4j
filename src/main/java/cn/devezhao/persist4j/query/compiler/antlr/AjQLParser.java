@@ -878,7 +878,7 @@ public class AjQLParser extends antlr.LLkParser implements AjQLParserTokenTypes 
 			match(RPAREN);
 			AST tmp34_AST = null;
 			tmp34_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp34_AST);
+			astFactory.makeASTRoot(currentAST, tmp34_AST);
 			match(AGAINST);
 			match(LPAREN);
 			AST tmp36_AST = null;

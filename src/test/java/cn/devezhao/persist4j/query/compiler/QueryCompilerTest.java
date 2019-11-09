@@ -59,10 +59,10 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testExists() {
-		String ajql = "select tPrimary from TestAllType where exists (select t2Primary from Test2 where ^tReference = t2Reference and t2Int = 999)";
+		String ajql = "select tPrimary from TestAllType where exists (select t2Primary from Test2 where ^tReference = t2Reference and t2Int = 999) and tInt = 100";
 		String sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
-		assertEquals(sql, "select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where exists ( select _t1.`T2_PRIMARY` as _c0 from `test2` as _t1 where _t0.`T_REFERENCE` = _t1.`T2_REFERENCE` and _t1.`T2_INT` = 999 )");
+		assertEquals(sql, "select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where exists ( select _t1.`T2_PRIMARY` as _c0 from `test2` as _t1 where _t0.`T_REFERENCE` = _t1.`T2_REFERENCE` and _t1.`T2_INT` = 999 ) and _t0.`T_INT` = 100");
 		
 		ajql = "select tPrimary from TestAllType where exists (select t2Primary from Test2 where t2Reference = ^tReference and t2Int = 999)";
 		sql = compile(ajql);
@@ -131,13 +131,13 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testFulltextMatch() {
-		String ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tText) against ('123 abc NB')";
-		QueryCompiler compiler = createCompiler(ajql);
-		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
+//		String ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tText) against ('123 abc NB' in boolean mode)";
+//		QueryCompiler compiler = createCompiler(ajql);
+//		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
 		
-		ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tText) against ('123 abc NB' in boolean mode)";
-		compiler = createCompiler(ajql);
-		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
+		String ajql2 = "select tPrimary from TestAllType where tLong > 100 and match(tText) against ('123 abc NB') and tInt > 100";
+		QueryCompiler compiler2 = createCompiler(ajql2);
+		System.out.println(ajql2 + "\n>> FULLTEXT MATCH\n" + compiler2.getCompiledSql());
 	}
 	
 	@Test

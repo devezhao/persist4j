@@ -106,7 +106,7 @@ rollupClause
 	;
 	
 matchClause
-	: MATCH^ LPAREN! column (COMMA! column)* RPAREN! AGAINST LPAREN! QUOTED_STRING (IN! BOOLEAN MODE!)? RPAREN!
+	: MATCH^ LPAREN! column (COMMA! column)* RPAREN! AGAINST^ LPAREN! QUOTED_STRING (IN! BOOLEAN MODE!)? RPAREN!
 	;
 
 selectList

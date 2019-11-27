@@ -113,12 +113,9 @@ public class Table {
 			}
 		}
 		
-		// 唯一索引
-		String[] uix = genIndexDDL(true);
-		if (uix.length > 0) {
-			for (String u : uix) {
-				sql.append(",\n  ").append(u);
-			}
+		// 索引
+		for (String ix : generateIndexDDL()) {
+			sql.append(",\n  ").append(ix);
 		}
 		
 		sql.append("\n)");
@@ -127,16 +124,7 @@ public class Table {
 		}
 		sqls.add(sql.toString());
 		
-		// 索引
-		String ux[] = genIndexDDL(false);
-		if (ux.length > 0) {
-			sql = new StringBuilder("alter table ").append(dialect.quote(entity.getPhysicalName()));
-			for (String u : ux) {
-				sql.append("\n  add ").append(u).append(",");
-			}
-			sql.deleteCharAt(sql.length() - 1).append(";");
-			sqls.add(sql.toString());
-		}
+		
 		
 		return sqls.toArray(new String[0]);
 	}
@@ -213,7 +201,7 @@ public class Table {
 	 * @param isUIX
 	 * @return
 	 */
-	protected String[] genIndexDDL(boolean isUIX) {
+	protected String[] generateIndexDDL() {
 		if (indexList == null || indexList.isEmpty()) {
 			return new String[0];
 		}
@@ -223,12 +211,6 @@ public class Table {
 		for (Object o : indexList) {
 			Element el = (Element) o;
 			String type = el.attributeValue("type");
-			if (isUIX && !"unique".equals(type)) {
-				continue;
-			} else if (!isUIX && "unique".equals(type)) {
-				continue;
-			}
-			
 			String fieldList = el.attributeValue("field-list");
 			String indexName = ("unique".equals(type) ? "UIX" : ("fulltext".equals(type) ? "FIX" : "IX"))
 					+ (++idxIndex) + '_' + entity.getPhysicalName();

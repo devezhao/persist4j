@@ -20,6 +20,7 @@
 		<field name="tAnyReference" type="any-reference" ref-entity="*" description="任意引用"/>
 		<field name="tAnyReference2" type="any-reference" ref-entity="Test2,Test3" description="任意引用"/>
 		<index type="fulltext" field-list="tText,tNtext" />
+		<index field-list="tReference" />
 	</entity>
 	
 	<entity name="Test2" type-code="102">

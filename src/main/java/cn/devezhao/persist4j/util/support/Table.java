@@ -27,7 +27,10 @@ public class Table {
 
 	private Entity entity;
 	private Dialect dialect;
+	
 	private List<?> indexList;
+	private List<String> autoValueIndex = new ArrayList<String>();
+	private int indexNo = 0;
 	
 	/**
 	 * @param entity
@@ -113,6 +116,9 @@ public class Table {
 			}
 		}
 		
+		for (String aix : autoValueIndex) {
+			sql.append(",\n  ").append(aix);
+		}
 		// 索引
 		for (String ix : generateIndexDDL()) {
 			sql.append(",\n  ").append(ix);
@@ -190,10 +196,10 @@ public class Table {
 		}
 		sql.append(ddl);
 		
+		// 为自增列加唯一索引
 		if (field.isAutoValue()) {
-			sql.append(',');
-			String aix = String.format("unique index `AIX0_%s` (`%s`)", entity.getPhysicalName(), column);
-			sql.append("\n  " + aix);
+			String aix = String.format("unique index `AIX%d_%s` (`%s`)", this.indexNo++, entity.getPhysicalName(), column);
+			autoValueIndex.add(aix);
 		}
 	}
 	
@@ -207,13 +213,12 @@ public class Table {
 		}
 		
 		List<String> uix = new ArrayList<String>();
-		int idxIndex = 0;
 		for (Object o : indexList) {
 			Element el = (Element) o;
 			String type = el.attributeValue("type");
 			String fieldList = el.attributeValue("field-list");
 			String indexName = ("unique".equals(type) ? "UIX" : ("fulltext".equals(type) ? "FIX" : "IX"))
-					+ (++idxIndex) + '_' + entity.getPhysicalName();
+					+ (this.indexNo++) + '_' + entity.getPhysicalName();
 			
 			List<String> fpNames = new LinkedList<String>();
 			for (String f : fieldList.split("\\,")) {

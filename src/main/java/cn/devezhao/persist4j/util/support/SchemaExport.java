@@ -1,13 +1,14 @@
 package cn.devezhao.persist4j.util.support;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.dom4j.Element;
 
 import cn.devezhao.persist4j.Entity;
+import cn.devezhao.persist4j.PersistException;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
@@ -24,37 +25,34 @@ public class SchemaExport {
 
 	final private MetadataFactory metadataFactory;
 	final private Dialect dialect;
-	final private Connection connect;
+	final private Connection connection;
 	
 	public SchemaExport(MetadataFactory metadataFactory, Dialect dialect, Connection connect) {
 		this.metadataFactory = metadataFactory;
 		this.dialect = dialect;
-		this.connect = connect;
+		this.connection = connect;
 	}
 
 	public void export(boolean dropExists, boolean createFK) {
 		Entity[] entities = metadataFactory.getEntities();
 		Element cfgRoot = ((ConfigurationMetadataFactory) metadataFactory).getConfigDocument().getRootElement();
 
-		PreparedStatement pstmt = null;
 		try {
 			for (Entity entity : entities) {
 				Element entityElement = (Element) cfgRoot.selectSingleNode("//entity[@name='" + entity.getName() + "']");
 				List<?> ix = entityElement.selectNodes("index");
 				String[] sqls = new Table(entity, dialect, ix).generateDDL(dropExists, createFK);
 				
-				pstmt = connect.prepareStatement("/* !NULL */");
 				for (String sql : sqls) {
-					pstmt.addBatch(sql);
-					System.out.println(sql + "\n");
+					try (Statement stmt = connection.createStatement()) {
+						stmt.execute(sql);
+					}
 				}
-				pstmt.executeBatch();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new PersistException(null, e);
 		} finally {
-			SqlHelper.close(pstmt);
-			SqlHelper.close(connect);
+			SqlHelper.close(connection);
 		}
 	}
 }

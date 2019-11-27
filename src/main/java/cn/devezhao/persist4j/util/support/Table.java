@@ -130,8 +130,6 @@ public class Table {
 		}
 		sqls.add(sql.toString());
 		
-		
-		
 		return sqls.toArray(new String[0]);
 	}
 	
@@ -198,7 +196,7 @@ public class Table {
 		
 		// 为自增列加唯一索引
 		if (field.isAutoValue()) {
-			String aix = String.format("unique key `AIX%d_%s` (`%s`)", this.indexNo++, entity.getPhysicalName(), column);
+			String aix = String.format("unique index AIX%d_%s (`%s`)", this.indexNo++, entity.getPhysicalName(), column);
 			autoValueIndex.add(aix);
 		}
 	}
@@ -227,12 +225,12 @@ public class Table {
 			String colNames = StringUtils.join(fpNames.iterator(), ", ");
 			
 			uix.add(("unique".equals(type) ? "unique " : ("fulltext".equals(type) ? "fulltext " : ""))
-					+ "key " + dialect.quote(indexName) + " (" + colNames + ")");
+					+ "index " + indexName + " (" + colNames + ")");
 		}
 		return uix.toArray(new String[0]);
 	}
 	
 	static final String COLUMN_ 	= "%s %s";
 	static final String PK_			= "primary key  ({0})";
-	static final String FK_ 		= "key        ({0}),\n  foreign key  ({0})  references {1}({2})";
+	static final String FK_ 		= "index        ({0}),\n  foreign key  ({0})  references {1}({2})";
 }

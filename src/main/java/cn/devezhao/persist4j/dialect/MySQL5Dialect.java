@@ -5,7 +5,7 @@ import java.sql.Types;
 import cn.devezhao.persist4j.engine.ID;
 
 /**
- * MySql方言
+ * MySQL 方言
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 5, 2009
@@ -62,6 +62,11 @@ public class MySQL5Dialect extends Dialect {
 
 	@Override
 	public boolean supportsLimitOffset() {
-		return true;
+		return Boolean.TRUE;
+	}
+	
+	@Override
+	public boolean supportsFullText() {
+		return Boolean.TRUE;
 	}
 }

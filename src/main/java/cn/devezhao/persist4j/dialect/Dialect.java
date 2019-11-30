@@ -150,6 +150,10 @@ public abstract class Dialect implements Serializable {
 		return false;
 	}
 	
+	public boolean supportsFullText() {
+		return false;
+	}
+	
 	// ------------------------------------------------------------------------ Abstract Methods
 
 	abstract public String getDialectName();

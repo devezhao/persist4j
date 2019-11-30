@@ -214,6 +214,10 @@ public class Table {
 		for (Object o : indexList) {
 			Element el = (Element) o;
 			String type = el.attributeValue("type");
+			if ("fulltext".equals(type) && !dialect.supportsFullText()) {
+				continue;
+			}
+			
 			String fieldList = el.attributeValue("field-list");
 			String indexName = ("unique".equals(type) ? "UIX" : ("fulltext".equals(type) ? "FIX" : "IX"))
 					+ (this.indexNo++) + '_' + entity.getPhysicalName();

@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -290,6 +292,11 @@ public class StandardRecord implements Record {
 	@Override
 	public Iterator<String> getAvailableFieldIterator() {
 		return recordMap.keySet().iterator();
+	}
+	
+	@Override
+	public Set<String> getAvailableFields() {
+		return Collections.unmodifiableSet(recordMap.keySet());
 	}
 
 	@Override

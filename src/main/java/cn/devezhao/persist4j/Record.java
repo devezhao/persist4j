@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.alibaba.fastjson.JSON;
 
@@ -246,8 +247,14 @@ public interface Record extends Cloneable, Serializable {
 
 	/**
 	 * @return
+	 * @see #getAvailableFields()
 	 */
 	Iterator<String> getAvailableFieldIterator();
+	
+	/**
+	 * @return
+	 */
+	Set<String> getAvailableFields();
 
 	/**
 	 * @return Anothers Record

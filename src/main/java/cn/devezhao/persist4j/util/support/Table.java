@@ -50,13 +50,23 @@ public class Table {
 		this.dialect = dialect;
 		this.indexList = indexList;
 	}
-
+	
 	/**
 	 * @param dropExists
 	 * @param createFk
 	 * @return
 	 */
 	public String[] generateDDL(boolean dropExists, boolean createFk) {
+		return generateDDL(dropExists, createFk, true);
+	}
+
+	/**
+	 * @param dropExists
+	 * @param createFk
+	 * @param allowZeroDate
+	 * @return
+	 */
+	public String[] generateDDL(boolean dropExists, boolean createFk, boolean allowZeroDate) {
 		List<String> sqls = new ArrayList<String>();
 		
 		StringBuilder sql = new StringBuilder();
@@ -88,7 +98,7 @@ public class Table {
 			}
 			
 			sql.append("\n  ");
-			generateFieldDDL(field, sql);
+			generateFieldDDL(field, sql, allowZeroDate);
 			sql.append(",");
 		}
 		
@@ -135,10 +145,18 @@ public class Table {
 	
 	/**
 	 * @param field
-	 * @param sql
-	 * @param belong
+	 * @param into
 	 */
-	public void generateFieldDDL(Field field, StringBuilder sql) {
+	public void generateFieldDDL(Field field, StringBuilder into) {
+		generateFieldDDL(field, into, true);
+	}
+	
+	/**
+	 * @param field
+	 * @param into
+	 * @param allowZeroDate
+	 */
+	public void generateFieldDDL(Field field, StringBuilder into, boolean allowZeroDate) {
 		String column = field.getPhysicalName();
 		String type = dialect.getColumnType(field.getType().getMask());
 		if (field.getType() == FieldType.DOUBLE
@@ -159,9 +177,9 @@ public class Table {
 		if (!field.isNullable()) {
 			canNull = " not null";
 			if (field.getType() == FieldType.TIMESTAMP) {
-				canNull += " default '0000-00-00 00:00:00'";
+				canNull += " default " + (allowZeroDate ? "'0000-00-00 00:00:00'" : "current_timestamp");
 			} else if (field.getType() == FieldType.DATE) {
-				canNull += " default '0000-00-00'";
+				canNull += " default " + (allowZeroDate ? "'0000-00-00'" : "current_date");
 			}
 		} else if (field.getType() == FieldType.TIMESTAMP || field.getType() == FieldType.DATE) {
 			canNull += " null default null";
@@ -192,7 +210,7 @@ public class Table {
 				ddl += " /* " + field.getDescription() + " */";
 			}
 		}
-		sql.append(ddl);
+		into.append(ddl);
 		
 		// 为自增列加唯一索引
 		if (field.isAutoValue()) {
@@ -202,7 +220,6 @@ public class Table {
 	}
 	
 	/**
-	 * @param isUIX
 	 * @return
 	 */
 	protected String[] generateIndexDDL() {

@@ -10,7 +10,7 @@
 		<field name="tDecimal" type="decimal" decimal-scale="7" />
 		<field name="tLong" type="long" auto-value="true"/>
 		<field name="tDate" type="date" description="日期"/>
-		<field name="tTimestamp" type="timestamp" description="日期时间"/>
+		<field name="tTimestamp" type="timestamp" description="日期时间" nullable="false" />
 		<field name="tChar" type="char" description="字符"/>
 		<field name="tString" type="string" description="文版"/>
 		<field name="tText" type="text" description="长文本"/>

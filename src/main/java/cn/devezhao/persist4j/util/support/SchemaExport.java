@@ -27,12 +27,21 @@ public class SchemaExport {
 	final private Dialect dialect;
 	final private Connection connection;
 	
+	/**
+	 * @param metadataFactory
+	 * @param dialect
+	 * @param connect
+	 */
 	public SchemaExport(MetadataFactory metadataFactory, Dialect dialect, Connection connect) {
 		this.metadataFactory = metadataFactory;
 		this.dialect = dialect;
 		this.connection = connect;
 	}
 
+	/**
+	 * @param dropExists
+	 * @param createFK
+	 */
 	public void export(boolean dropExists, boolean createFK) {
 		Entity[] entities = metadataFactory.getEntities();
 		Element cfgRoot = ((ConfigurationMetadataFactory) metadataFactory).getConfigDocument().getRootElement();

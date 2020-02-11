@@ -96,7 +96,7 @@ public class ID implements Serializable {
 	final private int entityCode;
 	final private String id;
 	
-	private String label;
+	private Object label;
 
 	/**
 	 * Create a new ID
@@ -125,7 +125,7 @@ public class ID implements Serializable {
 	/**
 	 * @param label
 	 */
-	public void setLabel(String label) {
+	public void setLabel(Object label) {
 		this.label = label;
 	}
 	
@@ -133,6 +133,13 @@ public class ID implements Serializable {
 	 * @return
 	 */
 	public String getLabel() {
+		return label == null ? null : label.toString();
+	}
+	
+	/**
+	 * @return
+	 */
+	public Object getLabelRaw() {
 		return label;
 	}
 

@@ -56,7 +56,7 @@ public class QueryedRecord extends StandardRecord {
 			key = key.substring(1);
 			ID id = getID(key);
 			if (id != null) {
-				id.setLabel(value.toString());
+				id.setLabel(value);
 			} else {
 				idLabel.put(key, value);
 			}
@@ -85,7 +85,7 @@ public class QueryedRecord extends StandardRecord {
 			Map.Entry<String, Object> e = iter.next();
 			ID id = getID(e.getKey());
 			if (id != null) {
-				id.setLabel(e.getValue().toString());
+				id.setLabel(e.getValue());
 			}
 		}
 	}

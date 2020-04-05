@@ -2,6 +2,8 @@ package cn.devezhao.persist4j.metadata;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * Base meta object
  * 
@@ -37,5 +39,5 @@ public interface BaseMeta extends Serializable {
 	 * 
 	 * @return
 	 */
-	String getExtraAttrs();
+	JSONObject getExtraAttrs();
 }

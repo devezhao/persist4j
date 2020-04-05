@@ -1,5 +1,10 @@
 package cn.devezhao.persist4j.metadata;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * 元数据基础
  * 
@@ -13,7 +18,7 @@ public abstract class BaseMetaObject implements BaseMeta {
 	final private String name;
 	final private String physicalName;
 	private String description;
-	private String extraAttrs;
+	private JSONObject extraAttrs;
 
 	/**
 	 * @param name
@@ -24,7 +29,7 @@ public abstract class BaseMetaObject implements BaseMeta {
 		this.name = name;
 		this.physicalName = physicalName;
 		this.description = description;
-		this.extraAttrs = extraAttrs;
+		this.extraAttrs = JSON.parseObject(StringUtils.defaultIfBlank(extraAttrs, "{}"));
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public abstract class BaseMetaObject implements BaseMeta {
 	}
 	
 	@Override
-	public String getExtraAttrs() {
+	public JSONObject getExtraAttrs() {
 		return extraAttrs;
 	}
 

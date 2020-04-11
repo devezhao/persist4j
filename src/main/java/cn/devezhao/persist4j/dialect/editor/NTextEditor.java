@@ -1,6 +1,10 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import java.io.BufferedReader;
+import java.io.Reader;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import cn.devezhao.persist4j.dialect.FieldType;
@@ -18,6 +22,29 @@ public class NTextEditor extends AbstractFieldEditor {
 
 	public int getType() {
 		return FieldType.NTEXT.getMask();
+	}
+	
+	@Override
+	public Object get(ResultSet rs, int index) throws SQLException {
+		Object val = super.get(rs, index);
+		
+		if (val != null && val instanceof Clob) {
+			try (Reader reader = ((Clob) val).getCharacterStream()) {
+				try (BufferedReader br = new BufferedReader(reader)) {
+					StringBuffer sb = new StringBuffer();
+					String line = br.readLine();
+					while (line != null) {
+						sb.append(line);
+						line = br.readLine();
+					}
+					val = sb.toString();
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return val;
 	}
 	
 	@Override

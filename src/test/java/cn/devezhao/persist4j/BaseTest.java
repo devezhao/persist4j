@@ -27,9 +27,8 @@ public class BaseTest {
 	 * 获取持久化工厂
 	 * 
 	 * @return
-	 * @throws Exception 
 	 */
-	protected PersistManagerFactory getPersistManagerFactory() throws Exception {
+	protected PersistManagerFactory getPersistManagerFactory() {
 		if (persistManagerFactory == null) {
 			Dialect dialect = new H2Dialect();
 			MetadataFactory metadata = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
@@ -39,19 +38,22 @@ public class BaseTest {
 	}
 	
 	/**
-	 * 获取 H2 数据源。已知于 MySQL 兼容问题：
+	 * 获取 H2 数据源（内存表）。已知于 MySQL 兼容问题：
 	 * 1. 不支持 double（不支持指定小数位）
 	 * 2. 不支付全文索引，及对 CLOB/TEXT 字段建立索引
 	 * 
 	 * @return
-	 * @throws Exception 
 	 */
-	protected DataSource getDataSource() throws Exception {
+	protected DataSource getDataSource() {
 		if (ds == null) {
 			Map<String, String> dbProps = new HashMap<>();
 			dbProps.put("url", "jdbc:h2:mem:test;MODE=MYSQL;DATABASE_TO_LOWER=TRUE;IGNORECASE=TRUE");
 			dbProps.put("testWhileIdle", "false");
-			this.ds = DruidDataSourceFactory.createDataSource(dbProps);
+			try {
+				this.ds = DruidDataSourceFactory.createDataSource(dbProps);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 		return ds;
 	}

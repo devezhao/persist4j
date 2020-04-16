@@ -117,21 +117,25 @@ public class AjqlResultImpl implements Result {
 		
 		SelectItem[] selectItems = query.getSelectItems();
 		
-		Map<String, ParameterItem> paramaters = query.getQueryCompiler().getParameters();
+		Map<String, ParameterItem> inParamaters = query.getQueryCompiler().getInParameters();
 		Map<ParameterItem, Object> paramatersMapping = null;
-		if (!paramaters.isEmpty()) {
-			paramatersMapping = new HashMap<ParameterItem, Object>();
-			Map<String, Object> inParameters = query.getInParameters();
+		if (!inParamaters.isEmpty()) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Use in-paramaters : " + inParamaters);
+			}
 			
-			for (Iterator<Map.Entry<String, ParameterItem>> iter = paramaters.entrySet().iterator(); iter.hasNext(); ) {
+			paramatersMapping = new HashMap<ParameterItem, Object>();
+			Map<String, Object> inParamatersRaw = query.getInParameters();
+			
+			for (Iterator<Map.Entry<String, ParameterItem>> iter = inParamaters.entrySet().iterator(); iter.hasNext(); ) {
 				Map.Entry<String, ParameterItem> e = iter.next();
 				boolean index = ( e.getKey().charAt(0) != ':' );
 				
 				Object pVal= null;
 				if (index) {
-					pVal = inParameters.get(e.getKey());
+					pVal = inParamatersRaw.get(e.getKey());
 				} else {
-					pVal = inParameters.get(e.getKey().substring(1));
+					pVal = inParamatersRaw.get(e.getKey().substring(1));
 				}
 				
 				if (pVal == null) {
@@ -276,8 +280,9 @@ public class AjqlResultImpl implements Result {
 			
 			QueryCompiler compiler = new QueryCompiler(ql.toString());
 			String subQl = compiler.compile(query.getPersistManagerFactory().getSQLExecutorContext());
-			if (LOG.isDebugEnabled())
-				LOG.debug("exec sub query(n-reference-label): " + subQl);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Exec sub-query (n-reference-label) : " + subQl);
+			}
 			
 			ResultSet rs = pstmt.executeQuery(subQl);
 			

@@ -53,12 +53,13 @@ public class QueryCompiler implements Serializable {
 	
 	final private Map<String, JoinField> joinFieldMap = new HashMap<String, JoinField>();
 	
-	final private Map<String, ParameterItem> parameters = new HashMap<String, ParameterItem>();
+	final private Map<String, ParameterItem> inParameters = new HashMap<String, ParameterItem>();
+	private int inParametersIndex = 0;
 	
 	private SqlExecutorContext sqlExecutorContext;
 	
-	private int nesteTableIncrease = 0;
-	private NesteSelectContext nesteSelectContext;
+	private int nestedTableIncrease = 0;
+	private NestedSelectContext nestedSelectContext;
 
 	/**
 	 * @param ajql
@@ -138,9 +139,9 @@ public class QueryCompiler implements Serializable {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	public Map<String, ParameterItem> getParameters() throws IllegalStateException {
+	public Map<String, ParameterItem> getInParameters() throws IllegalStateException {
 		throwIfUncompile();
-		return parameters;
+		return inParameters;
 	}
 	
 	// ----------------------------------------------------------- Compile
@@ -155,13 +156,13 @@ public class QueryCompiler implements Serializable {
 	private String compileQuery(AST select, Filter filter) {
 		AST from = select.getNextSibling();
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("compile select clause [" + select.toStringList() + " ]");
+			LOG.debug("Compiling select clause [ " + select.toStringList() + " ]");
 		}
 		
 		Entity entity = sqlExecutorContext.getEntity(from.getFirstChild().getText());
 		this.rootEntity = entity;
 		final JoinTree aJTree = new JoinTree(entity.getPhysicalName(),
-				nesteSelectContext == null ? -1 : nesteSelectContext.getTableIncrease() /* in neste-sql */);
+				nestedSelectContext == null ? -1 : nestedSelectContext.getTableIncrease() /* in neste-sql */);
 		
 		boolean distinctField = false;
 		Set<JoinField> distinctFields = new HashSet<JoinField>();
@@ -285,7 +286,6 @@ public class QueryCompiler implements Serializable {
 		if (where == null) {
 			sql.append("( 1 = 1 ) ");
 		} else {
-			int paramIndex = 0;
 			JoinField aJF = null;
 			
 			next = where.getFirstChild();
@@ -316,10 +316,10 @@ public class QueryCompiler implements Serializable {
 					break;
 				case AjQLParserTokenTypes.QUESTION_MARK:
 				case AjQLParserTokenTypes.NAMED_PARAM:
-					clause.append('?');
-					paramIndex++;
-					text = (text.charAt(0) == '?') ? paramIndex + "" : text;
-					parameters.put( text, new ParameterItem(text, paramIndex, aJF.getField()) );
+					clause.append(INDEX_PARAM);
+					inParametersIndex++;
+					text = (text.charAt(0) == INDEX_PARAM) ? String.valueOf(inParametersIndex) : text;
+					inParameters.put( text, new ParameterItem(text, inParametersIndex, aJF.getField()) );
 					break;
 				case AjQLParserTokenTypes.MATCH:
 					clause.append(compileMatchClause(next, lastField, aJTree.getRootJoinNode()));
@@ -339,7 +339,7 @@ public class QueryCompiler implements Serializable {
 							clause.append(" = 0");
 						}
 					} else {
-						LOG.warn("Unknow token: <" + type + ", " + text + ">");
+						LOG.warn("Unknow token : <" + type + ", " + text + ">");
 					}
 				}
 				
@@ -387,16 +387,16 @@ public class QueryCompiler implements Serializable {
 				clause.append('\'').append(text).append('\'');
 				break;
 			case AjQLParserTokenTypes.SELECT:
-				String neste = new QueryCompiler(this.sqlExecutorContext, null).compileNesteSelect(next);
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("compiled neste select clause [ " + neste + " ], will return now");
-				}
-				return clause.append(neste).append(" )").toString();  // NOTE: neste select, return now
+				
+				String nestedSql = compileNestedSelect(null, next);
+				// NOTE: nested select return now
+				return clause.append(nestedSql).append(" )").toString();
+				
 			default:
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
 				} else {
-					LOG.warn("Unknow token in in clause [ " + ttype + ":" + text + " ]");
+					LOG.warn("Unknow token in `in` clause [ " + ttype + ":" + text + " ]");
 				}
 				break;
 			}
@@ -427,17 +427,16 @@ public class QueryCompiler implements Serializable {
 				clause.append('\'').append(text).append('\'');
 				break;
 			case AjQLParserTokenTypes.SELECT:
-				NesteSelectContext context = new NesteSelectContext(rootEntity, root, this.nesteTableIncrease++);
-				String neste = new QueryCompiler(this.sqlExecutorContext, context).compileNesteSelect(next);
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("compiled neste select clause [ " + neste + " ], will return now");
-				}
-				return clause.append(neste).append(" )").toString();  // NOTE: neste select, return now
+				
+				String nestedSql = compileNestedSelect(root, next);
+				// NOTE: nested select return now
+				return clause.append(nestedSql).append(" )").toString();
+				
 			default:
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
 				} else {
-					LOG.warn("Unknow token in exists clause [ " + ttype + ":" + text + " ]");
+					LOG.warn("Unknow token in `exists` clause [ " + ttype + ":" + text + " ]");
 				}
 				break;
 			}
@@ -447,6 +446,26 @@ public class QueryCompiler implements Serializable {
 			}
 		} while ((next = next.getNextSibling()) != null);
 		return clause.append(" )").toString();
+	}
+	
+	private String compileNestedSelect(JoinNode root, AST select) {
+		NestedSelectContext context = null;
+		if (root != null) {
+			context = new NestedSelectContext(rootEntity, root, nestedTableIncrease++);
+		}
+		QueryCompiler nested = new QueryCompiler(sqlExecutorContext, context, inParametersIndex);
+		
+		String nestedSql = nested.compileNestedSelect(select);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Compiled nested select clause [ " + nestedSql + " ]");
+		}
+		
+		if (!nested.inParameters.isEmpty()) {
+			this.inParameters.putAll(nested.inParameters);
+			this.inParametersIndex = nested.inParametersIndex;
+		}
+		
+		return nestedSql;
 	}
 	
 	/**
@@ -611,10 +630,10 @@ public class QueryCompiler implements Serializable {
 				JoinField aJF = new JoinField(jNode, joinEntity.getField(joined[1]), itemName, type);
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
-			} else if (joined.length == 1 && nesteSelectContext != null) {  // in neste-sql (exists)
-				Entity master = nesteSelectContext.getMaster();
+			} else if (joined.length == 1 && nestedSelectContext != null) {  // in nested-sql (exists)
+				Entity master = nestedSelectContext.getMaster();
 				JoinField aJF = new JoinField(
-						nesteSelectContext.getMasterRoot(), master.getField(joined[0].substring(1)), itemName, type);
+						nestedSelectContext.getMasterRoot(), master.getField(joined[0].substring(1)), itemName, type);
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
@@ -747,14 +766,15 @@ public class QueryCompiler implements Serializable {
 		throw new CompileException("Parse AjQL error", ex);
 	}
 	
-	// ----------------------------------------------------------- Just for Neste SQL
+	// ----------------------------------------------------------- Just for Nested SQL
 	
-	private QueryCompiler(SqlExecutorContext context, NesteSelectContext nesteSelectContext) {
+	private QueryCompiler(SqlExecutorContext context, NestedSelectContext nestedSelectContext, int inParametersIndex) {
 		this.sqlExecutorContext = context;
-		this.nesteSelectContext = nesteSelectContext;
+		this.nestedSelectContext = nestedSelectContext;
+		this.inParametersIndex = inParametersIndex;
 	}
 	
-	private String compileNesteSelect(AST nesteSelect) {
-		return compileQuery(nesteSelect, null);
+	private String compileNestedSelect(AST nestedSelect) {
+		return compileQuery(nestedSelect, null);
 	}
 }

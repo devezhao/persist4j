@@ -6,18 +6,17 @@ import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
 
 /**
- * 
  * @author zhaofang123@gmail.com
  * @since 10/27/2018
  */
-public class NesteSelectContext implements Serializable {
+public class NestedSelectContext implements Serializable {
 	private static final long serialVersionUID = 7585161604688620934L;
 	
 	private Entity master;
 	private JoinNode masterRoot;
 	private int tableIncrease;
 
-	protected NesteSelectContext(Entity master, JoinNode masterRoot, int tableIncrease) {
+	protected NestedSelectContext(Entity master, JoinNode masterRoot, int tableIncrease) {
 		this.master = master;
 		this.masterRoot = masterRoot;
 		this.tableIncrease = tableIncrease;

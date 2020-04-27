@@ -36,11 +36,11 @@ tokens {
 	SUM = "sum";
 	COUNT = "count";
 	DATE_FORMAT = "date_format";
-	YEAR = "year";
+	//YEAR = "year";
 	QUARTER = "quarter";
-	MONTH = "month";
-	WEEK = "week";
-	DATE = "date";
+    //MONTH = "month";
+	//WEEK = "week";
+    //DATE = "date";
 	CONCAT = "concat";
 	
 	IS = "is";
@@ -117,8 +117,8 @@ selectItem
 	;
 
 column
-	//: dbObject | expression | ORDER | GROUP | BY
 	: dbObject | expression
+	//| ORDER | GROUP | BY | YEAR | QUARTER | MONTH | WEEK | DATE
 	;
 
 dbObject
@@ -130,11 +130,11 @@ aggregateWithMode
 	;
 
 aggregateWithFields
-	: CONCAT^ LPAREN! ( selectItem | QUOTED_STRING) (COMMA (selectItem | QUOTED_STRING) )* RPAREN!
+	: CONCAT^ LPAREN! (selectItem | QUOTED_STRING) ( COMMA (selectItem | QUOTED_STRING) )* RPAREN!
 	;
 	
 aggregate
-	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DATE^) LPAREN! column RPAREN!
+	: (MIN^ | MAX^ | AVG^ | SUM^ | QUARTER^) LPAREN! column RPAREN!
 	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
 	| aggregateWithMode
 	| aggregateWithFields

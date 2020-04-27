@@ -38,4 +38,13 @@
 		<field name="count" type="double"/>
 	</entity>
 	
+	<entity name="Test4" type-code="104">
+		<field name="t4Primary" type="primary" />
+		<field name="year" type="double"/>
+		<field name="date" type="string" />
+		<field name="week" type="string" />
+		<field name="month" type="double"/>
+		<field name="count" type="double"/>
+	</entity>
+	
 </metadata-config>

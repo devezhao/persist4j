@@ -1,4 +1,4 @@
-// $ANTLR 2.7.7 (2006-11-01): "ajql.g" -> "AjQLLexer.java"$
+// $ANTLR 2.7.7 (20060906): "ajql.g" -> "AjQLLexer.java"$
 
 package cn.devezhao.persist4j.query.compiler.antlr;
 
@@ -44,38 +44,34 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		literals.put(new ANTLRHashString("count", this), new Integer(22));
 		literals.put(new ANTLRHashString("sum", this), new Integer(21));
 		literals.put(new ANTLRHashString("min", this), new Integer(19));
-		literals.put(new ANTLRHashString("month", this), new Integer(26));
-		literals.put(new ANTLRHashString("false", this), new Integer(38));
-		literals.put(new ANTLRHashString("true", this), new Integer(37));
+		literals.put(new ANTLRHashString("false", this), new Integer(34));
+		literals.put(new ANTLRHashString("true", this), new Integer(33));
 		literals.put(new ANTLRHashString("rollup", this), new Integer(17));
 		literals.put(new ANTLRHashString("and", this), new Integer(8));
-		literals.put(new ANTLRHashString("concat", this), new Integer(29));
+		literals.put(new ANTLRHashString("concat", this), new Integer(25));
 		literals.put(new ANTLRHashString("asc", this), new Integer(11));
 		literals.put(new ANTLRHashString("desc", this), new Integer(12));
 		literals.put(new ANTLRHashString("select", this), new Integer(4));
-		literals.put(new ANTLRHashString("exists", this), new Integer(35));
+		literals.put(new ANTLRHashString("exists", this), new Integer(31));
 		literals.put(new ANTLRHashString("distinct", this), new Integer(5));
 		literals.put(new ANTLRHashString("group", this), new Integer(13));
 		literals.put(new ANTLRHashString("where", this), new Integer(7));
-		literals.put(new ANTLRHashString("year", this), new Integer(24));
-		literals.put(new ANTLRHashString("match", this), new Integer(39));
 		literals.put(new ANTLRHashString("avg", this), new Integer(20));
+		literals.put(new ANTLRHashString("match", this), new Integer(35));
 		literals.put(new ANTLRHashString("order", this), new Integer(10));
-		literals.put(new ANTLRHashString("in", this), new Integer(33));
-		literals.put(new ANTLRHashString("null", this), new Integer(32));
+		literals.put(new ANTLRHashString("in", this), new Integer(29));
+		literals.put(new ANTLRHashString("null", this), new Integer(28));
 		literals.put(new ANTLRHashString("having", this), new Integer(15));
-		literals.put(new ANTLRHashString("quarter", this), new Integer(25));
+		literals.put(new ANTLRHashString("quarter", this), new Integer(24));
 		literals.put(new ANTLRHashString("date_format", this), new Integer(23));
 		literals.put(new ANTLRHashString("or", this), new Integer(9));
-		literals.put(new ANTLRHashString("between", this), new Integer(36));
+		literals.put(new ANTLRHashString("between", this), new Integer(32));
 		literals.put(new ANTLRHashString("max", this), new Integer(18));
 		literals.put(new ANTLRHashString("from", this), new Integer(6));
-		literals.put(new ANTLRHashString("is", this), new Integer(30));
-		literals.put(new ANTLRHashString("like", this), new Integer(34));
-		literals.put(new ANTLRHashString("date", this), new Integer(28));
-		literals.put(new ANTLRHashString("week", this), new Integer(27));
+		literals.put(new ANTLRHashString("is", this), new Integer(26));
+		literals.put(new ANTLRHashString("like", this), new Integer(30));
 		literals.put(new ANTLRHashString("with", this), new Integer(16));
-		literals.put(new ANTLRHashString("not", this), new Integer(31));
+		literals.put(new ANTLRHashString("not", this), new Integer(27));
 		literals.put(new ANTLRHashString("by", this), new Integer(14));
 	}
 

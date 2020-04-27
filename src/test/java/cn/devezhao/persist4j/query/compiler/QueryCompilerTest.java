@@ -177,16 +177,17 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testConcat() {
-		String ajql = "select concat(tDate, '_', tText) from TestAllType";
+		String ajql = "select concat(tDate, '_', tText) from TestAllType group by concat(tInt, '_', tText) order by concat(tDouble, '_', tText) asc";
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 		assertEquals(compiler.getCompiledSql(),
-				"select concat( _t0.`T_DATE`, '_', _t0.`T_TEXT` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
+				"select concat( _t0.`T_DATE`, '_', _t0.`T_TEXT` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) group by concat( _t0.`T_INT`, '_', _t0.`T_TEXT` ) order by concat( _t0.`T_DOUBLE`, '_', _t0.`T_TEXT` ) asc");
 		
-		ajql = "select concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) from TestAllType";
+		// Unsupports `concat` in where
+		ajql = "select concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) from TestAllType where concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) = 123";
 		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 		assertEquals(compiler.getCompiledSql(),
-				"select concat( '123', year( _t0.`T_DATE` ), '_', _t0.`T_TEXT`, date_format( _t0.`T_DATE`, '%Y' ) ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
+				"select concat( '123', year( _t0.`T_DATE` ), '_', _t0.`T_TEXT`, date_format( _t0.`T_DATE`, '%Y' ) ) as _c0 from `test_all_type` as _t0 where  = 123");
 	}
 }

@@ -316,7 +316,8 @@ public class QueryCompiler implements Serializable {
 				int type = next.getType();
 				String text = next.getText();
 				
-				if (next.getNextSibling() != null && next.getNextSibling().getType() == AjQLParserTokenTypes.MATCH) {
+				if (next.getNextSibling() != null
+						&& next.getNextSibling().getType() == AjQLParserTokenTypes.MATCH) {
 					lastField = next;
 					continue;
 				}
@@ -565,7 +566,13 @@ public class QueryCompiler implements Serializable {
 				clause.append('\'').append(next.getText()).append("' ");
 				break;
 			default:
-				if (ParserHelper.isAggregator(type)) {
+				if (ParserHelper.isAggregatorWithNested(type)) {
+					StringBuilder concat = compileByClause(next, "concat");
+					concat.insert(6, "( ").append(") ");
+					clause.append(concat);
+					
+				} 
+				else if (ParserHelper.isAggregator(type)) {
 					AST item = next.getFirstChild();
 					aJF = getJoinField(item, next, sqlExecutorContext.getDialect());
 					clause.append(next.getText()).append("( ");
@@ -578,8 +585,10 @@ public class QueryCompiler implements Serializable {
 						clause.append(aJF.getName());
 					}
 					clause.append(" ) ");
+					
 				}
-				else {  /*if (ParserLeader.isInIgnoreValue(ttype) || ParserLeader.isInIgnore(ttype))*/  // for others
+				// ParserLeader.isInIgnoreValue(type) || ParserLeader.isInIgnore(type)
+				else {
 					clause.append(next.getText()).append(' ');
 				}
 			}
@@ -621,8 +630,7 @@ public class QueryCompiler implements Serializable {
 		}
 		
 		// 虚拟 JF
-		if (ParserHelper.isAggregatorWithFields(item.getType())) {
-			// Mutli fields
+		if (ParserHelper.isAggregatorWithNested(item.getType())) {
 			findJoinFields(item, tree, entity);
 			
 			JoinField aJF = new JoinField(null, null, itemName, type);

@@ -97,7 +97,7 @@ orderByClause
 	;
 
 groupByClause
-	: GROUP^ BY (aggregateWithMode | column) (COMMA (aggregateWithMode | column))*
+	: GROUP^ BY selectItem (COMMA selectItem)*
 	;
 
 havingClause

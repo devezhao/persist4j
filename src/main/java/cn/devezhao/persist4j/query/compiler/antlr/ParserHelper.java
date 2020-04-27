@@ -30,6 +30,8 @@ public class ParserHelper {
 	/**
 	 * @param type
 	 * @return
+	 * @see #isAggregatorWithMode(int)
+	 * @see #isAggregatorWithNested(int)
 	 */
 	public static boolean isAggregator(int type) {
 		return type == AjQLParserTokenTypes.MIN
@@ -37,13 +39,13 @@ public class ParserHelper {
 				|| type == AjQLParserTokenTypes.AVG
 				|| type == AjQLParserTokenTypes.SUM
 				|| type == AjQLParserTokenTypes.COUNT
-				|| type == AjQLParserTokenTypes.DATE_FORMAT
 				|| type == AjQLParserTokenTypes.YEAR
 				|| type == AjQLParserTokenTypes.QUARTER
 				|| type == AjQLParserTokenTypes.MONTH
 				|| type == AjQLParserTokenTypes.WEEK
 				|| type == AjQLParserTokenTypes.DATE
-				|| type == AjQLParserTokenTypes.CONCAT;
+				|| isAggregatorWithMode(type)
+				|| isAggregatorWithNested(type);
 	}
 	
 	/**
@@ -58,7 +60,7 @@ public class ParserHelper {
 	 * @param type
 	 * @return
 	 */
-	public static boolean isAggregatorWithFields(int type) {
+	public static boolean isAggregatorWithNested(int type) {
 		return type == AjQLParserTokenTypes.CONCAT;
 	}
 

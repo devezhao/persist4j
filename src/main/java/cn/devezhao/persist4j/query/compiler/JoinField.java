@@ -98,8 +98,12 @@ public class JoinField implements SelectItem {
 		}
 		
 		index = increase;
-		name = String.format("%s.%s", 
-				tableNode.getAlias(), dialect.quote(field.getPhysicalName()));
+		if (tableNode == null) {
+			name = "$";
+		} else {
+			name = String.format("%s.%s", 
+					tableNode.getAlias(), dialect.quote(field.getPhysicalName()));
+		}
 		alias = JoinTree.COLUMN_ALIAS_PREFIX + index;
 		return (fullPath = name + " as " + alias);
 	}

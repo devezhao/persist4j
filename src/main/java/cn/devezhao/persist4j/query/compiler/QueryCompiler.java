@@ -262,10 +262,9 @@ public class QueryCompiler implements Serializable {
 		Iterator<JoinField> iter = selectFields.iterator();
 		for (;; columnIncrease++) {
 			JoinField aJF = iter.next();
-			String clause = null;
+			String clause = aJF.as(columnIncrease, sqlExecutorContext.getDialect());
 			
-			switch (aJF.getType()) {
-			case Aggregator:
+			if (aJF.getType() == SelectItemType.Aggregator) {
 				if ("CONCAT".equalsIgnoreCase(aJF.getAggregator())) {
 					AST node = mutliFieldsAggregators.get(aJF);
 					StringBuilder concat = compileByClause(node, "concat");
@@ -273,7 +272,6 @@ public class QueryCompiler implements Serializable {
 					clause = concat.toString();
 					
 				} else {
-					aJF.as(columnIncrease, sqlExecutorContext.getDialect());
 					if (aJF.getAggregatorMode() != null) {
 						clause = String.format("%s( %s, '%s' ) as ", aJF.getAggregator(), aJF.getName(), aJF.getAggregatorMode());
 					} else if (aJF.getAggregatorSibling() != null) {
@@ -284,11 +282,6 @@ public class QueryCompiler implements Serializable {
 				}
 				
 				clause += JoinTree.COLUMN_ALIAS_PREFIX + columnIncrease;
-				break;
-				
-			default:
-				clause = aJF.as(columnIncrease, sqlExecutorContext.getDialect());
-				break;
 			}
 			
 			if (distinctFields.contains(aJF)) {

@@ -184,10 +184,14 @@ public class QueryCompilerTest extends Compiler {
 				"select concat( _t0.`T_DATE`, '_', _t0.`T_TEXT` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) group by concat( _t0.`T_INT`, '_', _t0.`T_TEXT` ) order by concat( _t0.`T_DOUBLE`, '_', _t0.`T_TEXT` ) asc");
 		
 		// Unsupports `concat` in where
-		ajql = "select concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) from TestAllType where concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) = 123";
+		ajql = "select tBool, concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')), tPrimary from TestAllType where concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) = 123";
 		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 		assertEquals(compiler.getCompiledSql(),
-				"select concat( '123', year( _t0.`T_DATE` ), '_', _t0.`T_TEXT`, date_format( _t0.`T_DATE`, '%Y' ) ) as _c0 from `test_all_type` as _t0 where  = 123");
+				"select _t0.`T_BOOL` as _c0, concat( '123', year( _t0.`T_DATE` ), '_', _t0.`T_TEXT`, date_format( _t0.`T_DATE`, '%Y' ) ) as _c1, _t0.`T_PRIMARY` as _c2 from `test_all_type` as _t0 where  = 123");
+		
+		for (SelectItem item : compiler.getSelectItems()) {
+			System.out.println(item);
+		}
 	}
 }

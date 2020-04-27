@@ -117,7 +117,8 @@ public class QueryCompilerTest extends Compiler {
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>> SELECT ITEMS\n" + StringUtils.join(compiler.getSelectItems(), " | "));
 		System.out.println(">> RAW SQL\n" + compiler.getCompiledSql());
-		assertEquals(compiler.getCompiledSql(), "select _t0.`T_DATE` as _c0, DATE_FORMAT( _t0.`T_DATE`, '%Y' ) as _c1, DATE_FORMAT( _t0.`T_DATE`, '%Y-%M' ) as _c2 from `test_all_type` as _t0 where ( 1 = 1 ) group by DATE_FORMAT( _t0.`T_DATE`, '%Y' ), DATE_FORMAT( _t0.`T_DATE`, '%Y-%M' )");
+		assertEquals(compiler.getCompiledSql(),
+				"select _t0.`T_DATE` as _c0, DATE_FORMAT( _t0.`T_DATE`, '%Y' ) as _c1, DATE_FORMAT( _t0.`T_DATE`, '%Y-%M' ) as _c2 from `test_all_type` as _t0 where ( 1 = 1 ) group by DATE_FORMAT( _t0.`T_DATE`, '%Y' ), DATE_FORMAT( _t0.`T_DATE`, '%Y-%M' )");
 	}
 	
 	@Test
@@ -126,7 +127,8 @@ public class QueryCompilerTest extends Compiler {
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>> SELECT ITEMS\n" + StringUtils.join(compiler.getSelectItems(), " | "));
 		System.out.println(">> RAW SQL\n" + compiler.getCompiledSql());
-		assertEquals(compiler.getCompiledSql(), "select count( _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where _t0.`T_PRIMARY` = '0000'");
+		assertEquals(compiler.getCompiledSql(),
+				"select count( _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where _t0.`T_PRIMARY` = '0000'");
 	}
 	
 	@Test
@@ -145,6 +147,46 @@ public class QueryCompilerTest extends Compiler {
 		String ajql = "select tPrimary from TestAllType where (tInt !& 1) and tInt && 1";
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
-		assertEquals(compiler.getCompiledSql(), "select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where ( _t0.`T_INT` & 1 = 0 ) and _t0.`T_INT` & 1");
+		assertEquals(compiler.getCompiledSql(), 
+				"select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where ( _t0.`T_INT` & 1 = 0 ) and _t0.`T_INT` & 1");
+	}
+	
+	@Test
+	public void testCount() {
+		String ajql = "select count(tPrimary) from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals(compiler.getCompiledSql(), 
+				"select count( _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
+		
+		ajql = "select count(distinct tPrimary) from TestAllType";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals(compiler.getCompiledSql(),
+				"select count( distinct _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
+	}
+	
+	@Test
+	public void testDateAggregator() {
+		String ajql = "select year(tDate),quarter(tDate),month(tDate),week(tDate),date(tDate),date_format(tDate, '%Y') from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals(compiler.getCompiledSql(),
+				"select year( _t0.`T_DATE` ) as _c0, quarter( _t0.`T_DATE` ) as _c1, month( _t0.`T_DATE` ) as _c2, week( _t0.`T_DATE` ) as _c3, date( _t0.`T_DATE` ) as _c4, date_format( _t0.`T_DATE`, '%Y' ) as _c5 from `test_all_type` as _t0 where ( 1 = 1 )");
+	}
+	
+	@Test
+	public void testConcat() {
+		String ajql = "select concat(tDate, '_', tText) from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals(compiler.getCompiledSql(),
+				"select concat( _t0.`T_DATE`, '_', _t0.`T_TEXT` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
+		
+		ajql = "select concat('123', year(tDate), '_', tText, date_format(tDate, '%Y')) from TestAllType";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals(compiler.getCompiledSql(),
+				"select concat( '123', year( _t0.`T_DATE` ), '_', _t0.`T_TEXT`, date_format( _t0.`T_DATE`, '%Y' ) ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
 	}
 }

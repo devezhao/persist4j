@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import cn.devezhao.persist4j.dialect.Editor;
 
 /**
@@ -16,6 +19,8 @@ import cn.devezhao.persist4j.dialect.Editor;
 public abstract class AbstractFieldEditor implements Editor {
 	private static final long serialVersionUID = 4896806840146314960L;
 
+	protected static final Log LOG = LogFactory.getLog(AbstractFieldEditor.class);
+	
 	protected AbstractFieldEditor() {
 	}
 	

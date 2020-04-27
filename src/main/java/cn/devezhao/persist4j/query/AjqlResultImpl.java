@@ -12,23 +12,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.Editor;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.Type;
-import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.exception.SqlExceptionConverter;
-import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.query.compiler.JoinField;
 import cn.devezhao.persist4j.query.compiler.ParameterItem;
-import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
 import cn.devezhao.persist4j.query.compiler.SelectItemType;
 import cn.devezhao.persist4j.util.SqlHelper;
@@ -229,19 +223,30 @@ public class AjqlResultImpl implements Result {
 		return dataCache;
 	}
 	
-	// read a row
-	Object[] readRow(SelectItem[] selectItems, ResultSet rs) throws SQLException {
+	// Read one row
+	private Object[] readRow(SelectItem[] selectItems, ResultSet rs) throws SQLException {
 		Object[] row = new Object[selectItems.length];
 
 		for (SelectItem item : selectItems) {
 			if (item.getType() == SelectItemType.Aggregator) {
 				Editor editor = null;
 				Type type = item.getField().getType();
-				String agger = ((JoinField) item).getAggregator();
-				if ("COUNT".equalsIgnoreCase(agger)) {
+				String aggregator = ((JoinField) item).getAggregator();
+				
+				if ("COUNT".equalsIgnoreCase(aggregator)) {
 					editor = FieldType.LONG.getFieldEditor();
-				} else if ("DATE_FORMAT".equalsIgnoreCase(agger)) {
+					
+				} else if ("DATE_FORMAT".equalsIgnoreCase(aggregator) 
+						|| "CONCAT".equalsIgnoreCase(aggregator)) {
 					editor = FieldType.STRING.getFieldEditor();
+					
+				} else if ("YEAR".contentEquals(aggregator)
+						|| "QUARTER".contentEquals(aggregator)
+						|| "MONTH".contentEquals(aggregator)
+						|| "WEEK".contentEquals(aggregator)
+						|| "DATE".contentEquals(aggregator)) {
+					editor = FieldType.INT.getFieldEditor();
+					
 				} else {
 					editor = type.getFieldEditor();
 				}
@@ -260,50 +265,8 @@ public class AjqlResultImpl implements Result {
 		return row;
 	}
 	
-	// read reference-list labels
-	Object[][] readLabel(ID[] ids) throws SQLException {
-		Validate.isTrue(ids.length <= 20, "id too many, most be 20");
-		List<Object[]> list = new ArrayList<Object[]>();
-		
-		ID[][] idArrays = sortIdArray(ids);
-		MetadataFactory factory = query.getPersistManagerFactory().getMetadataFactory();
-		for (ID[] array : idArrays) {
-			ID meta = array[0];
-			Entity entity = factory.getEntity(meta.getEntityCode());
-			
-			StringBuilder ql = new StringBuilder("select ");
-			ql.append(entity.getPrimaryField().getName()).append(", ")
-				.append(entity.getNameField().getName())
-				.append(" from ").append(entity.getName())
-				.append(" where ").append(entity.getPrimaryField().getName()).append(" in ( '")
-				.append(StringUtils.join(array, "', '")).append("' )");
-			
-			QueryCompiler compiler = new QueryCompiler(ql.toString());
-			String subQl = compiler.compile(query.getPersistManagerFactory().getSQLExecutorContext());
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Exec sub-query (n-reference-label) : " + subQl);
-			}
-			
-			ResultSet rs = pstmt.executeQuery(subQl);
-			
-			SelectItem[] selectItems = compiler.getSelectItems();
-			while (rs.next()) {
-				Editor i0Editor = selectItems[0].getField().getType().getFieldEditor();
-				Editor i1Editor = selectItems[1].getField().getType().getFieldEditor();
-				
-				Object i0Val = i0Editor.get(rs, selectItems[0].getIndex() + 1);
-				Object i1Val = i1Editor.get(rs, selectItems[1].getIndex() + 1);
-				
-				if (i0Val != null)
-					list.add(new Object[] { i0Val, i1Val });
-			}
-		}
-		
-		return list.toArray(new Object[list.size()][]);
-	}
-	
-	// build a record for the row data
-	Record bindRecord(Object[] row) {
+	// Build a record for the row data
+	private Record bindRecord(Object[] row) {
 		QueryedRecord record = new QueryedRecord(
 				query.getQueryCompiler().getRootEntity(), 
 				query.getPersistManagerFactory().getSQLExecutorContext());
@@ -318,35 +281,77 @@ public class AjqlResultImpl implements Result {
 		record.completeAfter();
 		return record;
 	}
+
+//	// Read labels of reference-list
+//	private Object[][] readLabel(ID[] ids) throws SQLException {
+//		Validate.isTrue(ids.length <= 20, "id too many, most be 20");
+//		List<Object[]> list = new ArrayList<Object[]>();
+//		
+//		ID[][] idArrays = sortIdArray(ids);
+//		MetadataFactory factory = query.getPersistManagerFactory().getMetadataFactory();
+//		for (ID[] array : idArrays) {
+//			ID meta = array[0];
+//			Entity entity = factory.getEntity(meta.getEntityCode());
+//			
+//			StringBuilder ql = new StringBuilder("select ");
+//			ql.append(entity.getPrimaryField().getName()).append(", ")
+//				.append(entity.getNameField().getName())
+//				.append(" from ").append(entity.getName())
+//				.append(" where ").append(entity.getPrimaryField().getName()).append(" in ( '")
+//				.append(StringUtils.join(array, "', '")).append("' )");
+//			
+//			QueryCompiler compiler = new QueryCompiler(ql.toString());
+//			String subQl = compiler.compile(query.getPersistManagerFactory().getSQLExecutorContext());
+//			if (LOG.isDebugEnabled()) {
+//				LOG.debug("Exec sub-query (n-reference-label) : " + subQl);
+//			}
+//			
+//			ResultSet rs = pstmt.executeQuery(subQl);
+//			
+//			SelectItem[] selectItems = compiler.getSelectItems();
+//			while (rs.next()) {
+//				Editor i0Editor = selectItems[0].getField().getType().getFieldEditor();
+//				Editor i1Editor = selectItems[1].getField().getType().getFieldEditor();
+//				
+//				Object i0Val = i0Editor.get(rs, selectItems[0].getIndex() + 1);
+//				Object i1Val = i1Editor.get(rs, selectItems[1].getIndex() + 1);
+//				
+//				if (i0Val != null)
+//					list.add(new Object[] { i0Val, i1Val });
+//			}
+//		}
+//		
+//		return list.toArray(new Object[list.size()][]);
+//	}
 	
-	// quoted string
-	String quote(String string) {
-		return query.getPersistManagerFactory().getDialect().quote(string);
-	}
+//	// Quoted strings
+//	private String quote(String string) {
+//		return query.getPersistManagerFactory().getDialect().quote(string);
+//	}
+//	
+//	// Throw unsupports exception
+//	private void throwUnsupports() {
+//		throw new UnsupportedOperationException();
+//	}
 	
-	// throw unsupports exception
-	void throwUnsupports() {
-		throw new UnsupportedOperationException();
-	}
-	
-	// sort id array
-	ID[][] sortIdArray(ID[] ids) {
-		Map<Integer, List<ID>> map = new HashMap<Integer, List<ID>>();
-		
-		for (ID id : ids) {
-			List<ID> list = map.get(id.getEntityCode());
-			if (list == null) {
-				list = new ArrayList<ID>();
-				map.put(id.getEntityCode(), list);
-			}
-			list.add(id);
-		}
-		
-		ID[][] arrays = new ID[map.size()][];
-		int idx = 0;
-		for (List<ID> list : map.values()) {
-			arrays[idx++] = list.toArray(new ID[list.size()]);
-		}
-		return arrays;
-	}
+//	// Sort id array
+//	private ID[][] sortIdArray(ID[] ids) {
+//		Map<Integer, List<ID>> map = new HashMap<Integer, List<ID>>();
+//		
+//		for (ID id : ids) {
+//			List<ID> list = map.get(id.getEntityCode());
+//			if (list == null) {
+//				list = new ArrayList<ID>();
+//				map.put(id.getEntityCode(), list);
+//			}
+//			list.add(id);
+//		}
+//		
+//		ID[][] arrays = new ID[map.size()][];
+//		int idx = 0;
+//		for (List<ID> list : map.values()) {
+//			arrays[idx++] = list.toArray(new ID[list.size()]);
+//		}
+//		return arrays;
+//	}
 }

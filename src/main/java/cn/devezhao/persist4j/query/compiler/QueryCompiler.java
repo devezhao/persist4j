@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.query.compiler;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -162,43 +163,51 @@ public class QueryCompiler implements Serializable {
 		Entity entity = sqlExecutorContext.getEntity(from.getFirstChild().getText());
 		this.rootEntity = entity;
 		final JoinTree aJTree = new JoinTree(entity.getPhysicalName(),
-				nestedSelectContext == null ? -1 : nestedSelectContext.getTableIncrease() /* in neste-sql */);
+				nestedSelectContext == null ? -1 : nestedSelectContext.getTableIncrease() /* nested-sql */ );
 		
-		boolean distinctField = false;
-		Set<JoinField> distinctFields = new HashSet<JoinField>();
+		Set<JoinField> distinctFields = new HashSet<>();
+		Map<JoinField, AST> mutliFieldsAggregators = new HashMap<>();
 		
 		List<JoinField> selectFields = new LinkedList<JoinField>();
 		AST item = select.getFirstChild();
 		do {
 			JoinField aJF = null;
-			if (item.getType() == AjQLParserTokenTypes.DISTINCT) {
-				distinctField = true;
-				continue;
-			}
 			
-			if (ParserHelper.isAggregator(item.getType())) {
-				AST column = item.getFirstChild();
-				aJF = bindJoinField(aJTree, entity, column, SelectItemType.Aggregator);
+			if (item.getType() == AjQLParserTokenTypes.DISTINCT) {
+				item = item.getNextSibling();
+				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Field);
+				distinctFields.add(aJF);
 				
-				aJF.setAggregator(item.getText());
-				if (ParserHelper.hasAggregatorMode(item.getType())) {
+			} else if (item.getType() == AjQLParserTokenTypes.CONCAT) {
+				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Aggregator);
+				aJF.setAggregator(item.getText(), null);
+				mutliFieldsAggregators.put(aJF, item);
+				
+			} else if (ParserHelper.isAggregator(item.getType())) {
+				AST column = item.getFirstChild();
+				boolean withDistinct = column.getType() == AjQLParserTokenTypes.DISTINCT;
+				if (withDistinct) {
+					column = column.getNextSibling();
+				}
+				
+				aJF = bindJoinField(aJTree, entity, column, SelectItemType.Aggregator);
+				aJF.setAggregator(item.getText(), withDistinct ? "distinct" : null);
+				
+				if (ParserHelper.isAggregatorWithMode(item.getType())) {
 					String mode = column.getNextSibling().getNextSibling().getText();  // [, '%Y']
 					aJF.setAggregatorMode(mode);
 				}
+				
 			} else {
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Field);
 			}
 			
 			selectFields.add(aJF);
-			if (distinctField) {
-				distinctFields.add(aJF);
-			}
-			distinctField = false;
 		} while ((item = item.getNextSibling()) != null);
 		selectList.clear();
 		selectList.addAll(selectFields);
 		
-		// fields in where and group-by and having and order-by 
+		// Fields in where and group-by and having and order-by 
 		AST where = null, group = null, having = null, order = null;
 		AST next = from.getNextSibling();
 		while (next != null) {
@@ -223,9 +232,9 @@ public class QueryCompiler implements Serializable {
 		
 		if (filter != null) {
 			String fstrs = filter.evaluate(this.rootEntity);
-			// patch #whereClause()
+			// Patch #whereClause()
 			fstrs = "where " + ( (where == null) ? fstrs : "1=1 and " + fstrs );
-				
+			
 			AjQLParser parser = ParserHelper.createAjQLParser(fstrs);
 			try {
 				parser.whereClause();
@@ -246,7 +255,7 @@ public class QueryCompiler implements Serializable {
 		}
 		
 		StringBuilder sql = new StringBuilder("select ");
-		// generate join clause and table alias
+		// Generate join clause and table alias
 		String aJQL = aJTree.toJoinsSQL(sqlExecutorContext.getDialect());
 		
 		int columnIncrease = 0;
@@ -257,14 +266,26 @@ public class QueryCompiler implements Serializable {
 			
 			switch (aJF.getType()) {
 			case Aggregator:
-				aJF.as(columnIncrease, sqlExecutorContext.getDialect());
-				if (aJF.getAggregatorMode() != null) {
-					clause = aJF.getAggregator() + "( " + aJF.getName() + ", '" + aJF.getAggregatorMode() + "' ) as ";
+				if ("CONCAT".equalsIgnoreCase(aJF.getAggregator())) {
+					AST node = mutliFieldsAggregators.get(aJF);
+					StringBuilder concat = compileByClause(node, "concat");
+					concat.insert(6, "( ").append(") as ");
+					clause = concat.toString();
+					
 				} else {
-					clause = aJF.getAggregator() + "( " + aJF.getName() + " ) as ";
+					aJF.as(columnIncrease, sqlExecutorContext.getDialect());
+					if (aJF.getAggregatorMode() != null) {
+						clause = String.format("%s( %s, '%s' ) as ", aJF.getAggregator(), aJF.getName(), aJF.getAggregatorMode());
+					} else if (aJF.getAggregatorSibling() != null) {
+						clause = String.format("%s( %s %s ) as ", aJF.getAggregator(), aJF.getAggregatorSibling(), aJF.getName());
+					} else {
+						clause = String.format("%s( %s ) as ", aJF.getAggregator(), aJF.getName());
+					}
 				}
+				
 				clause += JoinTree.COLUMN_ALIAS_PREFIX + columnIncrease;
 				break;
+				
 			default:
 				clause = aJF.as(columnIncrease, sqlExecutorContext.getDialect());
 				break;
@@ -517,16 +538,18 @@ public class QueryCompiler implements Serializable {
 		StringBuilder clause = new StringBuilder(who);
 		
 		AST next = null;
-		if (who.startsWith("having")) {
+		if (who.toUpperCase().startsWith("HAVING")
+				|| "CONCAT".equalsIgnoreCase(who)) {
 			next = ast.getFirstChild();
 		} else {
 			next = ast.getFirstChild().getNextSibling();
 		}
 		
 		do {
-			int ttype = next.getType();
+			int type = next.getType();
 			JoinField aJF = null;
-			switch (ttype) {
+			
+			switch (type) {
 			case AjQLParserTokenTypes.COMMA:
 				clause.insert(clause.length() - 1, ',');
 				break;
@@ -535,20 +558,27 @@ public class QueryCompiler implements Serializable {
 				clause.append(aJF.getName()).append(' ');
 				break;
 			case AjQLParserTokenTypes.ASC:
-			case AjQLParserTokenTypes.DESC:  // Only for order
+			case AjQLParserTokenTypes.DESC:
 				clause.append(next.getText()).append(' ');
 				break;
+			case AjQLParserTokenTypes.QUOTED_STRING:
+				clause.append('\'').append(next.getText()).append("' ");
+				break;
 			default:
-				if (ParserHelper.isAggregator(ttype)) {  // Only for group-by
+				if (ParserHelper.isAggregator(type)) {
 					AST item = next.getFirstChild();
 					aJF = getJoinField(item, next, sqlExecutorContext.getDialect());
 					clause.append(next.getText()).append("( ");
 					if (aJF.getAggregatorMode() != null) {
-						clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append("' ) ");
+						clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append('\'');
 					} else {
-						clause.append(aJF.getName()).append(" ) ");
+						if (aJF.getAggregatorSibling() != null) {
+							clause.append(aJF.getAggregatorSibling()).append(' ');
+						}
+						clause.append(aJF.getName());
 					}
-				} 
+					clause.append(" ) ");
+				}
 				else {  /*if (ParserLeader.isInIgnoreValue(ttype) || ParserLeader.isInIgnore(ttype))*/  // for others
 					clause.append(next.getText()).append(' ');
 				}
@@ -590,8 +620,17 @@ public class QueryCompiler implements Serializable {
 			return clone;
 		}
 		
+		// 虚拟 JF
+		if (ParserHelper.isAggregatorWithFields(item.getType())) {
+			// Mutli fields
+			findJoinFields(item, tree, entity);
+			
+			JoinField aJF = new JoinField(null, null, itemName, type);
+			return aJF;
+		}
+		
 		String path = itemName;
-		if (path.charAt(0) == NAME_FIELD_PREFIX) {  // eg. &accountId
+		if (path.charAt(0) == NAME_FIELD_PREFIX) {  // eg. `&accountId`
 			type = SelectItemType.NameField;
 			path = path.substring(1);
 			
@@ -610,7 +649,7 @@ public class QueryCompiler implements Serializable {
 		
 		String[] joined = path.split("\\.");
 		
-		if (path.charAt(0) == FORCE_JOIN_PREFIX) {  // eg. ^SalesOrder.totalAmount , ^t2Reference
+		if (path.charAt(0) == FORCE_JOIN_PREFIX) {  // eg. `^SalesOrder.totalAmount` `^t2Reference`
 			if (joined.length == 2) {
 				Entity joinEntity = sqlExecutorContext.getEntity( joined[0].substring(1) );
 				Field referenceTo = null;
@@ -630,7 +669,7 @@ public class QueryCompiler implements Serializable {
 				JoinField aJF = new JoinField(jNode, joinEntity.getField(joined[1]), itemName, type);
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
-			} else if (joined.length == 1 && nestedSelectContext != null) {  // in nested-sql (exists)
+			} else if (joined.length == 1 && nestedSelectContext != null) {  // In nested-sql (exists)
 				Entity master = nestedSelectContext.getMaster();
 				JoinField aJF = new JoinField(
 						nestedSelectContext.getMasterRoot(), master.getField(joined[0].substring(1)), itemName, type);
@@ -651,7 +690,7 @@ public class QueryCompiler implements Serializable {
 		Field crtf = null;
 		Entity crte = entity;
 		JoinNode pjn = null;  // previous JoinNode
-		for (int i = 0; i < joined.length; i++) {  // eg. accountId.ownUser.fullName
+		for (int i = 0; i < joined.length; i++) {  // eg. `accountId.ownUser.fullName`
 			String fn = joined[i];
 			crtf = crte.getField(fn);
 			Validate.notNull(crtf, "Unknow field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
@@ -698,7 +737,7 @@ public class QueryCompiler implements Serializable {
 	 */
 	private void findJoinFields(AST ast, JoinTree aJTree, Entity entity) {
 		if (ast == null) {
-			return;
+			Collections.emptyList();
 		}
 		
 		ast = ast.getFirstChild();
@@ -710,6 +749,7 @@ public class QueryCompiler implements Serializable {
 					continue;
 				}
 			}
+			
 			bindJoinField(aJTree, entity, node, SelectItemType.Field);
 			
 		} while ((ast = ast.getNextSibling()) != null);
@@ -730,15 +770,15 @@ public class QueryCompiler implements Serializable {
 		// Use clone
 		JoinField clone = new JoinField(aJF, null);
 		if (aggregator != null) {
-			clone.setAggregator(aggregator.getText());
-			if (ParserHelper.hasAggregatorMode(aggregator.getType())) {
+			clone.setAggregator(aggregator.getText(), null);
+			if (ParserHelper.isAggregatorWithMode(aggregator.getType())) {
 				String mode = item.getNextSibling().getNextSibling().getText();  // [, '%Y']
 				clone.setAggregatorMode(mode);
 			} else {
 				clone.setAggregatorMode(null);
 			}
 		} else {
-			clone.setAggregator(null);
+			clone.setAggregator(null, null);
 			clone.setAggregatorMode(null);
 		}
 		clone.as(-1, dialect);  // compile

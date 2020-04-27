@@ -36,6 +36,12 @@ tokens {
 	SUM = "sum";
 	COUNT = "count";
 	DATE_FORMAT = "date_format";
+	YEAR = "year";
+	QUARTER = "quarter";
+	MONTH = "month";
+	WEEK = "week";
+	DATE = "date";
+	CONCAT = "concat";
 	
 	IS = "is";
 	NOT = "not";
@@ -91,7 +97,7 @@ orderByClause
 	;
 
 groupByClause
-	: GROUP^ BY (aggregateHasMode | column) (COMMA (aggregateHasMode | column))*
+	: GROUP^ BY (aggregateWithMode | column) (COMMA (aggregateWithMode | column))*
 	;
 
 havingClause
@@ -111,29 +117,37 @@ selectItem
 	;
 
 column
-	: dbObject | expression | ORDER | GROUP | BY
+	//: dbObject | expression | ORDER | GROUP | BY
+	: dbObject | expression
 	;
 
 dbObject
 	: IDENT
 	;
 
-aggregateHasMode
+aggregateWithMode
 	: DATE_FORMAT^ LPAREN! column COMMA constantSimple RPAREN!
+	;
+
+aggregateWithFields
+	: CONCAT^ LPAREN! ( selectItem | QUOTED_STRING) (COMMA (selectItem | QUOTED_STRING) )* RPAREN!
 	;
 	
 aggregate
-	: (MIN^ | MAX^ | AVG^ | SUM^) LPAREN! column RPAREN!
-	| COUNT^ LPAREN! (STAR | column) RPAREN!
-	| aggregateHasMode
+	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DATE^) LPAREN! column RPAREN!
+	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
+	| aggregateWithMode
+	| aggregateWithFields
 	;
-
+	
 simpleCondition
 	: subSimpleCondition ( (AND | OR) subSimpleCondition )*
 	;
+	
 subSimpleCondition
 	: (NOT)? ( (LPAREN simpleCondition RPAREN) => LPAREN simpleCondition RPAREN | simplePredicate )
 	;
+	
 simplePredicate
 	: (expression | selectItem (
 		( comparisonOperator expression

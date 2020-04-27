@@ -25,6 +25,7 @@ public class JoinField implements SelectItem {
 	private String fullPath = null;
 	
 	private String aggregator;
+	private String aggregatorSibling;
 	private String aggregatorMode;
 
 	JoinField(JoinNode tableNode, Field field, String fieldPath, SelectItemType type) {
@@ -70,12 +71,17 @@ public class JoinField implements SelectItem {
 	
 	// --------------------------------------------------------------------- 
 	
-	protected void setAggregator(String aggre) {
-		this.aggregator = aggre;
+	protected void setAggregator(String aggregator, String aggregatorSibling) {
+		this.aggregator = aggregator;
+		this.aggregatorSibling = aggregatorSibling;
 	}
 	
 	public String getAggregator() {
 		return aggregator;
+	}
+	
+	public String getAggregatorSibling() {
+		return aggregatorSibling;
 	}
 	
 	protected void setAggregatorMode(String mode) {

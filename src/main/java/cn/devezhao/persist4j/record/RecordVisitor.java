@@ -15,6 +15,7 @@ import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.Type;
 import cn.devezhao.persist4j.dialect.editor.BoolEditor;
+import cn.devezhao.persist4j.dialect.editor.NTextEditor;
 import cn.devezhao.persist4j.engine.ID;
 
 
@@ -52,26 +53,39 @@ public class RecordVisitor {
 		Type ft = field.getType();
 		Object pVal = null;
 		
-		if (FieldType.PRIMARY.equals(ft) || FieldType.REFERENCE.equals(ft) || FieldType.ANY_REFERENCE.equals(ft)) {
+		if (FieldType.PRIMARY.equals(ft) 
+				|| FieldType.REFERENCE.equals(ft) 
+				|| FieldType.ANY_REFERENCE.equals(ft)) {
 			pVal = ID.valueOf(value);
-		} else if (FieldType.INT.equals(ft) || FieldType.SMALL_INT.equals(ft)) {
+			
+		} else if (FieldType.INT.equals(ft)
+				|| FieldType.SMALL_INT.equals(ft)) {
 			pVal = NumberUtils.toInt(value);
+			
 		} else if (FieldType.DOUBLE.equals(ft)) {
 			pVal = NumberUtils.toDouble(value);
+			
 		} else if (FieldType.DECIMAL.equals(ft)) {
 			pVal = new BigDecimal(value.toCharArray());
+			
 		} else if (FieldType.LONG.equals(ft)) {
 			pVal = NumberUtils.toLong(value);
-		} else if (FieldType.DATE.equals(ft) || FieldType.TIMESTAMP.equals(ft)) {
+			
+		} else if (FieldType.DATE.equals(ft)
+				|| FieldType.TIMESTAMP.equals(ft)) {
 			pVal = tryParseDate(value);
+			
 		} else if (FieldType.BOOL.equals(ft)) {
 			char ch = value.toUpperCase().charAt(0);
 			pVal = ch == BoolEditor.TRUE;
+			
 		} else if (FieldType.NTEXT.equals(ft)) {
 			pVal = new StringReader(value);
+			
 		} else if (FieldType.BINARY.equals(ft)) {
 			// TODO BINARY
 			throw new UnsupportedOperationException("Unsupported Type: BINARY");
+			
 		} else {  // FieldTypeImpl.CHAR, FieldTypeImpl.STRING, FieldTypeImpl.TEXT
 			pVal = value;
 		}
@@ -87,33 +101,41 @@ public class RecordVisitor {
 	 */
 	public static String getLiteralByValue(Field field, Object value) {
 		Type ft = field.getType();
-		String pVal = null;
+		String literalValue = null;
 		
 		if (FieldType.PRIMARY.equals(ft) 
-				|| FieldType.REFERENCE.equals(ft) || FieldType.ANY_REFERENCE.equals(ft)) {
-			pVal = ((ID) value).toLiteral();
+				|| FieldType.REFERENCE.equals(ft) 
+				|| FieldType.ANY_REFERENCE.equals(ft)) {
+			literalValue = ((ID) value).toLiteral();
+			
 		} else if (FieldType.INT.equals(ft) 
 				|| FieldType.SMALL_INT.equals(ft)
 				|| FieldType.DOUBLE.equals(ft) 
 				|| FieldType.DECIMAL.equals(ft)
 				|| FieldType.LONG.equals(ft)) {
-			pVal = String.valueOf( value );
+			literalValue = String.valueOf(value);
+			
 		} else if (FieldType.DATE.equals(ft)) {
-			pVal = getDefaultDateFormat().format((Date) value);
+			literalValue = getDefaultDateFormat().format((Date) value);
+			
 		} else if (FieldType.TIMESTAMP.equals(ft)) {
-			pVal = getDefaultDateTimeFormat().format((Date) value);
+			literalValue = getDefaultDateTimeFormat().format((Date) value);
+			
 		} else if (FieldType.BOOL.equals(ft)) {
-			pVal = (Boolean) value ? "T" : "F";
+			literalValue = (Boolean) value ? "T" : "F";
+			
 		} else if (FieldType.NTEXT.equals(ft)) {
-			// TODO NTEXT
-			throw new UnsupportedOperationException("Unsupported Type: NTEXT");
-			// TODO BINARY
+			literalValue = new NTextEditor().read2String(value).toString();
+			
 		} else if (FieldType.BINARY.equals(ft)) {
+			// TODO BINARY
 			throw new UnsupportedOperationException("Unsupported Type: BINARY");
+			
 		} else {  // FieldTypeImpl.CHAR, FieldTypeImpl.STRING, FieldTypeImpl.TEXT
-			pVal = value.toString();
+			literalValue = value.toString();
+			
 		}
-		return pVal;
+		return literalValue;
 	}
 	
 	/**

@@ -19,7 +19,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.Editor;
 import cn.devezhao.persist4j.dialect.FieldType;
-import cn.devezhao.persist4j.dialect.Type;
 import cn.devezhao.persist4j.exception.SqlExceptionConverter;
 import cn.devezhao.persist4j.query.compiler.JoinField;
 import cn.devezhao.persist4j.query.compiler.ParameterItem;
@@ -230,7 +229,6 @@ public class AjqlResultImpl implements Result {
 		for (SelectItem item : selectItems) {
 			if (item.getType() == SelectItemType.Aggregator) {
 				Editor editor = null;
-				Type type = item.getField().getType();
 				String aggregator = ((JoinField) item).getAggregator();
 				
 				if ("COUNT".equalsIgnoreCase(aggregator)) {
@@ -248,7 +246,7 @@ public class AjqlResultImpl implements Result {
 					editor = FieldType.INT.getFieldEditor();
 					
 				} else {
-					editor = type.getFieldEditor();
+					editor = item.getField().getType().getFieldEditor();
 				}
 				
 				row[item.getIndex()] = editor.get(rs, item.getIndex() + 1);

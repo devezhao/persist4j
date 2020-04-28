@@ -36,11 +36,10 @@ tokens {
 	SUM = "sum";
 	COUNT = "count";
 	DATE_FORMAT = "date_format";
-	//YEAR = "year";
+	YEAR = "year";
 	QUARTER = "quarter";
-    //MONTH = "month";
-	//WEEK = "week";
-    //DATE = "date";
+    MONTH = "month";
+	WEEK = "week";
 	CONCAT = "concat";
 	
 	IS = "is";
@@ -118,7 +117,7 @@ selectItem
 
 column
 	: dbObject | expression
-	//| ORDER | GROUP | BY | YEAR | QUARTER | MONTH | WEEK | DATE
+	//| ORDER | GROUP | BY | YEAR | QUARTER | MONTH | WEEK
 	;
 
 dbObject
@@ -134,7 +133,7 @@ aggregateWithFields
 	;
 	
 aggregate
-	: (MIN^ | MAX^ | AVG^ | SUM^ | QUARTER^) LPAREN! column RPAREN!
+	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^) LPAREN! column RPAREN!
 	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
 	| aggregateWithMode
 	| aggregateWithFields

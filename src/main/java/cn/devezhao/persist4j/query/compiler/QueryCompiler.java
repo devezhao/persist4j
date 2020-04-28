@@ -346,15 +346,19 @@ public class QueryCompiler implements Serializable {
 					clause.append('&');
 					break;
 				default:
-					if (ParserHelper.isInIgnore(type)) {
+					if (ParserHelper.isAggregator(type)) {
+						clause.append(compileAggregator(next));
+						
+					} else if (ParserHelper.isInIgnore(type)) {
 						clause.append(text);
 						
 						// 按位取反 a % b = 0
 						if (prevType == AjQLParserTokenTypes.NBAND) {
 							clause.append(" = 0");
 						}
+						
 					} else {
-						LOG.warn("Unknow token : <" + type + ", " + text + ">");
+						LOG.warn("Unknow token in `where` clause : <" + type + ", " + text + ">");
 					}
 				}
 				
@@ -559,31 +563,13 @@ public class QueryCompiler implements Serializable {
 				clause.append('\'').append(next.getText()).append("' ");
 				break;
 			default:
-				if (ParserHelper.isAggregatorWithNested(type)) {
-					StringBuilder concat = compileByClause(next, "concat");
-					concat.insert(6, "( ").append(") ");
-					clause.append(concat);
-					
-				} 
-				else if (ParserHelper.isAggregator(type)) {
-					AST item = next.getFirstChild();
-					aJF = getJoinField(item, next, sqlExecutorContext.getDialect());
-					clause.append(next.getText()).append("( ");
-					if (aJF.getAggregatorMode() != null) {
-						clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append('\'');
-					} else {
-						if (aJF.getAggregatorSibling() != null) {
-							clause.append(aJF.getAggregatorSibling()).append(' ');
-						}
-						clause.append(aJF.getName());
-					}
-					clause.append(" ) ");
-					
+				if (ParserHelper.isAggregator(type)) {
+					clause.append(compileAggregator(next));
+				} else {
+					// @see ParserLeader.isInIgnore(type)
+					clause.append(next.getText());
 				}
-				// ParserLeader.isInIgnoreValue(type) || ParserLeader.isInIgnore(type)
-				else {
-					clause.append(next.getText()).append(' ');
-				}
+				clause.append(' ');
 			}
 		} while ((next = next.getNextSibling()) != null);
 		return clause;
@@ -603,6 +589,32 @@ public class QueryCompiler implements Serializable {
 		return String.format("match (%s) against ('%s' in boolean mode)",
 				aJF.getName(),
 				query.getText());
+	}
+	
+	/**
+	 * @param next
+	 * @return
+	 */
+	private String compileAggregator(AST next) {
+		if (ParserHelper.isAggregatorWithNested(next.getType())) {
+			StringBuilder concat = compileByClause(next, "concat");
+			concat.insert(6, "( ").append(")");
+			return concat.toString();
+		}
+		
+		JoinField aJF = getJoinField(next.getFirstChild(), next, sqlExecutorContext.getDialect());
+		StringBuilder clause = new StringBuilder(next.getText())
+				.append("( ");
+		if (aJF.getAggregatorMode() != null) {
+			clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append('\'');
+		} else {
+			if (aJF.getAggregatorSibling() != null) {
+				clause.append(aJF.getAggregatorSibling()).append(' ');
+			}
+			clause.append(aJF.getName());
+		}
+		clause.append(" )");
+		return clause.toString();
 	}
 	
 	/**

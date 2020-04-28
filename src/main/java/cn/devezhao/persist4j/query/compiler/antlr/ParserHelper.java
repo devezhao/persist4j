@@ -39,7 +39,10 @@ public class ParserHelper {
 				|| type == AjQLParserTokenTypes.AVG
 				|| type == AjQLParserTokenTypes.SUM
 				|| type == AjQLParserTokenTypes.COUNT
+				|| type == AjQLParserTokenTypes.YEAR
 				|| type == AjQLParserTokenTypes.QUARTER
+				|| type == AjQLParserTokenTypes.MONTH
+				|| type == AjQLParserTokenTypes.WEEK
 				|| isAggregatorWithMode(type)
 				|| isAggregatorWithNested(type);
 	}
@@ -61,6 +64,8 @@ public class ParserHelper {
 	}
 
 	/**
+	 * 运算符
+	 * 
 	 * @param type
 	 * @return
 	 */
@@ -79,6 +84,8 @@ public class ParserHelper {
 	}
 	
 	/**
+	 * 逻辑符
+	 * 
 	 * @param type
 	 * @return
 	 */
@@ -95,6 +102,8 @@ public class ParserHelper {
 	}
 	
 	/**
+	 * 特殊值
+	 * 
 	 * @param type
 	 * @return
 	 */

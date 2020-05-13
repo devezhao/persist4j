@@ -1,8 +1,5 @@
 package cn.devezhao.persist4j.metadata;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -17,19 +14,31 @@ public abstract class BaseMetaObject implements BaseMeta {
 	
 	final private String name;
 	final private String physicalName;
-	private String description;
-	private JSONObject extraAttrs;
+	final private String description;
+	final private JSONObject extraAttrs;
+
+	final private boolean creatable;
+	final private boolean updatable;
+	final private boolean queryable;
 
 	/**
 	 * @param name
 	 * @param physicalName
 	 * @param description
+	 * @param extraAttrs
+	 * @param creatable
+	 * @param updatable
+	 * @param queryable
 	 */
-	public BaseMetaObject(String name, String physicalName, String description, String extraAttrs) {
+	public BaseMetaObject(String name, String physicalName, String description, JSONObject extraAttrs,
+						  boolean creatable, boolean updatable, boolean queryable) {
 		this.name = name;
 		this.physicalName = physicalName;
 		this.description = description;
-		this.extraAttrs = JSON.parseObject(StringUtils.defaultIfBlank(extraAttrs, "{}"));
+		this.extraAttrs = extraAttrs;
+		this.creatable = creatable;
+		this.updatable = updatable;
+		this.queryable = queryable;
 	}
 
 	@Override
@@ -50,6 +59,21 @@ public abstract class BaseMetaObject implements BaseMeta {
 	@Override
 	public JSONObject getExtraAttrs() {
 		return extraAttrs;
+	}
+
+	@Override
+	public boolean isCreatable() {
+		return creatable;
+	}
+
+	@Override
+	public boolean isUpdatable() {
+		return updatable;
+	}
+
+	@Override
+	public boolean isQueryable() {
+		return queryable;
 	}
 
 	@Override

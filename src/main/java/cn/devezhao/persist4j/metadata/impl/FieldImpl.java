@@ -1,16 +1,14 @@
 package cn.devezhao.persist4j.metadata.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
-import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.Type;
-import cn.devezhao.persist4j.dialect.editor.DecimalEditor;
-import cn.devezhao.persist4j.dialect.editor.DoubleEditor;
 import cn.devezhao.persist4j.metadata.BaseMetaObject;
 import cn.devezhao.persist4j.metadata.CascadeModel;
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
@@ -20,61 +18,41 @@ import cn.devezhao.persist4j.metadata.CascadeModel;
 public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	private static final long serialVersionUID = 1702329731097027085L;
 
-	private Entity ownEntity;
-	private Type type;
-	private int maxLength;
-	private CascadeModel cascadeModel;
+	final private static Entity[] EMPTY_ENTITY_ARRAY = new Entity[0];
 
-	private Set<Entity> referenceSet = new HashSet<Entity>();
+	final private Entity ownEntity;
+	final private Type type;
+	final private int maxLength;
+	final private CascadeModel cascadeModel;
+	final private boolean nullable;
+	final private boolean repeatable;
+	final private boolean autoValue;
+	final private int decimalScale;
+	final private Object defaultValue;
 
-	private boolean nullable;
-	private boolean creatable;
-	private boolean updatable;
-	private boolean repeatable;
-	private boolean autoValue;
+	private Set<Entity> referenceSet = new HashSet<>();
 
-	private int decimalScale = FieldType.DEFAULT_DECIMAL_SCALE;
-	private Object defaultValue;
-
-	public FieldImpl(String name, String physicalName, String description, Entity ownEntity, Type type,
-			CascadeModel cascade, int maxLength, boolean nullable, boolean creatable, boolean updatable,
-			boolean repeatable, int scale, Object defaultValue, boolean autoValue) {
-		this(name, physicalName, description, ownEntity, type, cascade, maxLength, nullable, creatable, updatable,
-				repeatable, scale, defaultValue, autoValue, null);
-	}
-
-	public FieldImpl(String name, String physicalName, String description, Entity ownEntity, Type type,
-			CascadeModel cascade, int maxLength, boolean nullable, boolean creatable, boolean updatable,
-			boolean repeatable, int scale, Object defaultValue, boolean autoValue, String extraAttrs) {
-		super(name, physicalName, description, extraAttrs);
-
+	public FieldImpl(String name, String physicalName, String description, JSONObject extraAttrs,
+					 boolean creatable, boolean updatable, boolean queryable,
+					 Entity ownEntity, Type type, int maxLength, CascadeModel cascadeModel,
+					 boolean nullable, boolean repeatable, boolean autoValue, int decimalScale, Object defaultValue) {
+		super(name, physicalName, description, extraAttrs, creatable, updatable, queryable);
 		this.ownEntity = ownEntity;
 		this.type = type;
-		this.cascadeModel = cascade;
 		this.maxLength = maxLength;
-
+		this.cascadeModel = cascadeModel;
 		this.nullable = nullable;
-		this.creatable = creatable;
-		this.updatable = updatable;
 		this.repeatable = repeatable;
-
-		this.decimalScale = scale;
-		this.defaultValue = defaultValue;
 		this.autoValue = autoValue;
+		this.decimalScale = decimalScale;
+		this.defaultValue = defaultValue;
 	}
 
-	@Override
-	public Entity[] getReferenceEntities() {
-		if (referenceSet.isEmpty()) {
-			return EntityImpl.EMPTY_ENTITY_ARRAY;
-		}
-		return referenceSet.toArray(new Entity[referenceSet.size()]);
-	}
-
-	@Override
-	public Entity getReferenceEntity() {
-		Entity[] e = getReferenceEntities();
-		return e.length == 0 ? null : e[0];
+	protected FieldImpl(Field c) {
+		this(c.getName(), c.getPhysicalName(), c.getDescription(), c.getExtraAttrs(),
+				c.isCreatable(), c.isUpdatable(), c.isQueryable(),
+				c.getOwnEntity(), c.getType(), c.getMaxLength(), c.getCascadeModel(),
+				c.isNullable(), c.isRepeatable(), c.isAutoValue(), c.getDecimalScale(), c.getDefaultValue());
 	}
 
 	@Override
@@ -88,28 +66,18 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	}
 
 	@Override
-	public CascadeModel getCascadeModel() {
-		return cascadeModel;
-	}
-
-	@Override
 	public int getMaxLength() {
 		return maxLength;
 	}
 
 	@Override
+	public CascadeModel getCascadeModel() {
+		return cascadeModel;
+	}
+
+	@Override
 	public boolean isNullable() {
 		return nullable;
-	}
-
-	@Override
-	public boolean isCreatable() {
-		return creatable;
-	}
-
-	@Override
-	public boolean isUpdatable() {
-		return updatable;
 	}
 
 	@Override
@@ -122,18 +90,29 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 		return autoValue;
 	}
 
-	/**
-	 * @see DoubleEditor
-	 * @see DecimalEditor
-	 */
 	@Override
 	public int getDecimalScale() {
 		return decimalScale;
 	}
 
+
 	@Override
 	public Object getDefaultValue() {
 		return defaultValue;
+	}
+
+	@Override
+	public Entity[] getReferenceEntities() {
+		if (referenceSet.isEmpty()) {
+			return EMPTY_ENTITY_ARRAY;
+		}
+		return referenceSet.toArray(new Entity[0]);
+	}
+
+	@Override
+	public Entity getReferenceEntity() {
+		Entity[] e = getReferenceEntities();
+		return e.length == 0 ? null : e[0];
 	}
 
 	@Override
@@ -149,7 +128,7 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 		if (!(obj instanceof FieldImpl)) {
 			return false;
 		}
-		return ((FieldImpl) obj).hashCode() == hashCode();
+		return obj.hashCode() == hashCode();
 	}
 
 	@Override
@@ -162,7 +141,7 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		FieldImpl clone = (FieldImpl) super.clone();
-		clone.referenceSet = new HashSet<Entity>(this.referenceSet);
+		clone.referenceSet = new HashSet<>(this.referenceSet);
 		return clone;
 	}
 

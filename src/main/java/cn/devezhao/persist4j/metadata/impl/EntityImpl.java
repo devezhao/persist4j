@@ -1,13 +1,5 @@
 package cn.devezhao.persist4j.metadata.impl;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-
 import cn.devezhao.commons.ByteUtils;
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
@@ -15,6 +7,14 @@ import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.BaseMetaObject;
 import cn.devezhao.persist4j.metadata.MetadataException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
@@ -23,44 +23,27 @@ import cn.devezhao.persist4j.util.CaseInsensitiveMap;
  */
 public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private static final long serialVersionUID = 4949038246043880357L;
-	
-	final static Entity[] EMPTY_ENTITY_ARRAY = new Entity[0];
-	final static Field[] EMPTY_FIELD_ARRAY = new Field[0];
-	
-	private int typeCode;
-	private String primaryFieldName;
+
+	final private int typeCode;
 	private String nameFieldName;
-	
+	final private boolean deletable;
+
+	private String primaryFieldName;
+
 	private Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
 	private Set<String> fieldSorted = new LinkedHashSet<>();
-	private List<Field> referenceTo = new ArrayList<Field>();
+	private List<Field> referenceTo = new ArrayList<>();
 	
 	private Entity masterEntity;
 	private Entity slaveEntity;
-	
-	/**
-	 * @param name
-	 * @param physicalName
-	 * @param description
-	 * @param typeCode
-	 * @param nameField
-	 */
-	public EntityImpl(String name, String physicalName, String description, int typeCode, String nameField) {
-		this(name, physicalName, description, typeCode, nameField, null);
-	}
-	
-	/**
-	 * @param name
-	 * @param physicalName
-	 * @param description
-	 * @param typeCode
-	 * @param nameField
-	 * @param extraAttrs
-	 */
-	public EntityImpl(String name, String physicalName, String description, int typeCode, String nameField, String extraAttrs) {
-		super(name, physicalName, description, extraAttrs);
+
+	public EntityImpl(String name, String physicalName, String description, JSONObject extraAttrs,
+					  boolean creatable, boolean updatable, boolean queryable,
+					  int typeCode, String nameFieldName, boolean deletable) {
+		super(name, physicalName, description, extraAttrs, creatable, updatable, queryable);
 		this.typeCode = typeCode;
-		this.nameFieldName = nameField;
+		this.nameFieldName = nameFieldName;
+		this.deletable = deletable;
 	}
 
 	@Override
@@ -110,15 +93,15 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	@Override
 	public Field[] getReferenceToFields(boolean excludeNReference) {
 		if (excludeNReference) {
-			List<Field> excluded = new ArrayList<Field>();
+			List<Field> excluded = new ArrayList<>();
 			for (Field rt : referenceTo) {
 				if (rt.getType() == FieldType.REFERENCE) {
 					excluded.add(rt);
 				}
 			}
-			return excluded.toArray(new Field[excluded.size()]);
+			return excluded.toArray(new Field[0]);
 		} else {
-			return referenceTo.toArray(new Field[referenceTo.size()]);
+			return referenceTo.toArray(new Field[0]);
 		}
 	}
 	
@@ -137,6 +120,15 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		return fieldMap.keySet().toArray(new String[0]);
 	}
 
+	/**
+	 * 是否可删除
+	 *
+	 * @return
+	 */
+	public boolean isDeletable() {
+		return deletable;
+	}
+
 	@Override
 	public int hashCode() {
 		return ByteUtils.hash(getEntityCode());
@@ -150,7 +142,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		if (!(obj instanceof EntityImpl)) {
 			return false;
 		}
-		return ((EntityImpl) obj).hashCode() == hashCode();
+		return obj.hashCode() == hashCode();
 	}
 
 	@Override
@@ -162,7 +154,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	protected Object clone() throws CloneNotSupportedException {
 		EntityImpl clone = (EntityImpl) super.clone();
 		clone.fieldMap = new CaseInsensitiveMap<>(this.fieldMap);
-		clone.referenceTo = new ArrayList<Field>(this.referenceTo);
+		clone.referenceTo = new ArrayList<>(this.referenceTo);
 		return clone;
 	}
 

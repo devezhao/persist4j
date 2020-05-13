@@ -31,7 +31,11 @@
  description			- 描述
  schema-name-optimize	- 是否启用schema优化
  master                 - 所属主实体
- extra-attrs            - 扩展属性
+ extra-attrs            - 扩展属性（JSON格式）
+ creatable              - 可创建
+ updatable              - 可更新
+ queryable              - 可查询
+ deletable              - 可删除
 -->
 <!ATTLIST entity
 	name       			CDATA #REQUIRED
@@ -43,6 +47,10 @@
 	schema-name-optimize (true | false | 1 | 0) "false"
 	master		 		CDATA #IMPLIED
 	extra-attrs         CDATA #IMPLIED
+    creatable           (true | false | 1 | 0) "true"
+	updatable           (true | false | 1 | 0) "true"
+	queryable           (true | false | 1 | 0) "true"
+	deletable           (true | false | 1 | 0) "true"
 >
 
 <!--
@@ -54,10 +62,6 @@
  name					- 字段名称
  type					- 字段类型
  physical-name			- 物理名称
- nullable				- 可为空
- creatable				- 可创建
- updatable				- 可更新
- repeatable     		- 可含有重复值
  ref-entity				- 引用实体列表
  max-length     		- 最大长度，只支持某些字段
  cascade				- 级联模式，只支持删除级联
@@ -65,17 +69,18 @@
  description			- 描述
  decimal-scale			- 小数位精度
  default-value			- 默认值，由数据库完成
- extra-attrs            - 扩展属性
+ extra-attrs            - 扩展属性（JSON格式）
+ creatable				- 可创建
+ updatable				- 可更新
+ queryable              - 可查询
+ nullable				- 可为空
+ repeatable     		- 可重复
 -->
 <!ATTLIST field
 	name   				CDATA #REQUIRED
-	physical-name 		CDATA #IMPLIED
-	type   				(primary | reference | any-reference | reference-list | char | string | text | ntext 
+	type   				(primary | reference | any-reference | reference-list | char | string | text | ntext
 							| int | small-int | double | decimal | long | date | timestamp | bool | binary) #REQUIRED
-	nullable   			(true | false | 1 | 0) "true"
-	creatable  			(true | false | 1 | 0) "true"
-	updatable  			(true | false | 1 | 0) "true"
-	repeatable 			(true | false | 1 | 0) "true"
+	physical-name 		CDATA #IMPLIED
 	ref-entity 			CDATA #IMPLIED
 	max-length      	CDATA #IMPLIED
 	cascade				(delete | remove-links | ignore) "remove-links"
@@ -84,6 +89,11 @@
 	decimal-scale       (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8) "4"
 	default-value       CDATA #IMPLIED
 	extra-attrs         CDATA #IMPLIED
+	creatable  			(true | false | 1 | 0) "true"
+	updatable  			(true | false | 1 | 0) "true"
+	queryable  			(true | false | 1 | 0) "true"
+	nullable   			(true | false | 1 | 0) "true"
+	repeatable 			(true | false | 1 | 0) "true"
 >
 
 <!--

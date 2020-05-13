@@ -9,11 +9,15 @@ package cn.devezhao.persist4j.metadata.impl;
  */
 public final class AnyEntity extends EntityImpl {
 	private static final long serialVersionUID = 1666508270744579952L;
-	
+
+	/**
+	 * 任意引用标识
+	 */
 	public static final String FLAG = "*";
 
 	@Deprecated
 	protected AnyEntity() {
-		super(FLAG, null, null, 0, null);
+		super(null, null, null, null, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE,
+				0, null, Boolean.TRUE);
 	}
 }

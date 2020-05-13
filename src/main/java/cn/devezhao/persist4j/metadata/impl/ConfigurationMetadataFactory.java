@@ -1,24 +1,5 @@
 package cn.devezhao.persist4j.metadata.impl;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Node;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.Dialect;
@@ -31,6 +12,26 @@ import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import cn.devezhao.persist4j.util.StringHelper;
 import cn.devezhao.persist4j.util.XmlHelper;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.Node;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 元数据配置
@@ -39,6 +40,7 @@ import cn.devezhao.persist4j.util.XmlHelper;
  * @since 0.1, Feb 4, 2009
  * @version $Id: ConfigurationMetadataFactory.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
+@SuppressWarnings("SpellCheckingInspection")
 public class ConfigurationMetadataFactory implements MetadataFactory {
 	private static final long serialVersionUID = 496898585196420839L;
 
@@ -46,11 +48,10 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	
 	final private XmlHelper XML_HELPER = new XmlHelper();
 	
-	volatile
-	private boolean refreshLocked = false;
+	volatile private boolean refreshLocked = false;
 	
 	volatile private Map<String, Integer> name2TypeMap = new CaseInsensitiveMap<>();
-	volatile private Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
+	volatile private Map<Integer, Entity> entityMap = new HashMap<>();
 	volatile private Document configDocument = null;
 	
 	private String configLocation;
@@ -58,7 +59,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	
 	private String commonEntityName = null;
 	private boolean schemaNameOptimize = false;
-	
+
 	/**
 	 * @param configLocation
 	 * @param dialect
@@ -69,19 +70,13 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		this.refresh(true);
 	}
 	
+	@Override
 	public Entity getEntity(String name) {
 		waitForRefreshLocked();
 		return getEntityNoLock(name);
 	}
 	
-	private Entity getEntityNoLock(String name) {
-		Integer aType = name2TypeMap.get(name);
-		if (aType == null) {
-			throw new MetadataException("entity [ " + name + " ] dose not exists");
-		}
-		return entityMap.get(aType);
-	}
-
+	@Override
 	public Entity getEntity(int type) {
 		waitForRefreshLocked();
 		Entity e = entityMap.get(type);
@@ -90,20 +85,33 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		return e;
 	}
+
+	private Entity getEntityNoLock(String name) {
+		Integer aType = name2TypeMap.get(name);
+		if (aType == null) {
+			throw new MetadataException("entity [ " + name + " ] dose not exists");
+		}
+		return entityMap.get(aType);
+	}
 	
+	@Override
 	public boolean containsEntity(int aType) {
 		waitForRefreshLocked();
 		return name2TypeMap.containsValue(aType);
 	}
 	
+	@Override
 	public Entity[] getEntities() {
 		waitForRefreshLocked();
-		return entityMap.values().toArray(new Entity[entityMap.size()]);
+		return entityMap.values().toArray(new Entity[0]);
 	}
-	
+
+	/**
+	 * @return
+	 */
 	public Document getConfigDocument() {
 		waitForRefreshLocked();
-		return configDocument;
+		return (Document) configDocument.clone();
 	}
 	
 	synchronized
@@ -117,9 +125,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			}
 		}
 	}
-	
-	synchronized
-	public void refresh(boolean initState) {
+
+	/**
+	 * @param initState
+	 */
+	synchronized public void refresh(boolean initState) {
 		final Document newlyDocument = readConfiguration(initState);
 		
 		this.refreshLocked = true;
@@ -134,19 +144,19 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			this.notifyAll();
 		}
 	}
-	
+
 	/**
-	 * @param url
+	 * @param initState
 	 * @return
 	 */
 	protected Document readConfiguration(boolean initState) {
 		URL url = getClass().getClassLoader().getResource(configLocation);
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 		
-		Document document = null;
+		Document document;
 		try {
 			document = XML_HELPER.createSAXReader("",
-					errors, XmlHelper.DEFAULT_DTD_RESOLVER).read( url.openStream() );
+					errors, XmlHelper.DEFAULT_DTD_RESOLVER).read(Objects.requireNonNull(url).openStream());
 		} catch (IOException e) {
 			throw new MetadataException("could not load metadata config [ " + url + " ]", e);
 		} catch (DocumentException e) {
@@ -154,7 +164,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		return document;
 	}
-	
+
 	/**
 	 * @param ident
 	 * @param type
@@ -164,7 +174,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			throw new MetadataException(type + " name [ " + ident + " ] is wrong! must start with ['a-zA-Z'|'_'|'#'] and contains ['a-zA-Z'|'_'|'#'|'0-9'] only");
 		}
 	}
-	
+
 	/**
 	 * @param document
 	 */
@@ -194,21 +204,21 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		buildCompleted();
 	}
-	
+
 	/**
-	 * @param eNode
+	 * @param entityNode
 	 * @param parent
 	 * @return
 	 */
-	private Entity buildEntity(Node eNode, Entity parent) {
-		String tCode = eNode.valueOf("@type-code");
+	private Entity buildEntity(Node entityNode, Entity parent) {
+		String tCode = entityNode.valueOf("@type-code");
 		Validate.notEmpty(tCode);
-		boolean fieldSchemaNameOptimize = BooleanUtils.toBoolean(eNode.valueOf("@schema-name-optimize"));
-		fieldSchemaNameOptimize = fieldSchemaNameOptimize || (schemaNameOptimize && !fieldSchemaNameOptimize);
+		boolean fieldSchemaNameOptimize = BooleanUtils.toBoolean(entityNode.valueOf("@schema-name-optimize"));
+		fieldSchemaNameOptimize = fieldSchemaNameOptimize || schemaNameOptimize;
 		
-		String name = eNode.valueOf("@name");
+		String name = entityNode.valueOf("@name");
 		namingPolicy(name, "entity");
-		String pName = eNode.valueOf("@physical-name");
+		String pName = entityNode.valueOf("@physical-name");
 		if (StringUtils.isEmpty(pName)) {
 			pName = name;
 			if (fieldSchemaNameOptimize) {
@@ -217,47 +227,48 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		namingPolicy(pName, "entity physical");
 		
-		String nameField = eNode.valueOf("@name-field");
-		String description = eNode.valueOf("@description");
-		String extraAttrs = eNode.valueOf("@extra-attrs");
-		
-		String master = eNode.valueOf("@master");
+		String nameField = entityNode.valueOf("@name-field");
+		String description = entityNode.valueOf("@description");
+
+		String extraAttrs = entityNode.valueOf("@extra-attrs");
+		JSONObject extraAttrsJson = JSON.parseObject(StringUtils.defaultIfBlank(extraAttrs, "{}"));
+
+		String master = entityNode.valueOf("@master");
 		if (StringUtils.isNotBlank(master)) {
 			SM_MAPPING.put(name, master);
 		}
-		
+
+		boolean C = Boolean.parseBoolean(entityNode.valueOf("@creatable"));
+		boolean U = Boolean.parseBoolean(entityNode.valueOf("@updatable"));
+		boolean Q = Boolean.parseBoolean(entityNode.valueOf("@queryable"));
+		boolean D = Boolean.parseBoolean(entityNode.valueOf("@deletable"));
+
 		EntityImpl entity = new EntityImpl(
-				name, pName, description, Integer.parseInt(tCode), nameField, extraAttrs);
+				name, pName, description, extraAttrsJson, C, U, Q, Integer.parseInt(tCode), nameField, D);
 		
 		Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
-		if (parent != null && !"false".equals(eNode.valueOf("@parent"))) {
+		if (parent != null && !"false".equals(entityNode.valueOf("@parent"))) {
 			for (Field field : parent.getFields()) {
-				FieldImpl fieldImpl = new FieldImpl(
-						field.getName(), field.getPhysicalName(), field.getDescription(), 
-						entity, field.getType(), field.getCascadeModel(), field.getMaxLength(),
-						field.isNullable(), field.isCreatable(), field.isUpdatable(), field.isRepeatable(),
-						field.getDecimalScale(), field.getDefaultValue(), field.isAutoValue());
-				
-				fieldMap.put(field.getName(), fieldImpl);
-				
+				FieldImpl fieldClone = new FieldImpl(field);
+				fieldMap.put(field.getName(), fieldClone);
+
 				// 复制父级的字段
 				if (field.getType() == FieldType.REFERENCE 
 						|| field.getType() == FieldType.ANY_REFERENCE || field.getType() == FieldType.REFERENCE_LIST) {
-					REFFIELD_REFS.put(fieldImpl, REFFIELD_REFS.get(field));
+					REFFIELD_REFS.put(fieldClone, REFFIELD_REFS.get(field));
 				}
 			}
 		}
 		
-		for (Object obj : eNode.selectNodes("field")) {
+		for (Object obj : entityNode.selectNodes("field")) {
 			Field field = buildField((Node) obj, entity, fieldSchemaNameOptimize);
 			if (entity.containsField(field.getName())) {
 				throw new MetadataException("Field [ " + field + " ] already exists");
 			}
 			entity.addField(field);
 		}
-		
-		for (Iterator<Map.Entry<String, Field>> iter = fieldMap.entrySet().iterator(); iter.hasNext(); ) {
-			Map.Entry<String, Field> e = iter.next();
+
+		for (Map.Entry<String, Field> e : fieldMap.entrySet()) {
 			if (entity.containsField(e.getKey())) {
 				continue;
 			}
@@ -267,15 +278,15 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 	
 	/**
-	 * @param node
+	 * @param fieldNode
 	 * @param ownEntity
 	 * @param fieldSchemaNameOptimize
 	 * @return
 	 */
-	private Field buildField(Node node, Entity ownEntity, boolean fieldSchemaNameOptimize) {
-		String name = node.valueOf("@name");
+	private Field buildField(Node fieldNode, Entity ownEntity, boolean fieldSchemaNameOptimize) {
+		String name = fieldNode.valueOf("@name");
 		namingPolicy(name, "field");
-		String pName = node.valueOf("@physical-name");
+		String pName = fieldNode.valueOf("@physical-name");
 		if (StringUtils.isEmpty(pName)) {
 			pName = name;
 			if (fieldSchemaNameOptimize) {
@@ -284,65 +295,69 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		}
 		namingPolicy(pName, "field physical ");
 		
-		Type type = dialect.getFieldType(node.valueOf("@type"));
+		Type type = dialect.getFieldType(fieldNode.valueOf("@type"));
 		Validate.notNull(type);
-		
-		boolean N = Boolean.parseBoolean(node.valueOf("@nullable"));
-		boolean C = Boolean.parseBoolean(node.valueOf("@creatable"));
-		boolean U = Boolean.parseBoolean(node.valueOf("@updatable"));
-		boolean R = Boolean.parseBoolean(node.valueOf("@repeatable"));
+
+		boolean C = Boolean.parseBoolean(fieldNode.valueOf("@creatable"));
+		boolean U = Boolean.parseBoolean(fieldNode.valueOf("@updatable"));
+		boolean Q = Boolean.parseBoolean(fieldNode.valueOf("@queryable"));
+		boolean N = Boolean.parseBoolean(fieldNode.valueOf("@nullable"));
+		boolean R = Boolean.parseBoolean(fieldNode.valueOf("@repeatable"));
+
 		int maxLength = FieldType.NO_NEED_LENGTH;
-		if (StringUtils.isBlank( node.valueOf("@max-length") )) {
+		if (StringUtils.isBlank( fieldNode.valueOf("@max-length") )) {
 			if (type == FieldType.STRING) {
 				maxLength = FieldType.DEFAULT_STRING_LENGTH;
 			} else if (type == FieldType.TEXT) {
 				maxLength = FieldType.DEFAULT_TEXT_LENGTH;
 			}
 		} else {
-			maxLength = Integer.parseInt( node.valueOf("@max-length") );
+			maxLength = Integer.parseInt( fieldNode.valueOf("@max-length") );
 		}
 		
 		if (type == FieldType.PRIMARY) {
-			N = C = U = R = false;
+			C = U = N = R = false;
 			maxLength = ID.getIDGenerator().getLength();
 		}
 		
 		CascadeModel cascade = null;
 		if (type == FieldType.REFERENCE || type == FieldType.ANY_REFERENCE) {
-			cascade = CascadeModel.parse(node.valueOf("@cascade"));
+			cascade = CascadeModel.parse(fieldNode.valueOf("@cascade"));
 			maxLength = ID.getIDGenerator().getLength();
 		}
 		
-		int decimalScale = 0;
+		int decimalScale;
 		if (type == FieldType.DECIMAL || type == FieldType.DOUBLE) {
 			decimalScale = Integer.parseInt( 
-					StringUtils.defaultIfEmpty(node.valueOf("@decimal-scale"), FieldType.DEFAULT_DECIMAL_SCALE + "") );
+					StringUtils.defaultIfEmpty(fieldNode.valueOf("@decimal-scale"), FieldType.DEFAULT_DECIMAL_SCALE + "") );
 		} else {
 			decimalScale = 0;
 		}
-		
-		String desc = node.valueOf("@description");
-		String defaultValue = node.valueOf("@default-value");
-		boolean auto = Boolean.parseBoolean(node.valueOf("@auto-value"));
-		if (auto) {
-			N = C = U = R = false;
+
+		// 自增值
+		boolean autoValue = Boolean.parseBoolean(fieldNode.valueOf("@auto-value"));
+		if (autoValue) {
+			C = U = N = R = false;
 			type = FieldType.LONG;
 		}
-		
-		String extraAttrs = node.valueOf("@extra-attrs");
-		
-		Field field = new FieldImpl(
-				name, pName, desc, ownEntity, type, cascade, maxLength, N, C, U, R,
-				decimalScale, defaultValue, auto, extraAttrs);
-		
-		String refs = node.valueOf("@ref-entity");
+
+		String desc = fieldNode.valueOf("@description");
+		String defaultValue = fieldNode.valueOf("@default-value");
+
+		String extraAttrs = fieldNode.valueOf("@extra-attrs");
+		JSONObject extraAttrsJson = JSON.parseObject(StringUtils.defaultIfBlank(extraAttrs, "{}"));
+
+		Field field = new FieldImpl(name, pName, desc, extraAttrsJson, C, U, Q,
+				ownEntity, type, maxLength, cascade, N, R, autoValue, decimalScale, defaultValue);
+
+		String refs = fieldNode.valueOf("@ref-entity");
 		if (type == FieldType.REFERENCE) {
 			Validate.notEmpty(refs,
 					"reference field [ " + field + " ] must have attribute ref-entity");
 			REFFIELD_REFS.put(field, new String[] { refs });
 		} else if (type == FieldType.ANY_REFERENCE || type == FieldType.REFERENCE_LIST) {
 			REFFIELD_REFS.put(field,
-					StringUtils.isBlank(refs) ? new String[] { AnyEntity.FLAG } : refs.split("\\,"));
+					StringUtils.isBlank(refs) ? new String[] { AnyEntity.FLAG } : refs.split(","));
 		}
 		return field;
 	}
@@ -365,13 +380,12 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 */
 	private void buildCompleted() {
 		// 特殊字段处理
-		for (Iterator<Map.Entry<Field, String[]>> iter = REFFIELD_REFS.entrySet().iterator(); iter.hasNext(); ) {
-			Map.Entry<Field, String[]> e = iter.next();
+		for (Map.Entry<Field, String[]> e : REFFIELD_REFS.entrySet()) {
 			FieldImpl field = (FieldImpl) e.getKey();
 			if (field.getOwnEntity().getName().equals(commonEntityName)) {
 				continue;
 			}
-			
+
 			// 任意引用，引用所有实体
 			if (AnyEntity.FLAG.equals(e.getValue()[0])) {
 				for (Entity entity : entityMap.values()) {
@@ -386,8 +400,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		REFFIELD_REFS.clear();
 		
 		// SM 实体处理
-		for (Iterator<Map.Entry<String, String>> iter = SM_MAPPING.entrySet().iterator(); iter.hasNext(); ) {
-			Map.Entry<String, String> e = iter.next();
+		for (Map.Entry<String, String> e : SM_MAPPING.entrySet()) {
 			Entity slaveEntity = getEntityNoLock(e.getKey());
 			String master = e.getValue();
 			if (name2TypeMap.containsKey(master)) {

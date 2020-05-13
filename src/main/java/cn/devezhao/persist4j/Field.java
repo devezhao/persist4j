@@ -56,20 +56,6 @@ public interface Field extends BaseMeta {
 	int getMaxLength();
 	
 	/**
-	 *  可创建/指定值（不可创建是指仅能由系统指定或由数据库生成）
-	 *  
-	 * @return
-	 */
-	boolean isCreatable();
-	
-	/**
-	 * 是否可更新值
-	 * 
-	 * @return
-	 */
-	boolean isUpdatable();
-
-	/**
 	 * 是否可以为空
 	 * 
 	 * @return
@@ -84,18 +70,11 @@ public interface Field extends BaseMeta {
 	boolean isRepeatable();
 
 	/**
-	 * 是否为数据库自动填充
+	 * 是否为数据库自动填充值
 	 * 
 	 * @return
 	 */
 	boolean isAutoValue();
-	
-	/**
-	 * 小数位精度
-	 * 
-	 * @return
-	 */
-	int getDecimalScale();
 	
 	/**
 	 * 默认值。注意：默认值由数据库进行填充，框架不会做任何处理，只在在生成SCHEMA的时候会生成默认值
@@ -103,4 +82,13 @@ public interface Field extends BaseMeta {
 	 * @return
 	 */
 	Object getDefaultValue();
+
+	/**
+	 * 小数位精度
+	 *
+	 * @return
+	 * @see cn.devezhao.persist4j.dialect.editor.DoubleEditor
+	 * @see cn.devezhao.persist4j.dialect.editor.DecimalEditor
+	 */
+	int getDecimalScale();
 }

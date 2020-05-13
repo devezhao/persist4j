@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.metadata;
 
-import java.io.Serializable;
-
 import com.alibaba.fastjson.JSONObject;
+
+import java.io.Serializable;
 
 /**
  * Base meta object
@@ -35,7 +35,28 @@ public interface BaseMeta extends Serializable {
 	String getDescription();
 	
 	/**
-	 * 扩展属性（便于实现自定义的效果）
+	 * 是否可创建
+	 * 
+	 * @return
+	 */
+	boolean isCreatable();
+	
+	/**
+	 * 是否可更新
+	 * 
+	 * @return
+	 */
+	boolean isUpdatable();
+	
+	/**
+	 * 是否可查询
+	 * 
+	 * @return
+	 */
+	boolean isQueryable();
+	
+	/**
+	 * 扩展属性（便于实现自定义属性）
 	 * 
 	 * @return
 	 */

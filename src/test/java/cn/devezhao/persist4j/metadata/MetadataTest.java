@@ -38,4 +38,13 @@ public class MetadataTest {
 			System.out.println(field);
 		}
 	}
+
+	@Test
+	public void testCommon() {
+		Dialect dialect = new MySQL5Dialect();
+		MetadataFactory metadataFactory = new ConfigurationMetadataFactory("metadata-test.xml", dialect);
+
+		Field commonReference = metadataFactory.getEntity("Test2").getField("commonReference");
+		System.out.println(commonReference);
+	}
 }

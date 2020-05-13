@@ -111,7 +111,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 */
 	public Document getConfigDocument() {
 		waitForRefreshLocked();
-		return (Document) configDocument.clone();
+		return configDocument;
 	}
 	
 	synchronized
@@ -165,11 +165,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		return document;
 	}
 
-	/**
-	 * @param ident
-	 * @param type
-	 */
-	protected void namingPolicy(String ident, String type) {
+	private void namingPolicy(String ident, String type) {
 		if (!StringHelper.isIdentifier(ident)) {
 			throw new MetadataException(type + " name [ " + ident + " ] is wrong! must start with ['a-zA-Z'|'_'|'#'] and contains ['a-zA-Z'|'_'|'#'|'0-9'] only");
 		}
@@ -181,24 +177,24 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	private void build(Document document) {
 		Element root = document.getRootElement();
 		schemaNameOptimize = BooleanUtils.toBoolean(root.valueOf("@schema-name-optimize"));
-		
-		Entity globalCommon = null;
+
+		Entity globalParent = null;
 		String allParent = root.valueOf("@default-parent");
 		if (!StringUtils.isBlank(allParent)) {
-			globalCommon = buildEntity(root.selectSingleNode(String.format("entity[@name='%s']", allParent)), null);
+			globalParent = buildEntity(root.selectSingleNode(String.format("entity[@name='%s']", allParent)), null);
 			if (LOG.isInfoEnabled()) {
-				LOG.info("Default entity [ " + globalCommon + " ] will merge into all entities");
+				LOG.info("Default entity [ " + globalParent + " ] will merge into all entities");
 			}
-			commonEntityName = globalCommon.getName();
+			commonEntityName = globalParent.getName();
 		}
 		
 		for (Object o : root.selectNodes("//entity")) {
 			Node e = (Node) o;
-			if (globalCommon != null && globalCommon.getName().equals(e.valueOf("@name"))) {
+			if (globalParent != null && globalParent.getName().equals(e.valueOf("@name"))) {
 				continue;
 			}
 			
-			Entity entity = buildEntity(e, globalCommon);
+			Entity entity = buildEntity(e, globalParent);
 			registerEntity(entity);
 		}
 		
@@ -211,21 +207,21 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	 * @return
 	 */
 	private Entity buildEntity(Node entityNode, Entity parent) {
-		String tCode = entityNode.valueOf("@type-code");
-		Validate.notEmpty(tCode);
+		String typeCode = entityNode.valueOf("@type-code");
+		Validate.notEmpty(typeCode);
 		boolean fieldSchemaNameOptimize = BooleanUtils.toBoolean(entityNode.valueOf("@schema-name-optimize"));
 		fieldSchemaNameOptimize = fieldSchemaNameOptimize || schemaNameOptimize;
 		
 		String name = entityNode.valueOf("@name");
-		namingPolicy(name, "entity");
-		String pName = entityNode.valueOf("@physical-name");
-		if (StringUtils.isEmpty(pName)) {
-			pName = name;
+		namingPolicy(name, "Entity");
+		String physicalName = entityNode.valueOf("@physical-name");
+		if (StringUtils.isEmpty(physicalName)) {
+			physicalName = name;
 			if (fieldSchemaNameOptimize) {
-				pName = StringHelper.hyphenate(pName).toLowerCase();
+				physicalName = StringHelper.hyphenate(physicalName).toLowerCase();
 			}
 		}
-		namingPolicy(pName, "entity physical");
+		namingPolicy(physicalName, "Entity physical");
 		
 		String nameField = entityNode.valueOf("@name-field");
 		String description = entityNode.valueOf("@description");
@@ -244,18 +240,18 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		boolean D = Boolean.parseBoolean(entityNode.valueOf("@deletable"));
 
 		EntityImpl entity = new EntityImpl(
-				name, pName, description, extraAttrsJson, C, U, Q, Integer.parseInt(tCode), nameField, D);
+				name, physicalName, description, extraAttrsJson, C, U, Q, Integer.parseInt(typeCode), nameField, D);
 		
-		Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
+		Map<String, Field> parentFields = new CaseInsensitiveMap<>();
 		if (parent != null && !"false".equals(entityNode.valueOf("@parent"))) {
 			for (Field field : parent.getFields()) {
-				FieldImpl fieldClone = new FieldImpl(field);
-				fieldMap.put(field.getName(), fieldClone);
+				FieldImpl useClone = new FieldImpl(field, entity);
+				parentFields.put(field.getName(), useClone);
 
 				// 复制父级的字段
 				if (field.getType() == FieldType.REFERENCE 
 						|| field.getType() == FieldType.ANY_REFERENCE || field.getType() == FieldType.REFERENCE_LIST) {
-					REFFIELD_REFS.put(fieldClone, REFFIELD_REFS.get(field));
+					REFFIELD_REFS.put(useClone, REFFIELD_REFS.get(field));
 				}
 			}
 		}
@@ -268,12 +264,13 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			entity.addField(field);
 		}
 
-		for (Map.Entry<String, Field> e : fieldMap.entrySet()) {
+		for (Map.Entry<String, Field> e : parentFields.entrySet()) {
 			if (entity.containsField(e.getKey())) {
 				continue;
 			}
 			entity.addField(e.getValue());
 		}
+
 		return entity;
 	}
 	
@@ -286,14 +283,14 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	private Field buildField(Node fieldNode, Entity ownEntity, boolean fieldSchemaNameOptimize) {
 		String name = fieldNode.valueOf("@name");
 		namingPolicy(name, "field");
-		String pName = fieldNode.valueOf("@physical-name");
-		if (StringUtils.isEmpty(pName)) {
-			pName = name;
+		String physicalName = fieldNode.valueOf("@physical-name");
+		if (StringUtils.isEmpty(physicalName)) {
+			physicalName = name;
 			if (fieldSchemaNameOptimize) {
-				pName = StringHelper.hyphenate(pName).toUpperCase();
+				physicalName = StringHelper.hyphenate(physicalName).toUpperCase();
 			}
 		}
-		namingPolicy(pName, "field physical ");
+		namingPolicy(physicalName, "Field physical");
 		
 		Type type = dialect.getFieldType(fieldNode.valueOf("@type"));
 		Validate.notNull(type);
@@ -347,13 +344,13 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		String extraAttrs = fieldNode.valueOf("@extra-attrs");
 		JSONObject extraAttrsJson = JSON.parseObject(StringUtils.defaultIfBlank(extraAttrs, "{}"));
 
-		Field field = new FieldImpl(name, pName, desc, extraAttrsJson, C, U, Q,
+		Field field = new FieldImpl(name, physicalName, desc, extraAttrsJson, C, U, Q,
 				ownEntity, type, maxLength, cascade, N, R, autoValue, decimalScale, defaultValue);
 
 		String refs = fieldNode.valueOf("@ref-entity");
 		if (type == FieldType.REFERENCE) {
 			Validate.notEmpty(refs,
-					"reference field [ " + field + " ] must have attribute ref-entity");
+					"Reference field [ " + field + " ] must have attribute ref-entity");
 			REFFIELD_REFS.put(field, new String[] { refs });
 		} else if (type == FieldType.ANY_REFERENCE || type == FieldType.REFERENCE_LIST) {
 			REFFIELD_REFS.put(field,

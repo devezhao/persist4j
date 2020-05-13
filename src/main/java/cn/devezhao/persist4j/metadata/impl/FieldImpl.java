@@ -48,10 +48,10 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 		this.defaultValue = defaultValue;
 	}
 
-	protected FieldImpl(Field c) {
+	protected FieldImpl(Field c, Entity ownEntity) {
 		this(c.getName(), c.getPhysicalName(), c.getDescription(), c.getExtraAttrs(),
 				c.isCreatable(), c.isUpdatable(), c.isQueryable(),
-				c.getOwnEntity(), c.getType(), c.getMaxLength(), c.getCascadeModel(),
+				ownEntity, c.getType(), c.getMaxLength(), c.getCascadeModel(),
 				c.isNullable(), c.isRepeatable(), c.isAutoValue(), c.getDecimalScale(), c.getDefaultValue());
 	}
 

@@ -91,4 +91,11 @@ public interface Entity extends BaseMeta {
 	 * @see #getFields()
 	 */
 	String[] getFieldNames();
+
+	/**
+	 * 是否可删除
+	 *
+	 * @return
+	 */
+	boolean isDeletable();
 }

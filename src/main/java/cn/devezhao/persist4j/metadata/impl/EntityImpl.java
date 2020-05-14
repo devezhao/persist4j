@@ -120,11 +120,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		return fieldMap.keySet().toArray(new String[0]);
 	}
 
-	/**
-	 * 是否可删除
-	 *
-	 * @return
-	 */
+	@Override
 	public boolean isDeletable() {
 		return deletable;
 	}

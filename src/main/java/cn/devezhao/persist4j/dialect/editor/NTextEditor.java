@@ -21,7 +21,8 @@ public class NTextEditor extends AbstractFieldEditor {
 
 	private static final long serialVersionUID = -6531990086997201844L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.NTEXT.getMask();
 	}
 	

@@ -17,7 +17,8 @@ public class DateEditor extends AbstractFieldEditor {
 
 	private static final long serialVersionUID = -2499354201101231156L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.DATE.getMask();
 	}
 

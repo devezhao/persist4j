@@ -78,7 +78,8 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 		literals.put(new ANTLRHashString("by", this), new Integer(14));
 	}
 
-	public Token nextToken() throws TokenStreamException {
+	@Override
+    public Token nextToken() throws TokenStreamException {
 		Token theRetToken = null;
 		tryAgain: for (;;) {
 			Token _token = null;
@@ -201,8 +202,9 @@ public class AjQLLexer extends antlr.CharScanner implements AjQLParserTokenTypes
 							}
 						}
 					}
-					if (_returnToken == null)
-						continue tryAgain; // found SKIP token
+					if (_returnToken == null) {
+                        continue tryAgain; // found SKIP token
+                    }
 					_ttype = _returnToken.getType();
 					_returnToken.setType(_ttype);
 					return _returnToken;

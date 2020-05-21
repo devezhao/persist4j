@@ -45,12 +45,14 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 		this.managerFactory = managerFactory;
 	}
 	
-	public NativeQuery setInParameterType(Type... fTypes) {
+	@Override
+    public NativeQuery setInParameterType(Type... fTypes) {
 		this.parameterTypes = fTypes;
 		return this;
 	}
 
-	public NativeQuery setReturnType(Type... fTypes) {
+	@Override
+    public NativeQuery setReturnType(Type... fTypes) {
 		this.returnTypes = fTypes;
 		return this;
 	}
@@ -61,25 +63,31 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 		return this;
 	}
 
-	public Object[][] array() {
-		if (execQuery(0).isEmpty())
-			return AjqlResultImpl.EMPTY_OBJECT_ARRAYS;
+	@Override
+    public Object[][] array() {
+		if (execQuery(0).isEmpty()) {
+            return AjqlResultImpl.EMPTY_OBJECT_ARRAYS;
+        }
 
 		return dataCache.toArray(new Object[dataCache.size()][]);
 	}
 
-	public Object[] unique() {
+	@Override
+    public Object[] unique() {
 		setMaxResults(1);
 		setLimit(1, offset);
-		if (execQuery(1).isEmpty())
-			return null;
+		if (execQuery(1).isEmpty()) {
+            return null;
+        }
 		
 		return dataCache.get(0);
 	}
 	
-	public NativeQuery reset() {
-		if (dataCache != null)
-			dataCache = null;
+	@Override
+    public NativeQuery reset() {
+		if (dataCache != null) {
+            dataCache = null;
+        }
 		return this;
 	}
 
@@ -90,12 +98,14 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 	 * @return
 	 */
 	protected List<Object[]> execQuery(int fetch) {
-		if (dataCache != null)
-			return dataCache;
+		if (dataCache != null) {
+            return dataCache;
+        }
 		dataCache = new LinkedList<Object[]>();
 
-		if (fetch == 1)
-			setMaxResults(1);
+		if (fetch == 1) {
+            setMaxResults(1);
+        }
 		// else to all
 		
 		String aSql = sql;
@@ -123,8 +133,9 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 						parameterTypes[idx].getFieldEditor().set( pstmt, idx + 1, e.getValue() );
 					}
 				} else {
-					if (LOG.isDebugEnabled())
-						LOG.debug("Parameter type unset, use #setObject");
+					if (LOG.isDebugEnabled()) {
+                        LOG.debug("Parameter type unset, use #setObject");
+                    }
 					
 					// set generial value
 					for (Map.Entry<Integer, Object> e : inParameters.entrySet()) {
@@ -133,16 +144,19 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 				}
 			}
 			
-			if (getTimeout() > 0)
-				pstmt.setQueryTimeout(getTimeout());
+			if (getTimeout() > 0) {
+                pstmt.setQueryTimeout(getTimeout());
+            }
 
 			rs = pstmt.executeQuery();
 			int colCount = rs.getMetaData().getColumnCount();
 			
-			if (fetch > 0)
-				rs.setFetchSize(fetch);
-			if (getFirstResult() > 0)
-				rs.absolute(getFirstResult());
+			if (fetch > 0) {
+                rs.setFetchSize(fetch);
+            }
+			if (getFirstResult() > 0) {
+                rs.absolute(getFirstResult());
+            }
 			
 			if (getMaxResults() <= 0) {
 				while (rs.next()) {
@@ -176,8 +190,9 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 				values[i] = returnTypes[i].getFieldEditor().get(rs, i + 1);
 			}
 		} else {
-			if (LOG.isDebugEnabled())
-				LOG.debug("Return type unset, use #getObject");
+			if (LOG.isDebugEnabled()) {
+                LOG.debug("Return type unset, use #getObject");
+            }
 			
 			for (int i = 0; i < colCount; i++) {
 				values[i] = rs.getObject(i + 1);

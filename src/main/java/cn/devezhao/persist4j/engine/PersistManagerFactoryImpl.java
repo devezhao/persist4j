@@ -38,35 +38,43 @@ public class PersistManagerFactoryImpl implements PersistManagerFactory {
 		this.executorContext = new SqlExecutorContext(metadataFactory, dialect, dataSource);
 	}
 
-	public DataSource getDataSource() {
+	@Override
+    public DataSource getDataSource() {
 		return dataSource;
 	}
 
-	public Dialect getDialect() {
+	@Override
+    public Dialect getDialect() {
 		return dialect;
 	}
 
-	public MetadataFactory getMetadataFactory() {
+	@Override
+    public MetadataFactory getMetadataFactory() {
 		return metadataFactory;
 	}
 
-	public SqlExecutorContext getSQLExecutorContext() {
+	@Override
+    public SqlExecutorContext getSQLExecutorContext() {
 		return executorContext;
 	}
 
-	public PersistManager createPersistManager() {
+	@Override
+    public PersistManager createPersistManager() {
 		return (new PersistManagerImpl(this));
 	}
 
-	public Query createQuery(String ajql) {
+	@Override
+    public Query createQuery(String ajql) {
 		return createQuery(ajql, null);
 	}
 
-	public Query createQuery(String ajql, Filter filter) {
+	@Override
+    public Query createQuery(String ajql, Filter filter) {
 		return new AjqlQuery(ajql, this, filter);
 	}
 
-	public NativeQuery createNativeQuery(String sql) {
+	@Override
+    public NativeQuery createNativeQuery(String sql) {
 		return (new NativeQueryImpl(sql, this));
 	}
 }

@@ -70,15 +70,18 @@ public class FieldType implements Type, Serializable {
 		this.editor = editor;
 	}
 
-	public Integer getMask() {
+	@Override
+    public Integer getMask() {
 		return mask;
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return name;
 	}
 
-	public Editor getFieldEditor() {
+	@Override
+    public Editor getFieldEditor() {
 		return editor;
 	}
 

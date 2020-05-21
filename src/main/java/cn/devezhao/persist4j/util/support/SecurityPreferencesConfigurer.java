@@ -37,8 +37,9 @@ public class SecurityPreferencesConfigurer extends PreferencesPlaceholderConfigu
 				append += "&useServerPrepStmts=true";
 			}
 			
-			if (append.length() > 1)
-				props.put("db.url", dbUrl + append);
+			if (append.length() > 1) {
+                props.put("db.url", dbUrl + append);
+            }
 		}
 	}
 }

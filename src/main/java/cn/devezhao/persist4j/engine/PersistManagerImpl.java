@@ -96,11 +96,13 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		int affected = 0;
 		try {
 			affected = execute(new StatementCallback(){
-				public String getSql() {
+				@Override
+                public String getSql() {
 					return sql;
 				}
 				
-				public Object doInParameters(PreparedStatement pstmt) throws SQLException {
+				@Override
+                public Object doInParameters(PreparedStatement pstmt) throws SQLException {
 					int index = 1;
 					for (Field field : fieldList) {
 						Editor editor = field.getType().getFieldEditor();
@@ -179,11 +181,13 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		try {
 			if (!first) {
 				affected = execute(new StatementCallback(){
-					public String getSql() {
+					@Override
+                    public String getSql() {
 						return sql;
 					}
 					
-					public Object doInParameters(PreparedStatement pstmt) throws SQLException {
+					@Override
+                    public Object doInParameters(PreparedStatement pstmt) throws SQLException {
 						int index = 1;
 						for (Field field : fieldList) {
 							Editor editor = field.getType().getFieldEditor();

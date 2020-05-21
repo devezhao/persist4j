@@ -4,6 +4,8 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
 
+import java.util.Objects;
+
 /**
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
@@ -44,27 +46,33 @@ public class JoinField implements SelectItem {
 	
 	// --------------------------------------------------------------------- Implements SelectItem
 
-	public String getFieldPath() {
+	@Override
+    public String getFieldPath() {
 		return fieldPath;
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return name;
 	}
 	
-	public String getAlias() {
+	@Override
+    public String getAlias() {
 		return alias;
 	}
 	
-	public int getIndex() {
+	@Override
+    public int getIndex() {
 		return index;
 	}
 	
-	public Field getField() {
+	@Override
+    public Field getField() {
 		return field;
 	}
 
-	public SelectItemType getType() {
+	@Override
+    public SelectItemType getType() {
 		return type;
 	}
 	
@@ -118,4 +126,17 @@ public class JoinField implements SelectItem {
 			return String.format("[%s->%s->%s]", fieldPath, name, alias);
 		}
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return o.hashCode() == hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                tableNode, field, fieldPath, type, name, alias, index, fullPath, aggregator, aggregatorSibling, aggregatorMode);
+    }
 }

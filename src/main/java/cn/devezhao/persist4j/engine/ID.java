@@ -61,8 +61,9 @@ public class ID implements Serializable {
 	 * @return
 	 */
 	public static boolean isId(Object id) {
-		if (id instanceof ID)
-			return true;
+		if (id instanceof ID) {
+            return true;
+        }
 		
 		if (id == null || StringUtils.isEmpty(id.toString())
 				|| id.toString().length() != idLength) {

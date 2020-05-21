@@ -12,7 +12,8 @@ public class AnyReferenceEditor extends ReferenceEditor {
 
 	private static final long serialVersionUID = -7654860974427302836L;
 	
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.ANY_REFERENCE.getMask();
 	}
 }

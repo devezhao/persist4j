@@ -20,7 +20,8 @@ public class BoolEditor extends CharEditor {
 	public static final char TRUE 	= 'T';
 	public static final char FALSE 	= 'F';
 	
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.BOOL.getMask();
 	}
 

@@ -15,19 +15,23 @@ import cn.devezhao.persist4j.dialect.Type;
  */
 public class GetDateFunction implements SqlFunction {
 
-	public String getToken() {
+	@Override
+    public String getToken() {
 		return "getdate";
 	}
 	
-	public Type getReturnType() {
+	@Override
+    public Type getReturnType() {
 		return FieldType.DATE;
 	}
 
-	public boolean hasArguments() {
+	@Override
+    public boolean hasArguments() {
 		return false;
 	}
 
-	public String render(Object[] arguments) {
+	@Override
+    public String render(Object[] arguments) {
 		return new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 	}
 }

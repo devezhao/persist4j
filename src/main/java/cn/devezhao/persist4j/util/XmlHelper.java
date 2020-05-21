@@ -119,18 +119,22 @@ public class XmlHelper {
 			this.errors = errors;
 		}
 
-		public void error(SAXParseException error) {
+		@Override
+        public void error(SAXParseException error) {
 			String message = file + '(' + error.getLineNumber() + ") " + error.getMessage();
 			LOG.error("Error parsing XML[" + file + "]: " + message);
-			if (errors != null)
-				errors.add(message);
+			if (errors != null) {
+                errors.add(message);
+            }
 		}
 
-		public void fatalError(SAXParseException error) {
+		@Override
+        public void fatalError(SAXParseException error) {
 			error(error);
 		}
 
-		public void warning(SAXParseException warn) {
+		@Override
+        public void warning(SAXParseException warn) {
 			LOG.warn("Warning parsing XML: " + file + '(' + warn.getLineNumber() + ") " + warn.getMessage());
 		}
 	}
@@ -143,7 +147,8 @@ public class XmlHelper {
 			super();
 		}
 
-		public InputSource resolveEntity(String publicId, String systemId)
+		@Override
+        public InputSource resolveEntity(String publicId, String systemId)
 				throws SAXException, IOException {
 			InputStream stream = getClass().getClassLoader().getResourceAsStream(PUBLIC_ID);
 			InputSource source = new InputSource(stream);

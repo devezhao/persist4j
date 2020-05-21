@@ -51,14 +51,16 @@ public class AjqlResultImpl implements Result {
 		this.query = query;
 	}
 
-	public Object[][] array() {
+	@Override
+    public Object[][] array() {
 		if (execQuery(0).isEmpty()) {
 			return EMPTY_OBJECT_ARRAYS;
 		}
 		return dataCache.toArray(new Object[dataCache.size()][]);
 	}
 	
-	public Object[] unique() {
+	@Override
+    public Object[] unique() {
 		query.setMaxResults(1);
 		query.setLimit(1, query.offset);
 		if (execQuery(1).isEmpty()) {
@@ -67,7 +69,8 @@ public class AjqlResultImpl implements Result {
 		return dataCache.get(0);
 	}
 
-	public List<Record> list() {
+	@Override
+    public List<Record> list() {
 		if (execQuery(0).isEmpty()) {
 			return Collections.<Record>emptyList();
 		}
@@ -79,7 +82,8 @@ public class AjqlResultImpl implements Result {
 		return records;
 	}
 
-	public Record record() {
+	@Override
+    public Record record() {
 		query.setMaxResults(1);
 		query.setLimit(1, query.offset);
 		if (execQuery(1).isEmpty()) {
@@ -89,7 +93,8 @@ public class AjqlResultImpl implements Result {
 		return bindRecord(dataCache.get(0));
 	}
 	
-	public Result reset() {
+	@Override
+    public Result reset() {
 		if (dataCache != null) {
 			dataCache = null;
 		}
@@ -271,8 +276,9 @@ public class AjqlResultImpl implements Result {
 		
 		for (SelectItem item : query.getSelectItems()) {
 			Object v = row[item.getIndex()];
-			if (v == null)
-				continue;
+			if (v == null) {
+                continue;
+            }
 			record.setObject(item.getFieldPath(), v);
 		}
 		record.setSelectItems(query.getSelectItems());

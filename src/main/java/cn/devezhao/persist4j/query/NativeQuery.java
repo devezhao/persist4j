@@ -15,5 +15,6 @@ public interface NativeQuery extends IQuery<NativeQuery> {
 	
 	NativeQuery setReturnType(Type... fTypes);
 	
-	NativeQuery reset();
+	@Override
+    NativeQuery reset();
 }

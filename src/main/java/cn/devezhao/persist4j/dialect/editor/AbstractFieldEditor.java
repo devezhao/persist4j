@@ -24,20 +24,24 @@ public abstract class AbstractFieldEditor implements Editor {
 	protected AbstractFieldEditor() {
 	}
 	
-	public Object get(ResultSet rs, int index) throws SQLException {
+	@Override
+    public Object get(ResultSet rs, int index) throws SQLException {
 		return rs.getObject(index);
 	}
 
-	public String getLiteral(ResultSet rs, int index) throws SQLException {
+	@Override
+    public String getLiteral(ResultSet rs, int index) throws SQLException {
 		return toLiteral( get(rs, index) );
 	}
 
-	public void set(PreparedStatement pstmt, int index, Object value)
+	@Override
+    public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
 		pstmt.setObject(index, value);
 	}
 
-	public String toLiteral(Object value) {
+	@Override
+    public String toLiteral(Object value) {
 		return (value == null) ? null : value.toString();
 	}
 }

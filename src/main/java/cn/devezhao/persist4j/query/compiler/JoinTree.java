@@ -2,6 +2,7 @@ package cn.devezhao.persist4j.query.compiler;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import cn.devezhao.persist4j.dialect.Dialect;
@@ -132,8 +133,9 @@ public class JoinTree implements Serializable {
 	 */
 	private String asJoinString(JoinNode node, Dialect dialect) {
 		StringBuilder joinSql = new StringBuilder();
-		if (node.parentJoin.getAlias() == null)
-			joinSql.append(node.parentJoin.as(dialect));
+		if (node.parentJoin.getAlias() == null) {
+            joinSql.append(node.parentJoin.as(dialect));
+        }
 		joinSql.append(" left join ");
 		
 		if (node.getChildJoins().length > 0) {  // has child join, using () quote
@@ -144,8 +146,9 @@ public class JoinTree implements Serializable {
 			joinSql.append(')');
 		}
 		
-		if (node.getAlias() == null)
-			joinSql.append(node.as(dialect));
+		if (node.getAlias() == null) {
+            joinSql.append(node.as(dialect));
+        }
 		
 		joinSql.append(" on ")
 			.append((node.parentJoin.getAlias() + '.' + dialect.quote(node.joinOnLeft)))
@@ -158,15 +161,17 @@ public class JoinTree implements Serializable {
 	 * has equals node?
 	 */
 	private JoinNode hasEquallyNode(String table, String joinOnLeft, String joinOnRight, JoinNode parentNode) {
-		if (parentNode == null)
-			return null;
+		if (parentNode == null) {
+            return null;
+        }
 		
 		for (JoinNode node : parentNode.getChildJoins()) {
 			if (node.table.equals(table)
 					&& node.joinOnLeft.equals(joinOnLeft)
 					/*&& node.joinOnRight.equals(joinOnRight)*/
-					&& parentNode.table.equals(node.parentJoin.table))
-			return node;
+					&& parentNode.table.equals(node.parentJoin.table)) {
+                return node;
+            }
 		}
 		return null;
 	}
@@ -194,7 +199,7 @@ public class JoinTree implements Serializable {
 		String alias;
 
 		JoinNode(String table) {
-			this.childJoins = new LinkedHashSet<JoinNode>();
+			this.childJoins = new LinkedHashSet<>();
 			this.table = table;
 		}
 		
@@ -233,12 +238,25 @@ public class JoinTree implements Serializable {
 		
 		@Override
 		public String toString() {
-			if (this.parentJoin == null)
-				return String.format("<%s>", this.table);
+			if (this.parentJoin == null) {
+                return String.format("<%s>", this.table);
+            }
 			
 			return String.format(
 					"<%s, %s = %s, %s>",
 					table, joinOnLeft, joinOnRight, parentJoin.table);
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            return o.hashCode() == hashCode();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(table, joinOnLeft, joinOnRight, parentJoin, childJoins, alias);
+        }
+    }
 }

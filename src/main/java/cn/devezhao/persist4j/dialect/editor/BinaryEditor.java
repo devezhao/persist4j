@@ -20,7 +20,8 @@ public class BinaryEditor extends AbstractFieldEditor {
 
 	private static final long serialVersionUID = 3962501236650435747L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.BINARY.getMask();
 	}
 	

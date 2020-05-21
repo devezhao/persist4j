@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.query.compiler;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import cn.devezhao.persist4j.Field;
 
@@ -33,4 +34,16 @@ public class ParameterItem implements Serializable {
 	public Field getField() {
 		return field;
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return hashCode() == o.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(named, index);
+    }
 }

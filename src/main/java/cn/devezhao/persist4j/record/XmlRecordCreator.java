@@ -64,7 +64,8 @@ public class XmlRecordCreator implements RecordCreator {
 		this.editor = editor;
 	}
 
-	public Record create() {
+	@Override
+    public Record create() {
 		Record record = new StandardRecord(entity, editor);
 		boolean isNew = true;
 		

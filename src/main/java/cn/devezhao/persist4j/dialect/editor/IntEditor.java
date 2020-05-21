@@ -18,7 +18,8 @@ public class IntEditor extends AbstractFieldEditor {
 
 	private static final long serialVersionUID = 2845210116784771583L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.INT.getMask();
 	}
 

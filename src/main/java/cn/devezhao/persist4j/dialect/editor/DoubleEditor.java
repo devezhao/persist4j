@@ -19,7 +19,8 @@ public class DoubleEditor extends AbstractFieldEditor {
 	
 	private static final long serialVersionUID = 3370417172932258927L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.DOUBLE.getMask();
 	}
 	

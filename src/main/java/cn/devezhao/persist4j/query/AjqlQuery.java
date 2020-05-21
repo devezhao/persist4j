@@ -42,54 +42,65 @@ public class AjqlQuery extends BaseQuery<Query> implements Query {
 		this.filter = filter;
 	}
 
-	public Query setParameter(int position, Object value) {
+	@Override
+    public Query setParameter(int position, Object value) {
 		return setParameter(position + "", value);
 	}
 
-	public Query setParameter(String name, Object value) {
+	@Override
+    public Query setParameter(String name, Object value) {
 		inParameters.put(name, value);
 		return this;
 	}
 
-	public Query setFilter(Filter filter) {
+	@Override
+    public Query setFilter(Filter filter) {
 		this.filter = filter;
 		return this;
 	}
 
-	public Result result() {
+	@Override
+    public Result result() {
 		if (result == null) {
 			result = new AjqlResultImpl(this);
 		}
 		return result;
 	}
 
-	public Object[] unique() {
+	@Override
+    public Object[] unique() {
 		return result().unique();
 	}
 
-	public Object[][] array() {
+	@Override
+    public Object[][] array() {
 		return result().array();
 	}
 
-	public List<Record> list() {
+	@Override
+    public List<Record> list() {
 		return result().list();
 	}
 
-	public Record record() {
+	@Override
+    public Record record() {
 		return result().record();
 	}
 	
-	public Query reset() {
+	@Override
+    public Query reset() {
 		result().reset();
 		return this;
 	}
 
-	public Entity getRootEntity() {
+	@Override
+    public Entity getRootEntity() {
 		compileQueryIfNeed();
 		return queryCompiler.getRootEntity();
 	}
 
-	public SelectItem[] getSelectItems() {
+	@Override
+    public SelectItem[] getSelectItems() {
 		compileQueryIfNeed();
 		return queryCompiler.getSelectItems();
 	}

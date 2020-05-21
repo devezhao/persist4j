@@ -21,7 +21,8 @@ public class PrimaryEditor extends StringEditor {
 
 	private static final long serialVersionUID = -1490384633712480716L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.PRIMARY.getMask();
 	}
 

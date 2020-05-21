@@ -67,10 +67,12 @@ public abstract class JdbcSupport {
 	public int[] executeBatch(final String[] sqls) throws SQLException, DataAccessException {
 		if (sqls.length == 1) {
 			int exec = execute(new StatementCallback(){
-				public String getSql() {
+				@Override
+                public String getSql() {
 					return sqls[0];
 				}
-				public Object doInParameters(PreparedStatement pstmt) throws SQLException {
+				@Override
+                public Object doInParameters(PreparedStatement pstmt) throws SQLException {
 					return null;
 				}
 			});

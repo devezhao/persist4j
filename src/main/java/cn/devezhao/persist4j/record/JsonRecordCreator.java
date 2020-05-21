@@ -85,7 +85,8 @@ public class JsonRecordCreator implements RecordCreator {
 	/**
 	 * @return
 	 */
-	public Record create() {
+	@Override
+    public Record create() {
 		return create(true);
 	}
 

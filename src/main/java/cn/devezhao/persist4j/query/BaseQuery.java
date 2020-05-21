@@ -17,58 +17,69 @@ public abstract class BaseQuery<T> implements IQuery<T> {
 
 	protected int limit, offset;
 
-	public int getFirstResult() {
+	@Override
+    public int getFirstResult() {
 		return firstResult;
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T setFirstResult(int firstResult) {
 		this.firstResult = firstResult;
 		return (T) this;
 	}
 
-	public int getMaxResults() {
+	@Override
+    public int getMaxResults() {
 		return maxResults;
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
 		return (T) this;
 	}
 
-	public int getTimeout() {
+	@Override
+    public int getTimeout() {
 		return timeout;
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T setTimeout(int timeout) {
 		this.timeout = timeout;
 		return (T) this;
 	}
 	
-	public int getSlowLoggerTime() {
+	@Override
+    public int getSlowLoggerTime() {
 		return slowLoggerTime;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T setSlowLoggerTime(int loggerTime) {
 		this.slowLoggerTime = loggerTime;
 		return (T) this;
 	}
 	
-	public T setLimit(int limit) {
+	@Override
+    public T setLimit(int limit) {
 		return setLimit(limit, 0);
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T setLimit(int limit, int offset) {
 		this.limit = limit;
 		this.offset = offset;
 		return (T) this;
 	}
 
-	public T setParameter(int position, Object value) {
+	@Override
+    public T setParameter(int position, Object value) {
 		throw new UnsupportedOperationException();
 	}
 }

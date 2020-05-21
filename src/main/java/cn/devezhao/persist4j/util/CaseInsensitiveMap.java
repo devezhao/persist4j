@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -80,7 +81,7 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 
 	@Override
 	public Set<String> keySet() {
-		return new HashSet<String>(originalKeys.values());
+		return new HashSet<>(originalKeys.values());
 	}
 
 	@Override
@@ -101,10 +102,9 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 	private String convertKey(final Object key) {
 		return key.toString().toUpperCase();
     }
-	
-	/**
-	 * @param <V>
-	 */
+
+    /**
+     */
 	class CIEntry implements Entry<String, V> {
 		
 		private String key;
@@ -132,5 +132,17 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 		public String toString() {
 			return String.format("%s=%s", key, value);
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            return o.hashCode() == hashCode();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key, value);
+        }
+    }
 }

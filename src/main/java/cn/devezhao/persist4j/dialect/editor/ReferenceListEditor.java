@@ -21,7 +21,8 @@ public class ReferenceListEditor extends StringEditor {
 
 	private static final long serialVersionUID = -7654860974427302836L;
 	
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.REFERENCE_LIST.getMask();
 	}
 	

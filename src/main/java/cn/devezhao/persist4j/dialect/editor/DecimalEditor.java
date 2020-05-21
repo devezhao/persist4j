@@ -19,7 +19,8 @@ public class DecimalEditor extends AbstractFieldEditor {
 
 	private static final long serialVersionUID = 3815050607620002543L;
 
-	public int getType() {
+	@Override
+    public int getType() {
 		return FieldType.DECIMAL.getMask();
 	}
 

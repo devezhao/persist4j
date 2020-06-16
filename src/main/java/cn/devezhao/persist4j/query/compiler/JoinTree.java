@@ -256,7 +256,7 @@ public class JoinTree implements Serializable {
 
         @Override
         public int hashCode() {
-            return Objects.hash(table, joinOnLeft, joinOnRight, parentJoin, childJoins, alias);
+            return Objects.hash(table, joinOnLeft, joinOnRight);
         }
     }
 }

@@ -136,7 +136,6 @@ public class JoinField implements SelectItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                tableNode, field, fieldPath, type, name, alias, index, fullPath, aggregator, aggregatorSibling, aggregatorMode);
+        return Objects.hash(tableNode, field, fieldPath, aggregator, aggregatorMode);
     }
 }

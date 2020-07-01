@@ -64,12 +64,12 @@ Record found = PM.createQuery(ajql).setParameter(1, "SomeValue").unique();
 ```
 <entity name="ProjectConfig" type-code="050" description="项目配置" queryable="false">
   <field name="configId" type="primary" />
-  <field name="projectName" type="string" max-length="100" nullable="false" description="项目名称" />
-  <field name="projectCode" type="string" max-length="10" nullable="false" updatable="false" description="项目代号" />
-  <field name="comments" type="string" max-length="300" description="备注" />
-  <field name="principal" type="reference" ref-entity="User" description="负责人" />
-  <field name="members" type="string" max-length="420" default-value="ALL" description="项目成员(可选值: ALL/$MemberID)" />
-  <field name="showConfig" type="text" max-length="3000" description="扩展配置(JSON Map)" />
+  <field name="projectName" type="string" max-length="100" nullable="false" />
+  <field name="projectCode" type="string" max-length="10" nullable="false" />
+  <field name="comments" type="string" max-length="300" />
+  <field name="principal" type="reference" ref-entity="User" />
+  <field name="members" type="string" max-length="420" default-value="ALL" />
+  <field name="showConfig" type="text" max-length="3000" />
 </entity>
 ```
 

@@ -16,23 +16,18 @@ limitations under the License.
 
 package cn.devezhao.persist4j.record;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import cn.devezhao.persist4j.Entity;
+import cn.devezhao.persist4j.Field;
+import cn.devezhao.persist4j.Record;
+import cn.devezhao.persist4j.engine.ID;
+import cn.devezhao.persist4j.engine.StandardRecord;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.alibaba.fastjson.JSONObject;
-
-import cn.devezhao.persist4j.Entity;
-import cn.devezhao.persist4j.Field;
-import cn.devezhao.persist4j.Record;
-import cn.devezhao.persist4j.dialect.FieldType;
-import cn.devezhao.persist4j.engine.ID;
-import cn.devezhao.persist4j.engine.StandardRecord;
+import java.util.Map;
 
 /**
  * JSON 记录解析
@@ -61,7 +56,6 @@ public class JsonRecordCreator implements RecordCreator {
 	 * </pre>
 	 * 
 	 * @param entity
-	 * @param editor
 	 * @param source
 	 */
 	public JsonRecordCreator(Entity entity, JSONObject source) {
@@ -114,14 +108,15 @@ public class JsonRecordCreator implements RecordCreator {
 			if (META_FIELD.equals(fileName)) {
 				continue;
 			}
-			
-			Field field = entity.getField(fileName);
-			if (field == null) {
+
+			if (!entity.containsField(fileName)) {
 				LOG.warn("Unable found field [ " + entity.getName() + '#' + fileName  + " ], will ignore");
 				continue;
 			}
-			
-			if (isNew == false && !field.isUpdatable()) {  // 忽略更新
+
+			Field field = entity.getField(fileName);
+
+			if (!isNew && !field.isUpdatable()) {  // 忽略更新
 				if (LOG.isDebugEnabled()) {
 					LOG.warn("Could not put value to un-update field");
 				}
@@ -169,7 +164,6 @@ public class JsonRecordCreator implements RecordCreator {
 	 * @param isNew
 	 */
 	protected void afterCreate(Record record, boolean isNew) {
-		// Biz to here
 	}
 	
 	/**
@@ -177,26 +171,6 @@ public class JsonRecordCreator implements RecordCreator {
 	 * @param isNew
 	 */
 	protected void verify(Record record, boolean isNew) {
-		if (!isNew) {
-			return;
-		}
-		
-		List<String> notNulls = new ArrayList<String>();
-		for (Field field : entity.getFields()) {
-			if (FieldType.PRIMARY.equals(field.getType())) {
-				continue;
-			}
-			
-			Object val = record.getObjectValue(field.getName());
-			if (!field.isNullable() && !field.isAutoValue() && val == null) {
-				notNulls.add(field.getName());
-			}
-		}
-		
-		if (notNulls.isEmpty()) {
-			return;
-		}
-		throw new FieldValueException("Must not been null. Entity [ " + entity.getName() 
-				+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[notNulls.size()]), ", ") + " ]");
+		XmlRecordCreator.verify(record, isNew);
 	}
 }

@@ -43,7 +43,6 @@ public class XmlRecordCreator implements RecordCreator {
 	 * </pre>
 	 * 
 	 * @param entity
-	 * @param editor
 	 * @param source
 	 */
 	public XmlRecordCreator(Entity entity, Element source) {
@@ -78,14 +77,14 @@ public class XmlRecordCreator implements RecordCreator {
 		for (Object o : source.elements()) {
 			Element ele = (Element) o;
 			String fn = ele.getName();
-			Field field = entity.getField(fn);
+			Field field = entity.containsField(fn) ? entity.getField(fn) : null;
 			
 			if (field == null) {
 				LOG.warn("Unable found field [ " + entity.getName() + '#' + fn  + " ], will ignore");
 				continue;
 			}
 			
-			if (isNew == false && !field.isUpdatable()) {  // un update
+			if (!isNew && !field.isUpdatable()) {  // un update
 				if (LOG.isDebugEnabled()) {
 					LOG.warn("could not put value to un-update field");
 				}
@@ -125,28 +124,28 @@ public class XmlRecordCreator implements RecordCreator {
 	
 	protected void afterCreate(Record record, boolean isNew) {
 	}
-	
+
 	protected void validate(Record record, boolean isNew) {
-		if (!isNew) {
-			return;
-		}
-		
+		verify(record, isNew);
+	}
+
+	protected static void verify(Record record, boolean isNew) {
+		if (!isNew) return;
+
 		List<String> notNulls = new ArrayList<String>();
-		for (Field field : entity.getFields()) {
-			if (FieldType.PRIMARY.equals(field.getType())) {
-				continue;
-			}
-			
+		for (Field field : record.getEntity().getFields()) {
+			if (FieldType.PRIMARY.equals(field.getType())) continue;
+
 			Object val = record.getObjectValue(field.getName());
 			if (!field.isNullable() && !field.isAutoValue() && val == null) {
 				notNulls.add(field.getName());
 			}
 		}
-		
-		if (notNulls.isEmpty()) {
-			return;
+
+		if (!notNulls.isEmpty()) {
+			throw new FieldValueException("Muse not been null. Entity [ " + record.getEntity().getName()
+					+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[notNulls.size()]), ", ") + " ]");
 		}
-		throw new FieldValueException("Muse not been null. Entity [ " + entity.getName() 
-				+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[notNulls.size()]), ", ") + " ]");
 	}
+
 }

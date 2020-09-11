@@ -229,9 +229,10 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		String extraAttrs = entityNode.valueOf("@extra-attrs");
 		JSONObject extraAttrsJson = JSON.parseObject(StringUtils.defaultIfBlank(extraAttrs, "{}"));
 
-		String master = entityNode.valueOf("@master");
-		if (StringUtils.isNotBlank(master)) {
-			SM_MAPPING.put(name, master);
+		String mianEntity = StringUtils.defaultIfBlank(entityNode.valueOf("@main"),
+				entityNode.valueOf("@master"));
+		if (StringUtils.isNotBlank(mianEntity)) {
+			SM_MAPPING.put(name, mianEntity);
 		}
 
 		boolean C = Boolean.parseBoolean(entityNode.valueOf("@creatable"));
@@ -398,12 +399,12 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		
 		// SM 实体处理
 		for (Map.Entry<String, String> e : SM_MAPPING.entrySet()) {
-			Entity slaveEntity = getEntityNoLock(e.getKey());
-			String master = e.getValue();
-			if (name2TypeMap.containsKey(master)) {
-				((EntityImpl) slaveEntity).setMasterEntity(getEntityNoLock(master));
+			Entity detailEntity = getEntityNoLock(e.getKey());
+			String main = e.getValue();
+			if (name2TypeMap.containsKey(main)) {
+				((EntityImpl) detailEntity).setMainEntity(getEntityNoLock(main));
 			} else {
-				throw new MetadataException("No master-entity found : " + master);
+				throw new MetadataException("No main-entity found : " + main);
 			}
 		}
 		SM_MAPPING.clear();

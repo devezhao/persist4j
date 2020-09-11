@@ -30,7 +30,7 @@
  parent					- 父实体
  description			- 描述
  schema-name-optimize	- 是否启用schema优化
- master                 - 所属主实体
+ main                   - 所属主实体
  extra-attrs            - 扩展属性（JSON格式）
  creatable              - 可创建
  updatable              - 可更新
@@ -45,7 +45,7 @@
 	parent		 		CDATA #IMPLIED
 	description 		CDATA #IMPLIED
 	schema-name-optimize (true | false | 1 | 0) "false"
-	master		 		CDATA #IMPLIED
+	main 		 		CDATA #IMPLIED
 	extra-attrs         CDATA #IMPLIED
     creatable           (true | false | 1 | 0) "true"
 	updatable           (true | false | 1 | 0) "true"

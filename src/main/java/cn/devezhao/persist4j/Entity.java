@@ -75,14 +75,14 @@ public interface Entity extends BaseMeta {
 	 * 
 	 * @return
 	 */
-	Entity getMasterEntity();
+	Entity getMainEntity();
 	
 	/**
 	 * 获取明细实体（如有）
 	 * 
 	 * @return
 	 */
-	Entity getSlaveEntity();
+	Entity getDetailEntity();
 	
 	/**
 	 * 获取字段名称

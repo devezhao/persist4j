@@ -1,14 +1,7 @@
 package cn.devezhao.persist4j.query.compiler;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -40,21 +33,25 @@ public class QueryCompiler implements Serializable {
 	private static final Log LOG = LogFactory.getLog(QueryCompiler.class);
 	
 	public static final char NAME_FIELD_PREFIX = '&';
+
 	public static final char IDLABEL_FIELD_PREFIX = '#';  //  NOTE reserved
+
 	public static final char CUSTOM_FUNC_PREFIX = '$';
+
 	public static final char FORCE_JOIN_PREFIX 	= '^';
 	
 	public static final char NAMED_PARAM = ':';
+
 	public static final char INDEX_PARAM = '?';
 	
 	private String ajql;
-	private List<SelectItem> selectList = new LinkedList<SelectItem>();
+	private List<SelectItem> selectList = new LinkedList<>();
 	private String compiledSql = null;
 	private Entity rootEntity;
 	
-	final private Map<String, JoinField> joinFieldMap = new HashMap<String, JoinField>();
+	final private Map<String, JoinField> joinFieldMap = new HashMap<>();
 	
-	final private Map<String, ParameterItem> inParameters = new HashMap<String, ParameterItem>();
+	final private Map<String, ParameterItem> inParameters = new HashMap<>();
 	private int inParametersIndex = 0;
 	
 	private SqlExecutorContext sqlExecutorContext;
@@ -120,7 +117,7 @@ public class QueryCompiler implements Serializable {
 	 */
 	public SelectItem[] getSelectItems() throws IllegalStateException {
 		throwIfUncompile();
-		return selectList.toArray(new SelectItem[selectList.size()]);
+		return selectList.toArray(new SelectItem[0]);
 	}
 	
 	/**
@@ -168,10 +165,10 @@ public class QueryCompiler implements Serializable {
 		Set<JoinField> distinctFields = new HashSet<>();
 		Map<JoinField, AST> mutliFieldsAggregators = new HashMap<>();
 		
-		List<JoinField> selectFields = new LinkedList<JoinField>();
+		List<JoinField> selectFields = new LinkedList<>();
 		AST item = select.getFirstChild();
 		do {
-			JoinField aJF = null;
+			JoinField aJF;
 			
 			if (item.getType() == AjQLParserTokenTypes.DISTINCT) {
 				item = item.getNextSibling();
@@ -334,10 +331,10 @@ public class QueryCompiler implements Serializable {
 					clause.append(INDEX_PARAM);
 					inParametersIndex++;
 					text = (text.charAt(0) == INDEX_PARAM) ? String.valueOf(inParametersIndex) : text;
-					inParameters.put( text, new ParameterItem(text, inParametersIndex, aJF.getField()) );
+					inParameters.put(text, new ParameterItem(text, inParametersIndex, aJF.getField()));
 					break;
 				case AjQLParserTokenTypes.MATCH:
-					clause.append(compileMatchClause(next, lastField, aJTree.getRootJoinNode()));
+					clause.append(compileMatchClause(next, lastField));
 					lastField = null;
 					next = next.getNextSibling();
 					break;
@@ -367,7 +364,6 @@ public class QueryCompiler implements Serializable {
 			} while (next != null && (next = next.getNextSibling()) != null);
 			
 			sql.append(clause);
-			clause = null;
 		}
 		
 		if (group != null) {
@@ -497,7 +493,7 @@ public class QueryCompiler implements Serializable {
 	private String compileGroupByClause(AST by, AST having) {
 		StringBuilder clause = new StringBuilder();
 		clause.append( compileByClause(by, "group by ") );
-		AST with = null;
+		AST with;
 		if (having != null) {
 			clause/*.append(' ')*/.append( compileByClause(having, "having ") );
 			with = having.getNextSibling();
@@ -535,7 +531,7 @@ public class QueryCompiler implements Serializable {
 	private StringBuilder compileByClause(AST ast, String who) {
 		StringBuilder clause = new StringBuilder(who);
 		
-		AST next = null;
+		AST next;
 		if (who.toUpperCase().startsWith("HAVING")
 				|| "CONCAT".equalsIgnoreCase(who)) {
 			next = ast.getFirstChild();
@@ -545,7 +541,7 @@ public class QueryCompiler implements Serializable {
 		
 		do {
 			int type = next.getType();
-			JoinField aJF = null;
+			JoinField aJF;
 			
 			switch (type) {
 			case AjQLParserTokenTypes.COMMA:
@@ -580,10 +576,9 @@ public class QueryCompiler implements Serializable {
 	 * 
 	 * @param match
 	 * @param field
-	 * @param root
 	 * @return
 	 */
-	private String compileMatchClause(AST match, AST field, JoinNode root) {
+	private String compileMatchClause(AST match, AST field) {
 		JoinField aJF = getJoinField(field, null, sqlExecutorContext.getDialect());
 		AST query = match.getNextSibling();
 		return String.format("match (%s) against ('%s' in boolean mode)",
@@ -630,16 +625,14 @@ public class QueryCompiler implements Serializable {
 		final String itemName = item.getText();
 		JoinField ifExists = joinFieldMap.get(itemName);
 		if (ifExists != null) {
-			JoinField clone = new JoinField(ifExists, type);
-			return clone;
+			return new JoinField(ifExists, type);
 		}
 		
 		// 虚拟 JF
 		if (ParserHelper.isAggregatorWithNested(item.getType())) {
 			findJoinFields(item, tree, entity);
-			
-			JoinField aJF = new JoinField(null, null, itemName, type);
-			return aJF;
+
+			return new JoinField(null, null, itemName, type);
 		}
 		
 		String path = itemName;
@@ -683,9 +676,9 @@ public class QueryCompiler implements Serializable {
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			} else if (joined.length == 1 && nestedSelectContext != null) {  // In nested-sql (exists)
-				Entity master = nestedSelectContext.getMaster();
+				Entity root = nestedSelectContext.getRoot();
 				JoinField aJF = new JoinField(
-						nestedSelectContext.getMasterRoot(), master.getField(joined[0].substring(1)), itemName, type);
+						nestedSelectContext.getRootNode(), root.getField(joined[0].substring(1)), itemName, type);
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
@@ -700,7 +693,7 @@ public class QueryCompiler implements Serializable {
 			return aJF;
 		}
 		
-		Field crtf = null;
+		Field crtf;
 		Entity crte = entity;
 		JoinNode pjn = null;  // previous JoinNode
 		for (int i = 0; i < joined.length; i++) {  // eg. `accountId.ownUser.fullName`
@@ -749,10 +742,6 @@ public class QueryCompiler implements Serializable {
 	 * @param entity
 	 */
 	private void findJoinFields(AST ast, JoinTree aJTree, Entity entity) {
-		if (ast == null) {
-			Collections.emptyList();
-		}
-		
 		ast = ast.getFirstChild();
 		do {
 			AST node = ast;

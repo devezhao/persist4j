@@ -34,8 +34,8 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private Set<String> fieldSorted = new LinkedHashSet<>();
 	private List<Field> referenceTo = new ArrayList<>();
 	
-	private Entity masterEntity;
-	private Entity slaveEntity;
+	private Entity mainEntity;
+	private Entity detailEntity;
 
 	public EntityImpl(String name, String physicalName, String description, JSONObject extraAttrs,
 					  boolean creatable, boolean updatable, boolean queryable,
@@ -61,7 +61,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 
 	@Override
 	public Field[] getFields() {
-		return fieldMap.values().toArray(new Field[fieldMap.size()]);
+		return fieldMap.values().toArray(new Field[0]);
 	}
 	
 	@Override
@@ -106,13 +106,13 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	}
 	
 	@Override
-	public Entity getMasterEntity() {
-		return masterEntity;
+	public Entity getMainEntity() {
+		return mainEntity;
 	}
 	
 	@Override
-	public Entity getSlaveEntity() {
-		return slaveEntity;
+	public Entity getDetailEntity() {
+		return detailEntity;
 	}
 	
 	@Override
@@ -183,10 +183,10 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	}
 	
 	/**
-	 * @param master
+	 * @param entity
 	 */
-	protected void setMasterEntity(Entity master) {
-		this.masterEntity = master;
-		((EntityImpl) master).slaveEntity = this;
+	protected void setMainEntity(Entity entity) {
+		this.mainEntity = entity;
+		((EntityImpl) entity).detailEntity = this;
 	}
 }

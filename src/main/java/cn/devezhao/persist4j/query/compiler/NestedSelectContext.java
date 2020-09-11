@@ -12,22 +12,22 @@ import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
 public class NestedSelectContext implements Serializable {
 	private static final long serialVersionUID = 7585161604688620934L;
 	
-	private Entity master;
-	private JoinNode masterRoot;
+	private Entity root;
+	private JoinNode rootNode;
 	private int tableIncrease;
 
-	protected NestedSelectContext(Entity master, JoinNode masterRoot, int tableIncrease) {
-		this.master = master;
-		this.masterRoot = masterRoot;
+	protected NestedSelectContext(Entity root, JoinNode rootNode, int tableIncrease) {
+		this.root = root;
+		this.rootNode = rootNode;
 		this.tableIncrease = tableIncrease;
 	}
 
-	public Entity getMaster() {
-		return master;
+	public Entity getRoot() {
+		return root;
 	}
 	
-	public JoinNode getMasterRoot() {
-		return masterRoot;
+	public JoinNode getRootNode() {
+		return rootNode;
 	}
 
 	public int getTableIncrease() {

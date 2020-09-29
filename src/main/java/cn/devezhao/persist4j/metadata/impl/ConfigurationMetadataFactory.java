@@ -86,7 +86,13 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		return e;
 	}
 
-	private Entity getEntityNoLock(String name) {
+	/**
+	 * 不加锁获取实体
+	 *
+	 * @param name
+	 * @return
+	 */
+	protected Entity getEntityNoLock(String name) {
 		Integer aType = name2TypeMap.get(name);
 		if (aType == null) {
 			throw new MetadataException("entity [ " + name + " ] dose not exists");
@@ -107,6 +113,8 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 
 	/**
+	 * 获取配置 XML
+	 *
 	 * @return
 	 */
 	public Document getConfigDocument() {
@@ -127,9 +135,12 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 
 	/**
+	 * 刷新
+	 *
 	 * @param initState
 	 */
-	synchronized public void refresh(boolean initState) {
+	synchronized
+	public void refresh(boolean initState) {
 		final Document newlyDocument = readConfiguration(initState);
 		
 		this.refreshLocked = true;

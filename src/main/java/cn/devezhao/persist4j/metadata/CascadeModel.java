@@ -25,7 +25,7 @@ public enum CascadeModel {
 	 */
 	Ignore;
 	
-	private static final Map<String, CascadeModel> NAMED = new HashMap<String, CascadeModel>();
+	private static final Map<String, CascadeModel> NAMED = new HashMap<>();
 	static {
 		NAMED.put("delete", Delete);
 		NAMED.put("remove-links", RemoveLinks);

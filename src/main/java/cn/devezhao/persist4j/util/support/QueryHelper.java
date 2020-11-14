@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.util.support;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cn.devezhao.persist4j.Query;
@@ -32,15 +33,14 @@ public class QueryHelper {
 	 * @return
 	 */
 	public static Object[][] readArray(IQuery<?> query, int pageSize) {
-		List<Object[]> tempList = new ArrayList<Object[]>();
+		List<Object[]> tempList = new ArrayList<>();
 		int pageNo = 1;
 		while (true) {
 			query.reset();
 			query.setLimit(pageSize, pageNo++ * pageSize - pageSize);
 			Object[][] temp = query.array();
-			for (Object[] t : temp) {
-				tempList.add(t);
-			}
+			Collections.addAll(tempList, temp);
+
 			if (temp.length < pageSize) {
 				break;
 			}
@@ -66,15 +66,14 @@ public class QueryHelper {
 	 * @return
 	 */
 	public static List<Record> readList(Query query, int pageSize) {
-		List<Record> tempList = new ArrayList<Record>();
+		List<Record> tempList = new ArrayList<>();
 		int pageNo = 1;
 		while (true) {
 			query.result().reset();
 			query.setLimit(pageSize, pageNo++ * pageSize - pageSize);
 			List<Record> temp = query.list();
-			for (Record t : temp) {
-				tempList.add(t);
-			}
+			tempList.addAll(temp);
+			
 			if (temp.size() < pageSize) {
 				break;
 			}

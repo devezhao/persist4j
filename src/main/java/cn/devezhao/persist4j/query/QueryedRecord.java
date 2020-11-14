@@ -81,8 +81,8 @@ public class QueryedRecord extends StandardRecord {
 		if (idLabel.isEmpty()) {
 			return;
 		}
-		for (Iterator<Map.Entry<String, Object>> iter = idLabel.entrySet().iterator(); iter.hasNext(); ) {
-			Map.Entry<String, Object> e = iter.next();
+
+		for (Map.Entry<String, Object> e : idLabel.entrySet()) {
 			ID id = getID(e.getKey());
 			if (id != null) {
 				id.setLabel(e.getValue());

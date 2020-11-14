@@ -1,9 +1,5 @@
 package cn.devezhao.persist4j.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -17,8 +13,10 @@ import org.dom4j.io.XMLWriter;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * 
@@ -103,7 +101,7 @@ public class XmlHelper {
 			XMLWriter writer = new XMLWriter(System.out, outformat);
 			writer.write(element);
 			writer.flush();
-			System.out.println("");
+			System.out.println();
 		} catch (Throwable t) {
 			System.err.println(element.asXML());
 		}
@@ -148,8 +146,7 @@ public class XmlHelper {
 		}
 
 		@Override
-        public InputSource resolveEntity(String publicId, String systemId)
-				throws SAXException, IOException {
+        public InputSource resolveEntity(String publicId, String systemId) {
 			InputStream stream = getClass().getClassLoader().getResourceAsStream(PUBLIC_ID);
 			InputSource source = new InputSource(stream);
 			source.setPublicId(PUBLIC_ID);

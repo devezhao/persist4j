@@ -24,7 +24,7 @@ public abstract class JdbcSupport {
 
 	private static final int TIMEOUT_DEFAULT = 5 * 60;
 	
-	private int timeout = TIMEOUT_DEFAULT;
+	private int timeout;
 	
 	/**
 	 */
@@ -60,7 +60,6 @@ public abstract class JdbcSupport {
 		} finally {
 			SqlHelper.close(pstmt);
 			releaseConnection(connect);
-			connect = null;
 		}
 	}
 	
@@ -72,7 +71,7 @@ public abstract class JdbcSupport {
 					return sqls[0];
 				}
 				@Override
-                public Object doInParameters(PreparedStatement pstmt) throws SQLException {
+                public Object doInParameters(PreparedStatement pstmt) {
 					return null;
 				}
 			});
@@ -81,18 +80,18 @@ public abstract class JdbcSupport {
 		
 		Connection connect = getConnection();
 		Statement stmt = null;
-		int rowsAffected[] = null;
+		int[] rowsAffected;
 		try {
 			stmt = connect.createStatement();
 			
 			if (SqlHelper.supportsBatchUpdates(connect)) {
 				stmt.setQueryTimeout(TIMEOUT_DEFAULT * 3);
-				for (int i = 0; i < sqls.length; i++) {
+				for (String sql : sqls) {
 					if (LOG.isDebugEnabled()) {
-						LOG.debug("add sql to batch: " + sqls[i]);
+						LOG.debug("add sql to batch: " + sql);
 					}
-					
-					stmt.addBatch(sqls[i]);
+
+					stmt.addBatch(sql);
 				}
 				rowsAffected = stmt.executeBatch();
 			} else {
@@ -124,15 +123,14 @@ public abstract class JdbcSupport {
 		} finally {
 			SqlHelper.close(stmt);
 			releaseConnection(connect);
-			connect = null;
 		}
 		return rowsAffected;
 	}
 	
 	protected ResultSet nativeQuery(String sql) throws SQLException, DataAccessException {
 		Connection connect = getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
+		Statement stmt;
+		ResultSet rs;
 		
 		try {
 			stmt = connect.createStatement();
@@ -146,11 +144,6 @@ public abstract class JdbcSupport {
 			throw sqlex;
 		} catch (Throwable unex) {
 			throw new DataAccessException("Unexception on nativeQuery", unex);
-		} finally {
-//			SqlHelper.close(rs);
-//			SqlHelper.close(stmt);
-//			releaseConnection(connect);
-//			connect = null;
 		}
 		return rs;
 	}

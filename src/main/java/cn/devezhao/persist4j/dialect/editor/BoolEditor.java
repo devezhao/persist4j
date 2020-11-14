@@ -28,7 +28,7 @@ public class BoolEditor extends CharEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		char ch = ( ((Boolean) value).booleanValue() ) ? TRUE : FALSE;
+		char ch = ((Boolean) value) ? TRUE : FALSE;
 		super.set(pstmt, index, ch);
 	}
 	

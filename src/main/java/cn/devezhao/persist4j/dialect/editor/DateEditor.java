@@ -25,7 +25,7 @@ public class DateEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		java.sql.Date v = null;
+		java.sql.Date v;
 		if (value.getClass() == java.util.Date.class) {
 			v = new java.sql.Date( ((java.util.Date) value).getTime() );
 		} else {

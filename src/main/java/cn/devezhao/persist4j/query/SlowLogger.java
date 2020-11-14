@@ -14,7 +14,7 @@ public class SlowLogger {
 	
 	private static final Log LOG = LogFactory.getLog(SlowLogger.class);
 	
-	private static final ThreadLocal<Long> QUERY_START = new ThreadLocal<Long>();
+	private static final ThreadLocal<Long> QUERY_START = new ThreadLocal<>();
 	
 	/**
 	 */

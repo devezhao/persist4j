@@ -43,7 +43,7 @@ public class ReferenceListEditor extends StringEditor {
 		for (String id : v.split(",")) {
 			ids.add(ID.valueOf(id));
 		}
-		return ids.isEmpty() ? null : ids.toArray(new ID[ids.size()]);
+		return ids.isEmpty() ? null : ids.toArray(new ID[0]);
 	}
 	
 	@Override

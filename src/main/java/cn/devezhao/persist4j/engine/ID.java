@@ -32,7 +32,7 @@ public class ID implements Serializable {
 		String idClazz = StringUtils.defaultIfEmpty(
 				System.getProperty("org.qdss.persist.id"), WeakIDGenerator.class.getName());
 		try {
-			idGenerator = (IDGenerator) Class.forName(idClazz).newInstance();
+			idGenerator = (IDGenerator) Class.forName(idClazz).getConstructor().newInstance();
 		} catch (Throwable ex) {
 			LOG.error("Could't instance ID clazz: " + idClazz);
 		}
@@ -69,10 +69,8 @@ public class ID implements Serializable {
 				|| id.toString().length() != idLength) {
 			return false;
 		}
-		if (id.toString().charAt(3) != '-') {
-			return false;
-		}
-		return true;
+
+		return id.toString().charAt(3) == '-';
 	}
 
 	/**
@@ -106,7 +104,7 @@ public class ID implements Serializable {
 	 */
 	private ID(String id) {
 		this.id = id.toLowerCase();
-		this.entityCode = Integer.valueOf(id.substring(0, 3));
+		this.entityCode = Integer.parseInt(id.substring(0, 3));
 	}
 
 	/**
@@ -156,7 +154,7 @@ public class ID implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj == this || obj instanceof ID)) {
+		if (!(obj instanceof ID)) {
 			return false;
 		}
 		return obj.hashCode() == hashCode();

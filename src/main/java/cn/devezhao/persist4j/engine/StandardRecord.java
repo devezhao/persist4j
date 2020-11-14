@@ -40,11 +40,6 @@ public class StandardRecord implements Record {
 
 	private static final Log LOG = LogFactory.getLog(StandardRecord.class);
 
-	/**
-	 * A empty id array
-	 */
-	public static final ID[] EMPTY_ID_ARRAY = new ID[] {};
-
 	final private Entity entity;
 	final private ID editor;
 
@@ -110,7 +105,7 @@ public class StandardRecord implements Record {
 	public ID[] getIDArray(String key) {
 		Object v = recordMap.get(key);
 		if (v == null) {
-			return EMPTY_ID_ARRAY;
+			return ID.EMPTY_ID_ARRAY;
 		}
 		return (ID[]) v;
 	}
@@ -220,7 +215,7 @@ public class StandardRecord implements Record {
 			return this;
 		}
 		
-		String content = null;
+		String content;
 		try {
 			content = ByteUtils.read(value);
 		} catch (IOException e) {
@@ -274,7 +269,7 @@ public class StandardRecord implements Record {
 		if (!has) {
 			return false;
 		}
-		return includeNullValue ? true : !NullValue.is(recordMap.get(key));
+		return includeNullValue || !NullValue.is(recordMap.get(key));
 	}
 	
 	@Override
@@ -301,7 +296,7 @@ public class StandardRecord implements Record {
 
 	@Override
 	public Record clone() {
-		StandardRecord o = null;
+		StandardRecord o;
 		try {
 			o = (StandardRecord) super.clone();
 		} catch (CloneNotSupportedException e) {
@@ -344,7 +339,7 @@ public class StandardRecord implements Record {
 
 	/**
 	 * @param key
-	 * @param clazz
+	 * @param matchsClazz
 	 * @return
 	 */
 	protected Object getObject(String key, Class<?> matchsClazz) {
@@ -383,7 +378,7 @@ public class StandardRecord implements Record {
 	 * @param value
 	 */
 	protected void checkReferenceValue(Field field, Object value) {
-		ID[] idList = null;
+		ID[] idList;
 		if (value.getClass() == ID[].class) {
 			idList = (ID[]) value;
 		} else {
@@ -392,10 +387,10 @@ public class StandardRecord implements Record {
 
 		Entity[] refEntities = field.getReferenceEntities();
 		for (ID id : idList) {
-			int idType = id.getEntityCode().intValue();
+			int idType = id.getEntityCode();
 			boolean idInvalid = true;
 			for (Entity entity : refEntities) {
-				if (entity.getEntityCode().intValue() == idType) {
+				if (entity.getEntityCode() == idType) {
 					idInvalid = false;
 					break;
 				}

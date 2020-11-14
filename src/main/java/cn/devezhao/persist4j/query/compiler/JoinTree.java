@@ -151,9 +151,9 @@ public class JoinTree implements Serializable {
         }
 		
 		joinSql.append(" on ")
-			.append((node.parentJoin.getAlias() + '.' + dialect.quote(node.joinOnLeft)))
-			.append(" = ")
-			.append((node.getAlias() + '.' + dialect.quote(node.joinOnRight)));
+				.append(node.parentJoin.getAlias()).append('.').append(dialect.quote(node.joinOnLeft))
+				.append(" = ")
+				.append(node.getAlias()).append('.').append(dialect.quote(node.joinOnRight));
 		return joinSql.toString();
 	}
 	

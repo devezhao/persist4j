@@ -92,7 +92,7 @@ public class FieldType implements Type, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Type)) {
+		if (!(obj instanceof Type)) {
 			return false;
 		}
 		Type t2 = (Type) obj;

@@ -29,7 +29,7 @@ public class Table {
 	private Dialect dialect;
 	
 	private List<?> indexList;
-	private List<String> autoValueIndex = new ArrayList<String>();
+	private List<String> autoValueIndex = new ArrayList<>();
 	private int indexNo = 0;
 	
 	/**
@@ -67,7 +67,7 @@ public class Table {
 	 * @return
 	 */
 	public String[] generateDDL(boolean dropExists, boolean createFk, boolean allowZeroDate) {
-		List<String> sqls = new ArrayList<String>();
+		List<String> sqls = new ArrayList<>();
 		
 		StringBuilder sql = new StringBuilder();
 
@@ -83,7 +83,7 @@ public class Table {
 		}
 		
 		String PK = "";
-		List<Object[]> FKs = new ArrayList<Object[]>();
+		List<Object[]> FKs = new ArrayList<>();
 		
 		Set<String> fields = ((EntityImpl) entity).getFieldSorted();
 		for (String fs : fields) {
@@ -190,7 +190,7 @@ public class Table {
 		// 自增值
 		if (field.isAutoValue()) {
 			canNull += " auto_increment";  // MS-SQL !?
-		} else if (defaultValue != null && StringUtils.isNotBlank(defaultValue.toString())) {  // 默认值
+		} else if (StringUtils.isNotBlank(defaultValue)) {  // 默认值
 			if (canNull.contains("default")) {
 				canNull = canNull.split("default")[0];
 				canNull += " " + defaultValue.replaceAll("'", "") + "'";
@@ -227,7 +227,7 @@ public class Table {
 			return new String[0];
 		}
 		
-		List<String> uix = new ArrayList<String>();
+		List<String> uix = new ArrayList<>();
 		for (Object o : indexList) {
 			Element el = (Element) o;
 			String type = el.attributeValue("type");
@@ -239,8 +239,8 @@ public class Table {
 			String indexName = ("unique".equals(type) ? "UIX" : ("fulltext".equals(type) ? "FIX" : "IX"))
 					+ (this.indexNo++) + '_' + entity.getPhysicalName();
 			
-			List<String> fpNames = new LinkedList<String>();
-			for (String f : fieldList.split("\\,")) {
+			List<String> fpNames = new LinkedList<>();
+			for (String f : fieldList.split(",")) {
 				fpNames.add( dialect.quote(entity.getField(f.trim()).getPhysicalName()) );
 			}
 			String colNames = StringUtils.join(fpNames.iterator(), ", ");

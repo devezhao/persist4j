@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +42,7 @@ public class AjqlResultImpl implements Result {
 	final private AjqlQuery query;
 	
 	private List<Object[]> dataCache;
-	
-	transient private Connection connection;
+
 	transient private PreparedStatement pstmt;
 	
 	protected AjqlResultImpl(AjqlQuery query) {
@@ -72,10 +70,10 @@ public class AjqlResultImpl implements Result {
 	@Override
     public List<Record> list() {
 		if (execQuery(0).isEmpty()) {
-			return Collections.<Record>emptyList();
+			return Collections.emptyList();
 		}
 		
-		List<Record> records = new ArrayList<Record>();
+		List<Record> records = new ArrayList<>();
 		for (Object[] row : dataCache) {
 			records.add( bindRecord(row) );
 		}
@@ -111,7 +109,7 @@ public class AjqlResultImpl implements Result {
 		if (dataCache != null) {
 			return dataCache;
 		}
-		dataCache = new LinkedList<Object[]>();
+		dataCache = new LinkedList<>();
 		
 		SelectItem[] selectItems = query.getSelectItems();
 		
@@ -122,22 +120,21 @@ public class AjqlResultImpl implements Result {
 				LOG.debug("Use in-paramaters : " + inParamaters);
 			}
 			
-			paramatersMapping = new HashMap<ParameterItem, Object>();
+			paramatersMapping = new HashMap<>();
 			Map<String, Object> inParamatersRaw = query.getInParameters();
-			
-			for (Iterator<Map.Entry<String, ParameterItem>> iter = inParamaters.entrySet().iterator(); iter.hasNext(); ) {
-				Map.Entry<String, ParameterItem> e = iter.next();
-				boolean index = ( e.getKey().charAt(0) != ':' );
-				
-				Object pVal= null;
+
+			for (Map.Entry<String, ParameterItem> e : inParamaters.entrySet()) {
+				boolean index = (e.getKey().charAt(0) != ':');
+
+				Object pVal;
 				if (index) {
 					pVal = inParamatersRaw.get(e.getKey());
 				} else {
 					pVal = inParamatersRaw.get(e.getKey().substring(1));
 				}
-				
+
 				if (pVal == null) {
-					throw new QueryException(( (index) ? "index" : "named" ) + " parameter unset, " + ( (index) ? "index " : "name " ) + e.getKey());
+					throw new QueryException(((index) ? "index" : "named") + " parameter unset, " + ((index) ? "index " : "name ") + e.getKey());
 				}
 				paramatersMapping.put(e.getValue(), pVal);
 			}
@@ -170,7 +167,7 @@ public class AjqlResultImpl implements Result {
 		}
 		
 		SlowLogger.start();
-		connection = DataSourceUtils.getConnection(
+		Connection connection = DataSourceUtils.getConnection(
 				query.getPersistManagerFactory().getDataSource());
 		ResultSet rs = null;
 		
@@ -233,7 +230,7 @@ public class AjqlResultImpl implements Result {
 
 		for (SelectItem item : selectItems) {
 			if (item.getType() == SelectItemType.Aggregator) {
-				Editor editor = null;
+				Editor editor;
 				String aggregator = ((JoinField) item).getAggregator();
 				
 				if ("COUNT".equalsIgnoreCase(aggregator)) {

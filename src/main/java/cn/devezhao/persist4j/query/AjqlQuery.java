@@ -27,7 +27,7 @@ public class AjqlQuery extends BaseQuery<Query> implements Query {
 	transient private PersistManagerFactory managerFactory;
 	private Filter filter;
 
-	private Map<String, Object> inParameters = new HashMap<String, Object>();
+	private Map<String, Object> inParameters = new HashMap<>();
 
 	private QueryCompiler queryCompiler;
 	private Result result;

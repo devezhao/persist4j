@@ -43,7 +43,7 @@ public class NTextEditor extends AbstractFieldEditor {
 		else if (ntext instanceof Clob) {
 			try (Reader reader = ((Clob) ntext).getCharacterStream()) {
 				try (BufferedReader br = new BufferedReader(reader)) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					String line = br.readLine();
 					while (line != null) {
 						sb.append(line);

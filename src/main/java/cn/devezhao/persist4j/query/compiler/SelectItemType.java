@@ -13,5 +13,5 @@ public enum SelectItemType {
 	
 	NameField,
 	
-	IDLabelField;
+	IDLabelField
 }

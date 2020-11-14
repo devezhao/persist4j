@@ -51,7 +51,7 @@ public class RecordVisitor {
 	 */
 	public static void setValueByLiteral(Field field, String value, Record record) {
 		Type ft = field.getType();
-		Object pVal = null;
+		Object pVal;
 		
 		if (FieldType.PRIMARY.equals(ft) 
 				|| FieldType.REFERENCE.equals(ft) 
@@ -101,7 +101,7 @@ public class RecordVisitor {
 	 */
 	public static String getLiteralByValue(Field field, Object value) {
 		Type ft = field.getType();
-		String literalValue = null;
+		String literalValue;
 		
 		if (FieldType.PRIMARY.equals(ft) 
 				|| FieldType.REFERENCE.equals(ft) 
@@ -152,7 +152,7 @@ public class RecordVisitor {
 		return new SimpleDateFormat(DATETIME_FORMAT_STRING);
 	}
 	
-	private static final String DATEPARSE_MODES[] = new String[] {
+	private static final String[] DATEPARSE_MODES = new String[] {
 			"yyyy", "yyyy-MM", "yyyy-MM-dd", "yyyy-MM-dd HH", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss"
 	};
 	/**

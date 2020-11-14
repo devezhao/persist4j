@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,15 +33,15 @@ public class DoubleEditor extends AbstractFieldEditor {
 	
 	public void set(PreparedStatement pstmt, int index, Object value, int scale)
 			throws SQLException {
-		BigDecimal decimalValue = null;
+		BigDecimal decimalValue;
 		if (value instanceof BigDecimal) {
 			decimalValue = (BigDecimal) value;
 		} else {
 			decimalValue = BigDecimal.valueOf((Double) value);
 		}
 		
-		Double doubleValue = decimalValue
-				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP)
+		double doubleValue = decimalValue
+				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, RoundingMode.HALF_UP)
 				.doubleValue();
 		pstmt.setDouble(index, doubleValue);
 	}

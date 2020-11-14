@@ -132,7 +132,7 @@ public class XmlRecordCreator implements RecordCreator {
 	protected static void verify(Record record, boolean isNew) {
 		if (!isNew) return;
 
-		List<String> notNulls = new ArrayList<String>();
+		List<String> notNulls = new ArrayList<>();
 		for (Field field : record.getEntity().getFields()) {
 			if (FieldType.PRIMARY.equals(field.getType())) continue;
 
@@ -144,7 +144,7 @@ public class XmlRecordCreator implements RecordCreator {
 
 		if (!notNulls.isEmpty()) {
 			throw new FieldValueException("Muse not been null. Entity [ " + record.getEntity().getName()
-					+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[notNulls.size()]), ", ") + " ]");
+					+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[0]), ", ") + " ]");
 		}
 	}
 

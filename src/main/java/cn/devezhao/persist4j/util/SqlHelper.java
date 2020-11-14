@@ -62,10 +62,11 @@ public final class SqlHelper {
 	}
 
 	/**
-	 * deprecated Using {@link #release(Connection, DataSource)}
+	 * deprecated Using  {@link DataSourceUtils#releaseConnection(Connection, DataSource)}}
 	 * 
 	 * @param connect
 	 */
+	@Deprecated
 	public static void close(Connection connect) {
 		if (connect == null) {
 			return;

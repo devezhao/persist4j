@@ -28,13 +28,13 @@ public abstract class Dialect implements Serializable {
 	protected static final char[] QUOTED = { '`', '`', '[', ']', '"'};
 
 	// types of system
-	final private Set<Type> fieldTypes = new HashSet<Type>();
+	final private Set<Type> fieldTypes = new HashSet<>();
 	// types of raw
-	final private Map<Integer, String> columnTypes = new HashMap<Integer, String>();
+	final private Map<Integer, String> columnTypes = new HashMap<>();
 	// system to raw mapping
-	final private Map<Integer, Integer> field2columnMapping = new HashMap<Integer, Integer>();
+	final private Map<Integer, Integer> field2columnMapping = new HashMap<>();
 	// function of sql in ajql query
-	final private Map<String, Class<?>> sqlFunctions = new HashMap<String, Class<?>>();
+	final private Map<String, Class<?>> sqlFunctions = new HashMap<>();
 
 	/**
 	 * Create a new Dialect

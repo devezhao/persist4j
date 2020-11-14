@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +39,7 @@ public class DecimalEditor extends AbstractFieldEditor {
 		
 		BigDecimal decimalValue = (BigDecimal) value;
 		decimalValue = decimalValue
-				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, BigDecimal.ROUND_HALF_UP);
+				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, RoundingMode.HALF_UP);
 		pstmt.setBigDecimal(index, decimalValue);
 	}
 

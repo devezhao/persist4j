@@ -27,7 +27,7 @@ public class TimestampEditor extends DateEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		Timestamp v = null;
+		Timestamp v;
 		Class<?> vClazz = value.getClass();
 		if (vClazz == java.util.Date.class || vClazz == java.sql.Date.class) {
 			v = new Timestamp( ((java.util.Date) value).getTime() );

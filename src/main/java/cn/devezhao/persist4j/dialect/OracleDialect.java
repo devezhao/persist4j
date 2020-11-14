@@ -59,7 +59,7 @@ public class OracleDialect extends Dialect {
 			isForUpdate = true;
 		}
 
-		String pagingSelect = null;
+		String pagingSelect;
 		if (offset > 0) {
 			pagingSelect = "select * from ( select row_.*, ROWNUM rownum_ from ( %s ) where rownum_ <= ? and rownum_ > ?";
 			pagingSelect = String.format(pagingSelect, query, limit + offset, offset);

@@ -19,11 +19,11 @@ import cn.devezhao.persist4j.exception.jdbc.SqlSyntaxException;
  */
 public class SqlExceptionConverter {
 
-	private static final Set<String> SQL_GRAMMAR_CATEGORIES = new HashSet<String>();
-	private static final Set<String> DATA_CATEGORIES = new HashSet<String>();
-	private static final Set<String> INTEGRITY_VIOLATION_CATEGORIES = new HashSet<String>();
-	private static final Set<String> CONNECTION_CATEGORIES = new HashSet<String>();
-	
+	private static final Set<String> SQL_GRAMMAR_CATEGORIES = new HashSet<>();
+	private static final Set<String> DATA_CATEGORIES = new HashSet<>();
+	private static final Set<String> INTEGRITY_VIOLATION_CATEGORIES = new HashSet<>();
+	private static final Set<String> CONNECTION_CATEGORIES = new HashSet<>();
+
 	// error code
 	static {
 		SQL_GRAMMAR_CATEGORIES.add("07");
@@ -92,10 +92,8 @@ public class SqlExceptionConverter {
 		String stateCode = sqlex.getSQLState();
 		if (stateCode != null && stateCode.length() >= 2) {
 			String classCode = stateCode.substring(0, 2);
-			if (INTEGRITY_VIOLATION_CATEGORIES.contains(classCode)
-					|| sqlex instanceof SQLIntegrityConstraintViolationException) {
-				return true;
-			}
+			return INTEGRITY_VIOLATION_CATEGORIES.contains(classCode)
+					|| sqlex instanceof SQLIntegrityConstraintViolationException;
 		}
 		return false;
 	}

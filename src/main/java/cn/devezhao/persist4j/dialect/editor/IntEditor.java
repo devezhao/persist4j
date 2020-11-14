@@ -26,7 +26,7 @@ public class IntEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		Integer intValue = null;
+		Integer intValue;
 		if (value instanceof Long) {
 			intValue = ((Long) value).intValue();
 		} else {

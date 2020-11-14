@@ -29,7 +29,7 @@ public class BinaryEditor extends AbstractFieldEditor {
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
 		InputStream stream = (InputStream) value;
-		long size = -1;
+		long size;
 		try {
 //			size = ByteUtils.size(stream);  // NOTE does not read
 			size = stream.available();

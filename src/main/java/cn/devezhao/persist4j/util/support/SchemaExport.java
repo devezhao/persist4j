@@ -42,6 +42,7 @@ public class SchemaExport {
 	 * @param dropExists
 	 * @param createFK
 	 */
+	@SuppressWarnings("deprecation")
 	public void export(boolean dropExists, boolean createFK) {
 		Entity[] entities = metadataFactory.getEntities();
 		Element cfgRoot = ((ConfigurationMetadataFactory) metadataFactory).getConfigDocument().getRootElement();

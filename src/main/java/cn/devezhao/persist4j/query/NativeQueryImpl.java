@@ -33,10 +33,10 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 	final private String sql;
 	transient private PersistManagerFactory managerFactory;
 
-	private Map<Integer, Object> inParameters = new HashMap<Integer, Object>();
+	private Map<Integer, Object> inParameters = new HashMap<>();
 
-	private Type parameterTypes[] = null;
-	private Type returnTypes[] = null;
+	private Type[] parameterTypes = null;
+	private Type[] returnTypes = null;
 
 	transient private List<Object[]> dataCache = null;
 
@@ -101,7 +101,7 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 		if (dataCache != null) {
             return dataCache;
         }
-		dataCache = new LinkedList<Object[]>();
+		dataCache = new LinkedList<>();
 
 		if (fetch == 1) {
             setMaxResults(1);

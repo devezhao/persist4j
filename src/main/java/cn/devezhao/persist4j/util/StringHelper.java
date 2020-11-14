@@ -42,7 +42,7 @@ public class StringHelper {
 	}
 
 	/**
-	 * 根据驼峰加入下划线并大些，例如：userName -> USER_NAME
+	 * 根据驼峰加入下划线并大些，例如：userName &gt; USER_NAME
 	 * 
 	 * @param string
 	 * @return

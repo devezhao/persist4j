@@ -8,7 +8,7 @@ import cn.devezhao.persist4j.dialect.MySQL5Dialect;
 /**
  * H2 with MySQL
  * 
- * @author devezhao <zhaofang123@gmail.com>
+ * @author devezhao zhaofang123@gmail.com
  * @since 2019年11月28日
  */
 public class H2Dialect extends MySQL5Dialect {

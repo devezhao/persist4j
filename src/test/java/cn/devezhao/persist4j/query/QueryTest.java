@@ -8,7 +8,7 @@ import cn.devezhao.persist4j.engine.ID;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
- * @see 04/16/2020
+ * @since 04/16/2020
  */
 public class QueryTest extends BaseTest {
 

@@ -15,7 +15,6 @@ public final class AnyEntity extends EntityImpl {
 	 */
 	public static final String FLAG = "*";
 
-	@Deprecated
 	protected AnyEntity() {
 		super(null, null, null, null, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE,
 				0, null, Boolean.TRUE);

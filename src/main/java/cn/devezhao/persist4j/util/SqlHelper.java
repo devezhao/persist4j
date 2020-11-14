@@ -99,7 +99,7 @@ public final class SqlHelper {
 	}
 	
 	/**
-	 * clear statement <tt>btach<tt>, <tt>warnings</tt>
+	 * clear statement <tt>btach</tt>, <tt>warnings</tt>
 	 * 
 	 * @param stmt
 	 */

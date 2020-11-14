@@ -24,7 +24,7 @@ import cn.devezhao.persist4j.dialect.editor.TimestampEditor;
  * 字段类型定义
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
- * @see 0.1, May 25, 2009
+ * @since 0.1, May 25, 2009
  * @version $Id: FieldType.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
 public class FieldType implements Type, Serializable {

@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
  * 慢查询记录
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">Zhao Fangfang</a>
- * @date 2011-4-11
+ * @since 2011-4-11
  * @version $Id: SlowLogger.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
  */
 public class SlowLogger {

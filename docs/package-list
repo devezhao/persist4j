@@ -1,0 +1,16 @@
+cn.devezhao.persist4j
+cn.devezhao.persist4j.dialect
+cn.devezhao.persist4j.dialect.editor
+cn.devezhao.persist4j.dialect.function
+cn.devezhao.persist4j.dialect.h2
+cn.devezhao.persist4j.engine
+cn.devezhao.persist4j.exception
+cn.devezhao.persist4j.exception.jdbc
+cn.devezhao.persist4j.metadata
+cn.devezhao.persist4j.metadata.impl
+cn.devezhao.persist4j.query
+cn.devezhao.persist4j.query.compiler
+cn.devezhao.persist4j.query.compiler.antlr
+cn.devezhao.persist4j.record
+cn.devezhao.persist4j.util
+cn.devezhao.persist4j.util.support

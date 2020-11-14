@@ -7,7 +7,7 @@ import cn.devezhao.persist4j.PersistManagerFactory;
 import cn.devezhao.persist4j.Record;
 
 /**
- * @author devezhao <zhaofang123@gmail.com>
+ * @author devezhao zhaofang123@gmail.com
  * @since 2019年11月28日
  */
 public class PersistManagerTest extends BaseTest {

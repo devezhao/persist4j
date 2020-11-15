@@ -66,7 +66,7 @@ public class RecordVisitor {
 			for (String id : value.split(ReferenceListEditor.VALUE_SEP)) {
 				if (ID.isId(id)) ids.add(ID.valueOf(id));
 			}
-			pVal = ids.toArray();
+			pVal = ids.toArray(new ID[0]);
 
 		} else if (FieldType.INT.equals(ft)
 				|| FieldType.SMALL_INT.equals(ft)) {

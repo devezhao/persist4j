@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * 多引用（任意实体）
- * 
+ *
  * @author zhaofang123@gmail.com
  * @since 12/28/2018
  */
@@ -48,7 +48,7 @@ public class ReferenceListEditor extends StringEditor {
 		for (String id : v.split(",")) {
 			ids.add(ID.valueOf(id));
 		}
-		return ids.isEmpty() ? null : ids.toArray();
+		return ids.isEmpty() ? null : ids.toArray(new ID[0]);
 	}
 	
 	@Override

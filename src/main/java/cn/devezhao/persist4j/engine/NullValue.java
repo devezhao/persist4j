@@ -1,5 +1,7 @@
 package cn.devezhao.persist4j.engine;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -17,5 +19,10 @@ public class NullValue implements Serializable {
 	 */
 	public static boolean is(Object value) {
 		return value instanceof NullValue;
+	}
+
+	@Override
+	public String toString() {
+		return StringUtils.EMPTY;
 	}
 }

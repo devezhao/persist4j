@@ -1,10 +1,9 @@
 package cn.devezhao.persist4j.dialect.editor;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 /**
  * 字符串
@@ -25,7 +24,11 @@ public class StringEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		pstmt.setString(index, value.toString());
+		if (value == null || NullValue.is(value)) {
+			pstmt.setNull(index, Types.VARCHAR);
+		} else {
+			pstmt.setString(index, value.toString());
+		}
 	}
 	
 	@Override

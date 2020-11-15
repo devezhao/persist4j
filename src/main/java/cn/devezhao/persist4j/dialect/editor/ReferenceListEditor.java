@@ -34,7 +34,6 @@ public class ReferenceListEditor extends StringEditor {
 	public void set(PreparedStatement pstmt, int index, Object value) throws SQLException {
 		String text = toLiteral(value);
 		super.set(pstmt, index, text);
-
 	}
 	
 	@Override

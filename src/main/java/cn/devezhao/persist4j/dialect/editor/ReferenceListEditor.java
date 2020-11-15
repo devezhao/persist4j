@@ -1,18 +1,17 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.ID;
+import org.apache.commons.lang.StringUtils;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
-import cn.devezhao.persist4j.dialect.FieldType;
-import cn.devezhao.persist4j.engine.ID;
-
 /**
- * 多 ID 引用
+ * 多引用（任意实体）
  * 
  * @author zhaofang123@gmail.com
  * @since 12/28/2018
@@ -20,6 +19,11 @@ import cn.devezhao.persist4j.engine.ID;
 public class ReferenceListEditor extends StringEditor {
 
 	private static final long serialVersionUID = -7654860974427302836L;
+
+	/**
+	 * ID 分隔符
+	 */
+	public static final String VALUE_SEP = ",";
 	
 	@Override
     public int getType() {
@@ -30,6 +34,7 @@ public class ReferenceListEditor extends StringEditor {
 	public void set(PreparedStatement pstmt, int index, Object value) throws SQLException {
 		String text = toLiteral(value);
 		super.set(pstmt, index, text);
+
 	}
 	
 	@Override
@@ -43,7 +48,7 @@ public class ReferenceListEditor extends StringEditor {
 		for (String id : v.split(",")) {
 			ids.add(ID.valueOf(id));
 		}
-		return ids.isEmpty() ? null : ids.toArray(new ID[0]);
+		return ids.isEmpty() ? null : ids.toArray();
 	}
 	
 	@Override
@@ -52,6 +57,6 @@ public class ReferenceListEditor extends StringEditor {
 			return null;
 		}
 		ID[] ids = (ID[]) value;
-		return ids.length == 0 ? null : StringUtils.join(ids, ",");
+		return ids.length == 0 ? null : StringUtils.join(ids, VALUE_SEP);
 	}
 }

@@ -39,7 +39,7 @@ public class FieldType implements Type, Serializable {
 	public static final Type PRIMARY = new FieldType(10001, "primary", new PrimaryEditor());
 	public static final Type REFERENCE = new FieldType(10002, "reference", new ReferenceEditor());
 	public static final Type ANY_REFERENCE = new FieldType(10003, "any-reference", new AnyReferenceEditor());
-	public static final Type REFERENCE_LIST = new FieldType(10004, "nreference-list", new ReferenceListEditor());
+	public static final Type REFERENCE_LIST = new FieldType(10004, "reference-list", new ReferenceListEditor());
 
 	public static final Type INT = new FieldType(10011, "int", new IntEditor());
 	public static final Type SMALL_INT = new FieldType(10012, "small-int", new SmallIntEditor());

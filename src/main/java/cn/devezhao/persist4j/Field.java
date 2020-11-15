@@ -29,7 +29,7 @@ public interface Field extends BaseMeta {
 
 	/**
 	 * 用于多引用字段。
-	 * 如果是引用型字段，获取到其引用的实体
+	 * 如果是引用型字段，获取到其引用的实体。如果 `ref-entity=*` 会返回所有实体
 	 * 
 	 * @return
 	 */

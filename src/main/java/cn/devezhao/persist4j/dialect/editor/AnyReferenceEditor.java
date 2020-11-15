@@ -3,7 +3,7 @@ package cn.devezhao.persist4j.dialect.editor;
 import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
- * 任意引用
+ * 单一引用（任意实体）
  * 
  * @author zhaofang123@gmail.com
  * @since 12/28/2018

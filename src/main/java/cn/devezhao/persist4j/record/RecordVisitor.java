@@ -4,8 +4,11 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import cn.devezhao.persist4j.dialect.editor.ReferenceListEditor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -58,6 +61,13 @@ public class RecordVisitor {
 				|| FieldType.ANY_REFERENCE.equals(ft)) {
 			pVal = ID.valueOf(value);
 			
+		} else if (FieldType.REFERENCE_LIST.equals(ft)) {
+			List<ID> ids = new ArrayList<>();
+			for (String id : value.split(ReferenceListEditor.VALUE_SEP)) {
+				if (ID.isId(id)) ids.add(ID.valueOf(id));
+			}
+			pVal = ids.toArray();
+
 		} else if (FieldType.INT.equals(ft)
 				|| FieldType.SMALL_INT.equals(ft)) {
 			pVal = NumberUtils.toInt(value);
@@ -108,7 +118,10 @@ public class RecordVisitor {
 				|| FieldType.ANY_REFERENCE.equals(ft)) {
 			literalValue = ((ID) value).toLiteral();
 			
-		} else if (FieldType.INT.equals(ft) 
+		} else if (FieldType.REFERENCE_LIST.equals(ft)) {
+			literalValue = StringUtils.join((ID[]) value, ReferenceListEditor.VALUE_SEP);
+
+		} else if (FieldType.INT.equals(ft)
 				|| FieldType.SMALL_INT.equals(ft)
 				|| FieldType.DOUBLE.equals(ft) 
 				|| FieldType.DECIMAL.equals(ft)

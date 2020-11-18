@@ -114,22 +114,18 @@ public class JsonRecordCreator implements RecordCreator {
 			Object fieldValue = e.getValue();
 			if (fieldValue != null) fieldValue = fieldValue.toString();
 
-			if (ignoreNullValue && (fieldValue == null || StringUtils.isEmpty(fileName.toUpperCase()))) {
+			if (ignoreNullValue && (fieldValue == null || StringUtils.isEmpty((String) fieldValue))) {
 				continue;
 			}
 
-			XmlRecordCreator.setFieldValue(field, (String) fieldValue, record);
+			setFieldValue(field, (String) fieldValue, record);
 		}
 		
 		afterCreate(record);
-		afterVerify(record);
 		return record;
 	}
 
 	protected void afterCreate(Record record) {
-	}
-
-	protected void afterVerify(Record record) {
-		XmlRecordCreator.verify(record);
+		verify(record);
 	}
 }

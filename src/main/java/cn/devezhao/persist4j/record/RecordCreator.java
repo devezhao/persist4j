@@ -20,7 +20,23 @@ public interface RecordCreator {
 
     Log LOG = LogFactory.getLog(RecordCreator.class);
 
-    Record create();
+	/**
+	 * 创建 Record
+	 *
+	 * @return
+	 */
+	Record create();
+
+	/**
+	 * #setFieldValue 产生警告时调用
+	 *
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	default boolean onSetFieldValueWarn(Field field, String value, Record record) {
+		return false;
+	}
 
 	/**
 	 * 设置字段值
@@ -35,24 +51,34 @@ public interface RecordCreator {
 
         // 忽略更新
         if (!isNew && !field.isUpdatable()) {
-            LOG.warn("Could not put value to un-updatable field : " + field);
-            return false;
+        	if (onSetFieldValueWarn(field, value, record)) {
+        		return true;
+			} else {
+				LOG.warn("Could not put value to un-updatable field : " + field);
+				return false;
+			}
         }
 
         // 忽略新建
         if (isNew && !field.isCreatable()) {
-            LOG.warn("Could not put value to un-creatable field : " + field);
-            return false;
+			if (onSetFieldValueWarn(field, value, record)) {
+				return true;
+			} else {
+            	LOG.warn("Could not put value to un-creatable field : " + field);
+				return false;
+			}
         }
 
+        boolean noValue = value == null || StringUtils.isEmpty(value);
+
         // 无值
-        if (value == null || StringUtils.isEmpty(value)) {
+        if (noValue) {
             if (isNew && !field.isNullable() && !field.isAutoValue()) {
                 throw new FieldValueException("Field [ " + field + " ] must not be null");
             }
         }
 
-        if (value == null || NullValue.is(value)) {
+        if (noValue) {
             record.setNull(field.getName());
         } else {
             RecordVisitor.setValueByLiteral(field, value, record);

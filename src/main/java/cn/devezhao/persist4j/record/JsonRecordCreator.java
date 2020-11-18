@@ -85,10 +85,10 @@ public class JsonRecordCreator implements RecordCreator {
 	}
 
 	/**
-	 * @param ignoreNullValue 忽略空值（仅在新建时有效）
+	 * @param ignoreNullValueWhenNew 忽略空值（仅在新建时有效）
 	 * @return
 	 */
-	public Record create(boolean ignoreNullValue) {
+	public Record create(boolean ignoreNullValueWhenNew) {
 		Record record = new StandardRecord(entity, editor);
 
 		JSONObject metadata = source.getJSONObject(META_FIELD);
@@ -114,7 +114,8 @@ public class JsonRecordCreator implements RecordCreator {
 			Object fieldValue = e.getValue();
 			if (fieldValue != null) fieldValue = fieldValue.toString();
 
-			if (ignoreNullValue && (fieldValue == null || StringUtils.isEmpty((String) fieldValue))) {
+			if (ignoreNullValueWhenNew && record.getPrimary() == null
+					&& (fieldValue == null || StringUtils.isEmpty((String) fieldValue))) {
 				continue;
 			}
 

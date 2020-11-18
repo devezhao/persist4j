@@ -1,5 +1,7 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.persist4j.dialect.FieldType;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -7,8 +9,6 @@ import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
  * 大文本

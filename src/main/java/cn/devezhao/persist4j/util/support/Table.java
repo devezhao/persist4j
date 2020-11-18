@@ -1,20 +1,19 @@
 package cn.devezhao.persist4j.util.support;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.dom4j.Element;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
 import cn.devezhao.persist4j.metadata.impl.EntityImpl;
+import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 建表语句

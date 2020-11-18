@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.query.compiler;
 
-import java.io.Serializable;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
+
+import java.io.Serializable;
 
 /**
  * @author zhaofang123@gmail.com

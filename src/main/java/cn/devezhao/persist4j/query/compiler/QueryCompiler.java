@@ -1,12 +1,5 @@
 package cn.devezhao.persist4j.query.compiler;
 
-import java.io.Serializable;
-import java.util.*;
-
-import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import antlr.collections.AST;
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
@@ -19,6 +12,12 @@ import cn.devezhao.persist4j.query.compiler.antlr.AjQLParser;
 import cn.devezhao.persist4j.query.compiler.antlr.AjQLParserTokenTypes;
 import cn.devezhao.persist4j.query.compiler.antlr.ParserException;
 import cn.devezhao.persist4j.query.compiler.antlr.ParserHelper;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * AJQL 编译器

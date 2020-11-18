@@ -1,16 +1,12 @@
 package cn.devezhao.persist4j.query;
 
+import cn.devezhao.persist4j.*;
+import cn.devezhao.persist4j.query.compiler.QueryCompiler;
+import cn.devezhao.persist4j.query.compiler.SelectItem;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import cn.devezhao.persist4j.Entity;
-import cn.devezhao.persist4j.Filter;
-import cn.devezhao.persist4j.PersistManagerFactory;
-import cn.devezhao.persist4j.Query;
-import cn.devezhao.persist4j.Record;
-import cn.devezhao.persist4j.query.compiler.QueryCompiler;
-import cn.devezhao.persist4j.query.compiler.SelectItem;
 
 /**
  * Ajql query

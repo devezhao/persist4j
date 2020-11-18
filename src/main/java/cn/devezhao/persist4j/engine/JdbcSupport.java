@@ -1,16 +1,11 @@
 package cn.devezhao.persist4j.engine;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import cn.devezhao.persist4j.DataAccessException;
+import cn.devezhao.persist4j.util.SqlHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import cn.devezhao.persist4j.DataAccessException;
-import cn.devezhao.persist4j.util.SqlHelper;
+import java.sql.*;
 
 /**
  * 

@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.dialect;
 
-import java.sql.Types;
-
 import cn.devezhao.persist4j.engine.ID;
+
+import java.sql.Types;
 
 /**
  * MySQL 方言

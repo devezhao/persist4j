@@ -1,7 +1,5 @@
 package cn.devezhao.persist4j.engine;
 
-import javax.sql.DataSource;
-
 import cn.devezhao.persist4j.Filter;
 import cn.devezhao.persist4j.PersistManager;
 import cn.devezhao.persist4j.PersistManagerFactory;
@@ -11,6 +9,8 @@ import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.query.AjqlQuery;
 import cn.devezhao.persist4j.query.NativeQuery;
 import cn.devezhao.persist4j.query.NativeQueryImpl;
+
+import javax.sql.DataSource;
 
 /**
  * 持久化对象工厂

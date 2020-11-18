@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.query.compiler;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 

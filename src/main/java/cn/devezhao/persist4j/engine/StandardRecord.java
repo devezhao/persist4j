@@ -1,22 +1,5 @@
 package cn.devezhao.persist4j.engine;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.devezhao.commons.ByteUtils;
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
@@ -26,6 +9,17 @@ import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.MetadataException;
 import cn.devezhao.persist4j.record.FieldValueException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * 记录对象

@@ -1,16 +1,15 @@
 package cn.devezhao.persist4j;
 
-import java.math.BigDecimal;
-import java.util.Iterator;
-
-import org.junit.Test;
-
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
+import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.util.Iterator;
 
 /**
  * 

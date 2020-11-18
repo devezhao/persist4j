@@ -1,16 +1,15 @@
 package cn.devezhao.persist4j.dialect;
 
+import cn.devezhao.persist4j.Field;
+import cn.devezhao.persist4j.dialect.function.GetDateFunction;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import cn.devezhao.persist4j.Field;
-import cn.devezhao.persist4j.dialect.function.GetDateFunction;
 
 /**
  * 数据库方言

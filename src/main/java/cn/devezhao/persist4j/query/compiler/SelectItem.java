@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.query.compiler;
 
-import java.io.Serializable;
-
 import cn.devezhao.persist4j.Field;
+
+import java.io.Serializable;
 
 /**
  * 

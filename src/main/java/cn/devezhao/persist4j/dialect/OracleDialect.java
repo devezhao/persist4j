@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.dialect;
 
+import cn.devezhao.persist4j.engine.ID;
+
 import java.sql.Types;
 import java.util.Locale;
-
-import cn.devezhao.persist4j.engine.ID;
 
 /**
  * 

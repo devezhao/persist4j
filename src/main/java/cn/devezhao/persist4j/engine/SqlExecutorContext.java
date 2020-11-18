@@ -1,15 +1,13 @@
 package cn.devezhao.persist4j.engine;
 
-import java.io.Serializable;
-import java.sql.Connection;
-
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import javax.sql.DataSource;
+import java.io.Serializable;
+import java.sql.Connection;
 
 /**
  * Sql执行上下文信息

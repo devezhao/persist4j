@@ -1,13 +1,13 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.persist4j.PersistException;
+import cn.devezhao.persist4j.dialect.FieldType;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import cn.devezhao.persist4j.PersistException;
-import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
  * 二进制

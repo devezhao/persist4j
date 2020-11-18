@@ -1,12 +1,12 @@
 package cn.devezhao.persist4j.util.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import cn.devezhao.persist4j.Query;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.query.IQuery;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Zhao Fangfang

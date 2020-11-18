@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j;
 
-import java.io.Serializable;
-
 import cn.devezhao.persist4j.engine.ID;
+
+import java.io.Serializable;
 
 /**
  * 持久化管理器

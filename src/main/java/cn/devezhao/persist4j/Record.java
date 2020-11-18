@@ -1,5 +1,9 @@
 package cn.devezhao.persist4j;
 
+import cn.devezhao.persist4j.engine.ID;
+import cn.devezhao.persist4j.engine.NullValue;
+import com.alibaba.fastjson.JSON;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
@@ -7,11 +11,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.alibaba.fastjson.JSON;
-
-import cn.devezhao.persist4j.engine.ID;
-import cn.devezhao.persist4j.engine.NullValue;
 
 /**
  * 记录

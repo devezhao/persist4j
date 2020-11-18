@@ -1,17 +1,5 @@
 package cn.devezhao.persist4j.record;
 
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import cn.devezhao.persist4j.dialect.editor.ReferenceListEditor;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-
 import cn.devezhao.commons.CalendarUtils;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.Record;
@@ -19,7 +7,18 @@ import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.Type;
 import cn.devezhao.persist4j.dialect.editor.BoolEditor;
 import cn.devezhao.persist4j.dialect.editor.NTextEditor;
+import cn.devezhao.persist4j.dialect.editor.ReferenceListEditor;
 import cn.devezhao.persist4j.engine.ID;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 /**

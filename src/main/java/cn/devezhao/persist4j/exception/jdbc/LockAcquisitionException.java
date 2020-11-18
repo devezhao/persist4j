@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.exception.jdbc;
 
-import java.sql.SQLException;
-
 import cn.devezhao.persist4j.exception.JdbcException;
+
+import java.sql.SQLException;
 
 
 /**

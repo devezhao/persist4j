@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.exception;
 
-import java.sql.SQLWarning;
-
 import cn.devezhao.persist4j.DataAccessException;
+
+import java.sql.SQLWarning;
 
 /**
  * Sql警告类的异常

@@ -1,20 +1,20 @@
 package cn.devezhao.persist4j.record;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import cn.devezhao.persist4j.Entity;
+import cn.devezhao.persist4j.Field;
+import cn.devezhao.persist4j.Record;
+import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.ID;
+import cn.devezhao.persist4j.engine.NullValue;
+import cn.devezhao.persist4j.engine.StandardRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
-import cn.devezhao.persist4j.Entity;
-import cn.devezhao.persist4j.Field;
-import cn.devezhao.persist4j.Record;
-import cn.devezhao.persist4j.dialect.FieldType;
-import cn.devezhao.persist4j.engine.ID;
-import cn.devezhao.persist4j.engine.StandardRecord;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -66,85 +66,106 @@ public class XmlRecordCreator implements RecordCreator {
 	@Override
     public Record create() {
 		Record record = new StandardRecord(entity, editor);
-		boolean isNew = true;
-		
+
 		String id = source.valueOf("@id");
 		if (!StringUtils.isBlank(id)) {
 			record.setID(entity.getPrimaryField().getName(), ID.valueOf(id));
-			isNew = false;
 		}
 
 		for (Object o : source.elements()) {
-			Element ele = (Element) o;
-			String fn = ele.getName();
-			Field field = entity.containsField(fn) ? entity.getField(fn) : null;
-			
-			if (field == null) {
-				LOG.warn("Unable found field [ " + entity.getName() + '#' + fn  + " ], will ignore");
-				continue;
-			}
-			
-			if (!isNew && !field.isUpdatable()) {  // un update
-				if (LOG.isDebugEnabled()) {
-					LOG.warn("could not put value to un-update field");
-				}
-				continue;
-			}
-			
-			String value = ele.attributeValue("value");
-			if (value == null) {
-				value = ele.getText();
+			Element el = (Element) o;
+			String fieldName = el.getName();
+			String fieldValue = el.attributeValue("value");
+			if (fieldValue == null) {
+				fieldValue = el.getText();
 			}
 
-			if (StringUtils.isBlank(value)) {
-				value = null;
-				if (isNew) {
-					if (!field.isNullable() && !field.isAutoValue()) {
-						throw new FieldValueException(entity.getName() + '#' + field.getName() + " must not be null");
-					}
-					continue;
-				}
+			Field field = entity.containsField(fieldName) ? entity.getField(fieldName) : null;
+			if (field == null) {
+				LOG.warn("Unable found field [ " + entity.getName() + '#' + fieldName  + " ], will ignore");
+				continue;
 			}
-			
-			setValue(field, value, record);
+
+			setFieldValue(field, fieldValue, record, true);
 		}
-		
-		afterCreate(record, isNew);
-		validate(record, isNew);
+
+		afterCreate(record);
+		afterVerify(record);
 		return record;
 	}
 	
-	protected void setValue(Field field, String value, Record record) {
-		if (value == null) {
-			record.setNull(field.getName());
-			return;
+	protected void afterCreate(Record record) {
+	}
+
+	protected void afterVerify(Record record) {
+		verify(record);
+	}
+
+	/**
+	 * 设置字段值
+	 *
+	 * @param field
+	 * @param value
+	 * @param record
+	 * @param ignoreNullValue
+	 * @return
+	 */
+	protected static boolean setFieldValue(Field field, String value, Record record, boolean ignoreNullValue) {
+		final boolean isNew = record.getPrimary() == null;
+
+		// 忽略更新
+		if (!isNew && !field.isUpdatable()) {
+			LOG.warn("Could not put value to un-updatable field : " + field);
+			return false;
 		}
-		RecordVisitor.setValueByLiteral(field, value, record);
-	}
-	
-	protected void afterCreate(Record record, boolean isNew) {
+
+		// 忽略新建
+		if (isNew && !field.isCreatable()) {
+			LOG.warn("Could not put value to un-creatable field : " + field);
+			return false;
+		}
+
+		// 无值
+		if (value == null || StringUtils.isEmpty(value)) {
+			if (isNew && !field.isNullable() && !field.isAutoValue()) {
+				throw new FieldValueException("Field [ " + field + " ] must not be null");
+			}
+
+			// 不忽略空值
+			if (!ignoreNullValue) {
+				value = null;
+			}
+		}
+
+		if (value == null || NullValue.is(value)) {
+			record.setNull(field.getName());
+		} else {
+			RecordVisitor.setValueByLiteral(field, value, record);
+		}
+		return true;
 	}
 
-	protected void validate(Record record, boolean isNew) {
-		verify(record, isNew);
-	}
+	/**
+	 * 验证字段约束
+	 *
+	 * @param record
+	 */
+	protected static void verify(Record record) {
+		if (record.getPrimary() == null) return;
 
-	protected static void verify(Record record, boolean isNew) {
-		if (!isNew) return;
-
-		List<String> notNulls = new ArrayList<>();
+		List<String> notNullable = new ArrayList<>();
 		for (Field field : record.getEntity().getFields()) {
 			if (FieldType.PRIMARY.equals(field.getType())) continue;
 
 			Object val = record.getObjectValue(field.getName());
-			if (!field.isNullable() && !field.isAutoValue() && val == null) {
-				notNulls.add(field.getName());
+			if (!field.isNullable() && !field.isAutoValue() && (val == null || NullValue.is(val))) {
+				notNullable.add(field.getName());
 			}
 		}
 
-		if (!notNulls.isEmpty()) {
+		if (!notNullable.isEmpty()) {
 			throw new FieldValueException("Muse not been null. Entity [ " + record.getEntity().getName()
-					+ " ], Fields [ " + StringUtils.join(notNulls.toArray(new String[0]), ", ") + " ]");
+					+ " ], Fields [ " + StringUtils.join(notNullable.toArray(new String[0]), ", ") + " ]");
 		}
 	}
 

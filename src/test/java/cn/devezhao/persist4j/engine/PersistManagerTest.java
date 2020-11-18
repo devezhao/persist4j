@@ -1,11 +1,10 @@
 package cn.devezhao.persist4j.engine;
 
-import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
-
 import cn.devezhao.persist4j.BaseTest;
 import cn.devezhao.persist4j.PersistManagerFactory;
 import cn.devezhao.persist4j.Record;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
 
 /**
  * @author devezhao zhaofang123@gmail.com

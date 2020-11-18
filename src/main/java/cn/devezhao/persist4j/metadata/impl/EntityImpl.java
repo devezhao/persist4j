@@ -10,11 +10,7 @@ import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>

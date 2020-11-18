@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.persist4j.dialect.FieldType;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
  * 单字符

@@ -1,11 +1,11 @@
 package cn.devezhao.persist4j.query.compiler;
 
+import cn.devezhao.persist4j.dialect.Dialect;
+
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import cn.devezhao.persist4j.dialect.Dialect;
 
 
 /**

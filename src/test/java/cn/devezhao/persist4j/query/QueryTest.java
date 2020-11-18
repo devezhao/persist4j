@@ -1,10 +1,9 @@
 package cn.devezhao.persist4j.query;
 
-import org.junit.Test;
-
 import cn.devezhao.persist4j.BaseTest;
 import cn.devezhao.persist4j.Query;
 import cn.devezhao.persist4j.engine.ID;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>

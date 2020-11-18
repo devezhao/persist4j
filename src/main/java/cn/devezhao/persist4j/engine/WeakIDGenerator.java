@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.engine;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * 弱ID生成器，只有20位长度

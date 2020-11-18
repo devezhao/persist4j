@@ -1,11 +1,11 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.commons.ObjectUtils;
+import cn.devezhao.persist4j.dialect.FieldType;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import cn.devezhao.commons.ObjectUtils;
-import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
  * 整数

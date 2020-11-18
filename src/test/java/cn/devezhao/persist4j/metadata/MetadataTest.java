@@ -1,13 +1,12 @@
 package cn.devezhao.persist4j.metadata;
 
-import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
 
 /**
  * @author zhaofang123@gmail.com

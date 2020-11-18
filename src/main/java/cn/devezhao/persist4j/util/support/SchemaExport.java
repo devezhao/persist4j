@@ -1,18 +1,17 @@
 package cn.devezhao.persist4j.util.support;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-
-import org.dom4j.Element;
-
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.PersistException;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
 import cn.devezhao.persist4j.util.SqlHelper;
+import org.dom4j.Element;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
 /**
  * 生成建表语句

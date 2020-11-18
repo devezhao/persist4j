@@ -1,13 +1,12 @@
 package cn.devezhao.persist4j.engine;
 
-import java.io.Serializable;
-
+import cn.devezhao.commons.ByteUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import cn.devezhao.commons.ByteUtils;
+import java.io.Serializable;
 
 /**
  * Id of record

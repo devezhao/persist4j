@@ -1,10 +1,10 @@
 package cn.devezhao.persist4j.dialect.function;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.Type;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * <tt>$GETDATE</tt>

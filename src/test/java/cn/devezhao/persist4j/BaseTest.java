@@ -1,18 +1,16 @@
 package cn.devezhao.persist4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
-import com.alibaba.druid.pool.DruidDataSourceFactory;
-
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.h2.H2Dialect;
 import cn.devezhao.persist4j.engine.PersistManagerFactoryImpl;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
 import cn.devezhao.persist4j.util.support.SchemaExport;
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author zhaofang123@gmail.com

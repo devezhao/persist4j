@@ -1,15 +1,14 @@
 package cn.devezhao.persist4j.util.support;
 
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.dom4j.Element;
-import org.junit.Test;
-
 import cn.devezhao.persist4j.BaseTest;
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.PersistManagerFactory;
 import cn.devezhao.persist4j.metadata.impl.ConfigurationMetadataFactory;
+import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
+import org.junit.Test;
+
+import java.util.List;
 
 /**
  * 

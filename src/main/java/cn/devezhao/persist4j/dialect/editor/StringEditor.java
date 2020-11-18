@@ -1,9 +1,12 @@
 package cn.devezhao.persist4j.dialect.editor;
 
-import java.sql.*;
-
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.engine.NullValue;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * 字符串

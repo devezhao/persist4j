@@ -1,8 +1,8 @@
 package cn.devezhao.persist4j.metadata;
 
-import java.io.Serializable;
-
 import cn.devezhao.persist4j.Entity;
+
+import java.io.Serializable;
 
 /**
  * 

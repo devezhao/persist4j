@@ -2,15 +2,7 @@
 
 package cn.devezhao.persist4j.query.compiler.antlr;
 
-import antlr.ASTFactory;
-import antlr.ASTPair;
-import antlr.NoViableAltException;
-import antlr.ParserSharedInputState;
-import antlr.RecognitionException;
-import antlr.Token;
-import antlr.TokenBuffer;
-import antlr.TokenStream;
-import antlr.TokenStreamException;
+import antlr.*;
 import antlr.collections.AST;
 import antlr.collections.impl.BitSet;
 

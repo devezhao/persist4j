@@ -1,14 +1,14 @@
 package cn.devezhao.persist4j.exception;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashSet;
-import java.util.Set;
-
 import cn.devezhao.persist4j.exception.jdbc.ConstraintViolationException;
 import cn.devezhao.persist4j.exception.jdbc.GenericJdbcException;
 import cn.devezhao.persist4j.exception.jdbc.LockAcquisitionException;
 import cn.devezhao.persist4j.exception.jdbc.SqlSyntaxException;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 将Sql异常转换至清晰的异常类型

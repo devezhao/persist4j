@@ -1,11 +1,6 @@
 package cn.devezhao.persist4j.util;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 大小写不敏感 Map

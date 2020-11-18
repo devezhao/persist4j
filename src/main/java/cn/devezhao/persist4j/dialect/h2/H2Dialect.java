@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.dialect.h2;
 
-import java.sql.Types;
-
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.MySQL5Dialect;
+
+import java.sql.Types;
 
 /**
  * H2 with MySQL

@@ -1,20 +1,5 @@
 package cn.devezhao.persist4j.query;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.Editor;
 import cn.devezhao.persist4j.dialect.FieldType;
@@ -24,6 +9,15 @@ import cn.devezhao.persist4j.query.compiler.ParameterItem;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
 import cn.devezhao.persist4j.query.compiler.SelectItemType;
 import cn.devezhao.persist4j.util.SqlHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * 

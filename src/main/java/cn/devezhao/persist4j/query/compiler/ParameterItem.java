@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.query.compiler;
 
+import cn.devezhao.persist4j.Field;
+
 import java.io.Serializable;
 import java.util.Objects;
-
-import cn.devezhao.persist4j.Field;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>

@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.query;
 
+import cn.devezhao.persist4j.Record;
+
 import java.io.Serializable;
 import java.util.List;
-
-import cn.devezhao.persist4j.Record;
 
 /**
  * 查询结果集

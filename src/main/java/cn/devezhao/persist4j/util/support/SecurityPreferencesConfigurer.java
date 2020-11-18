@@ -1,9 +1,9 @@
 package cn.devezhao.persist4j.util.support;
 
+import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
+
 import java.io.IOException;
 import java.util.Properties;
-
-import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 
 /**
  * 

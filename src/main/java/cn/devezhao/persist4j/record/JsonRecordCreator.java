@@ -22,7 +22,6 @@ import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -90,87 +89,42 @@ public class JsonRecordCreator implements RecordCreator {
 	 */
 	public Record create(boolean ignoreNullValue) {
 		Record record = new StandardRecord(entity, editor);
-		boolean isNew = true;
-		
+
 		JSONObject metadata = source.getJSONObject(META_FIELD);
 		if (metadata == null) {
 			throw new FieldValueException("`metadata` element must not be null");
 		}
-		
+
 		String id = metadata.getString("id");
 		if (ID.isId(id)) {
 			record.setID(entity.getPrimaryField().getName(), ID.valueOf(id));
-			isNew = false;
 		}
 		
 		for (Map.Entry<String, Object> e : source.entrySet()) {
 			String fileName = e.getKey();
-			if (META_FIELD.equals(fileName)) {
-				continue;
-			}
+			if (META_FIELD.equals(fileName)) continue;
 
-			if (!entity.containsField(fileName)) {
+			final Field field = entity.containsField(fileName) ? entity.getField(fileName) : null;
+			if (field == null) {
 				LOG.warn("Unable found field [ " + entity.getName() + '#' + fileName  + " ], will ignore");
 				continue;
 			}
 
-			Field field = entity.getField(fileName);
+			Object fieldValue = e.getValue();
+			if (fieldValue != null) fieldValue = fieldValue.toString();
 
-			if (!isNew && !field.isUpdatable()) {  // 忽略更新
-				if (LOG.isDebugEnabled()) {
-					LOG.warn("Could not put value to un-update field");
-				}
-				continue;
-			}
-			
-			Object value = e.getValue();
-			if (value == null || StringUtils.isEmpty(value.toString())) {
-				if (isNew) {
-					if (!field.isNullable() && !field.isAutoValue()) {
-						throw new FieldValueException(entity.getName() + '#' + field.getName() + " must not be null");
-					}
-					
-					// 不忽略空值
-					if (!ignoreNullValue) {
-						record.setNull(fileName);
-					}
-					continue;
-				}
-				value = null;
-			}
-			setValue(field, value == null ? null : value.toString(), record);
+			XmlRecordCreator.setFieldValue(field, (String) fieldValue, record, ignoreNullValue);
 		}
 		
-		afterCreate(record, isNew);
-		verify(record, isNew);
+		afterCreate(record);
+		afterVerify(record);
 		return record;
 	}
-	
-	/**
-	 * @param field
-	 * @param value
-	 * @param record
-	 */
-	protected void setValue(Field field, String value, Record record) {
-		if (value == null) {
-			record.setNull(field.getName());
-			return;
-		}
-		RecordVisitor.setValueByLiteral(field, value, record);
+
+	protected void afterCreate(Record record) {
 	}
-	
-	/**
-	 * @param record
-	 * @param isNew
-	 */
-	protected void afterCreate(Record record, boolean isNew) {
-	}
-	
-	/**
-	 * @param record
-	 * @param isNew
-	 */
-	protected void verify(Record record, boolean isNew) {
-		XmlRecordCreator.verify(record, isNew);
+
+	protected void afterVerify(Record record) {
+		XmlRecordCreator.verify(record);
 	}
 }

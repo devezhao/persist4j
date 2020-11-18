@@ -1,13 +1,12 @@
 package cn.devezhao.persist4j.dialect.editor;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import cn.devezhao.persist4j.dialect.Editor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import cn.devezhao.persist4j.dialect.Editor;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * 字段编辑者公用实现

@@ -1,8 +1,7 @@
 package cn.devezhao.persist4j.query.compiler.antlr;
 
-import org.apache.commons.lang.exception.NestableRuntimeException;
-
 import antlr.ANTLRException;
+import org.apache.commons.lang.exception.NestableRuntimeException;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>

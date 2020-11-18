@@ -1,10 +1,9 @@
 package cn.devezhao.persist4j.engine;
 
-import java.io.Serializable;
-
+import cn.devezhao.commons.identifier.UUIDHexGenerator;
 import org.apache.commons.lang.StringUtils;
 
-import cn.devezhao.commons.identifier.UUIDHexGenerator;
+import java.io.Serializable;
 
 /**
  * ID生成器

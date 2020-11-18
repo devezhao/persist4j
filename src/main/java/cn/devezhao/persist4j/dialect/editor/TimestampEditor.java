@@ -1,12 +1,12 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.persist4j.dialect.FieldType;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
-
-import cn.devezhao.persist4j.dialect.FieldType;
 
 /**
  * 日期时间。兼容: <tt>Date, Long</tt>

@@ -1,13 +1,12 @@
 package cn.devezhao.persist4j;
 
-import java.io.Serializable;
-
-import javax.sql.DataSource;
-
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
 import cn.devezhao.persist4j.query.NativeQuery;
+
+import javax.sql.DataSource;
+import java.io.Serializable;
 
 /**
  * 持久化管理器工厂

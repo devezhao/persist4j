@@ -1,13 +1,12 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.ID;
+import org.apache.commons.lang.StringUtils;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.apache.commons.lang.StringUtils;
-
-import cn.devezhao.persist4j.dialect.FieldType;
-import cn.devezhao.persist4j.engine.ID;
 
 /**
  * 主键

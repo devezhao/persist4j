@@ -110,7 +110,7 @@ public class XmlRecordCreator implements RecordCreator {
 	 * @param ignoreNullValue
 	 * @return
 	 */
-	protected static boolean setFieldValue(Field field, String value, Record record, boolean ignoreNullValue) {
+	public static boolean setFieldValue(Field field, String value, Record record, boolean ignoreNullValue) {
 		final boolean isNew = record.getPrimary() == null;
 
 		// 忽略更新
@@ -150,7 +150,7 @@ public class XmlRecordCreator implements RecordCreator {
 	 *
 	 * @param record
 	 */
-	protected static void verify(Record record) {
+	public static void verify(Record record) {
 		if (record.getPrimary() == null) return;
 
 		List<String> notNullable = new ArrayList<>();

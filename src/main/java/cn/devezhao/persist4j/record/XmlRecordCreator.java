@@ -86,7 +86,7 @@ public class XmlRecordCreator implements RecordCreator {
 				continue;
 			}
 
-			setFieldValue(field, fieldValue, record, true);
+			setFieldValue(field, fieldValue, record);
 		}
 
 		afterCreate(record);
@@ -107,10 +107,9 @@ public class XmlRecordCreator implements RecordCreator {
 	 * @param field
 	 * @param value
 	 * @param record
-	 * @param ignoreNullValue
 	 * @return
 	 */
-	public static boolean setFieldValue(Field field, String value, Record record, boolean ignoreNullValue) {
+	public static boolean setFieldValue(Field field, String value, Record record) {
 		final boolean isNew = record.getPrimary() == null;
 
 		// 忽略更新
@@ -129,11 +128,6 @@ public class XmlRecordCreator implements RecordCreator {
 		if (value == null || StringUtils.isEmpty(value)) {
 			if (isNew && !field.isNullable() && !field.isAutoValue()) {
 				throw new FieldValueException("Field [ " + field + " ] must not be null");
-			}
-
-			// 不忽略空值
-			if (!ignoreNullValue) {
-				value = null;
 			}
 		}
 

@@ -22,6 +22,7 @@ import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,7 +114,11 @@ public class JsonRecordCreator implements RecordCreator {
 			Object fieldValue = e.getValue();
 			if (fieldValue != null) fieldValue = fieldValue.toString();
 
-			XmlRecordCreator.setFieldValue(field, (String) fieldValue, record, ignoreNullValue);
+			if (ignoreNullValue && (fieldValue == null || StringUtils.isEmpty(fileName.toUpperCase()))) {
+				continue;
+			}
+
+			XmlRecordCreator.setFieldValue(field, (String) fieldValue, record);
 		}
 		
 		afterCreate(record);

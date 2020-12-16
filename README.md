@@ -1,6 +1,7 @@
 # Use by Jitpack
 
 [![JitPack](https://jitpack.io/v/devezhao/persist4j.svg)](https://jitpack.io/#devezhao/persist4j)
+[![JavaDoc](https://img.shields.io/badge/java-doc-red.svg)](https://devezhao.github.io/persist4j/index.html)
 
 ## Maven
 
@@ -21,9 +22,9 @@
 </dependencies>
 ```
 
-# 如何使用
+## 如何使用
 
-## 基础对象
+### 基础对象
 
 使用 [persist4j](https://github.com/devezhao/persist4j) 首先需要了解两个基础对象 `Record` 和 `Query`。`Record` 是一个 Map 实现，他承担了 DAO 职责，而 `Query` 是查询入口，是日常编码中使用最为频繁的类。
 
@@ -57,7 +58,7 @@ Record found = PM.createQuery(ajql).setParameter(1, "SomeValue").unique();
 可以看出，通过 AJQL 可以大大简化我们日常查询 SQL 中的表关联操作，这也正是 AJQL 名称的由来。
 
 
-## 元数据
+### 元数据
 
 动态元数据是支撑 [persist4j](https://github.com/devezhao/persist4j) 的核心，使用 XML 配置，也可以将其存储在数据库中动态加载。无论何种方式没有本质区别，仅在与来源不同。
 
@@ -78,6 +79,7 @@ Record found = PM.createQuery(ajql).setParameter(1, "SomeValue").unique();
 元数据的配置最终会被映射为 `Entity` 和 `Field` 对象，可以对元数据进行操作。
 
 
-## 在真实环境中使用
+### 最佳实践
 
-我们建议你将 [persist4j](https://github.com/devezhao/persist4j) 与 Spring 配合使用，可以大大简化编码。当然，这不是必须的。通过参考 [rebuild](https://github.com/getrebuild/rebuild/blob/master/src/main/resources/application-ctx.xml#L47) 项目你可以进行更多的了解。
+我们建议你将 [persist4j](https://github.com/devezhao/persist4j) 与 Spring 配合使用，可以大大简化编码。当然，这不是必须的。通过参考 [rebuild](https://github.com/getrebuild/rebuild/) 项目你可以进行更多的了解。
+

@@ -51,9 +51,7 @@ public interface RecordCreator {
 
         // 忽略更新
         if (!isNew && !field.isUpdatable()) {
-        	if (onSetFieldValueWarn(field, value, record)) {
-        		return true;
-			} else {
+        	if (!onSetFieldValueWarn(field, value, record)) {
 				LOG.warn("Could not put value to un-updatable field : " + field);
 				return false;
 			}
@@ -61,9 +59,7 @@ public interface RecordCreator {
 
         // 忽略新建
         if (isNew && !field.isCreatable()) {
-			if (onSetFieldValueWarn(field, value, record)) {
-				return true;
-			} else {
+			if (!onSetFieldValueWarn(field, value, record)) {
             	LOG.warn("Could not put value to un-creatable field : " + field);
 				return false;
 			}

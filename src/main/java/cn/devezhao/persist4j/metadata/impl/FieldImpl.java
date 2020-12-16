@@ -133,9 +133,10 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append("<").append(
-				ownEntity.getName()).append("#").append(getName()).append(
-				"(").append(getType()).append(",").append(getMaxLength()).append(")>@").append(super.toString()).toString();
+		return (ownEntity.getName() + "#" + getName()).toUpperCase();
+//		return new StringBuilder().append("<").append(
+//				ownEntity.getName()).append("#").append(getName()).append(
+//				"(").append(getType()).append(",").append(getMaxLength()).append(")>@").append(super.toString()).toString();
 	}
 
 	@Override

@@ -101,7 +101,7 @@ public interface RecordCreator {
 		}
 
 		if (!notNullable.isEmpty()) {
-			throw new FieldValueException("Muse not been null. Entity [ " + record.getEntity().getName()
+			throw new FieldValueException("Must not be null. Entity [ " + record.getEntity().getName()
 					+ " ], Fields [ " + StringUtils.join(notNullable.toArray(new String[0]), ", ") + " ]");
 		}
 	}

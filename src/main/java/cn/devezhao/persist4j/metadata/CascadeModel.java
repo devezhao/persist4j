@@ -42,6 +42,6 @@ public enum CascadeModel {
 		if (cm != null) {
 			return cm;
 		}
-		throw new MetadataException("Nu CascadeModel found: " + model);
+		throw new MetadataException("No CascadeModel found: " + model);
 	}
 }

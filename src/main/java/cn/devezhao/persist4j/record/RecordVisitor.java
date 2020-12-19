@@ -183,6 +183,6 @@ public class RecordVisitor {
 				return CalendarUtils.parse(source, CalendarUtils.getDateFormat(mode));
 			}
 		}
-		throw new FieldValueException("无效日期值 : " + source);
+		throw new FieldValueException("Invalid value of date: " + source);
 	}
 }

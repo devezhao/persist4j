@@ -119,7 +119,7 @@ public abstract class Dialect implements Serializable {
 	public int getSQLType(int mask) {
 		Integer sqlt = field2columnMapping.get(mask);
 		if (sqlt == null) {
-			throw new DialectException("No sql type mapping by mask: " + mask);
+			throw new DialectException("No sql type mapping for mask: " + mask);
 		}
 		return sqlt;
 	}

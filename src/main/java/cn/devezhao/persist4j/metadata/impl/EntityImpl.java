@@ -5,7 +5,7 @@ import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.BaseMetaObject;
-import cn.devezhao.persist4j.metadata.MetadataException;
+import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -50,7 +50,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	@Override
 	public Field getField(String aName) {
 		if (!containsField(aName)) {
-			throw new MetadataException("No such field [ " + aName + " ] in entity [ " + getName() + " ]");
+			throw new MissingMetaExcetion(aName, getName());
 		}
 		return fieldMap.get(aName);
 	}

@@ -666,7 +666,7 @@ public class QueryCompiler implements Serializable {
 				}
 				
 				if (referenceTo == null) {
-					throw new CompileException("entity " + joinEntity.getName() + " no reference-to " + rootEntity.getName());
+					throw new CompileException("Entity " + joinEntity.getName() + " no reference-to " + rootEntity.getName());
 				}
 				
 				JoinNode jNode = tree.addChildJoin(
@@ -730,7 +730,7 @@ public class QueryCompiler implements Serializable {
 	 */
 	private Entity getReferenceEntity(Field field) {
 		if (FieldType.REFERENCE != field.getType()) {
-			throw new CompileException(field + " does not support joins");
+			throw new CompileException("Field [ " + field + " ] does not support joins");
 		}
 		return field.getReferenceEntity();
 	}
@@ -801,7 +801,7 @@ public class QueryCompiler implements Serializable {
 		if (ex instanceof ParserException) {
 			Throwable cause = ex.getCause();
 			throw new CompileException(
-					"ANTLR can't parse AjQL stream, threw an exception [ "
+					"ANTLR cannot parse AjQL stream, threw an exception [ "
 					+ cause.getClass().getName() + ": " + ex.getCause() + " ]", ex.getCause());
 		}
 		throw new CompileException("Parse AjQL error", ex);

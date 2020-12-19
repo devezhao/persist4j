@@ -6,7 +6,7 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.PersistException;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.FieldType;
-import cn.devezhao.persist4j.metadata.MetadataException;
+import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.record.FieldValueException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import com.alibaba.fastjson.JSON;
@@ -311,7 +311,7 @@ public class StandardRecord implements Record {
 	 */
 	protected void setObject(String key, Object value) {
 		if (!entity.containsField(key)) {
-			throw new MetadataException("No such field " + key + " in entity " + entity.getName());
+			throw new MissingMetaExcetion(key, entity.getName());
 		}
 		if (value == null) {
 			return;
@@ -338,10 +338,9 @@ public class StandardRecord implements Record {
 	 */
 	protected Object getObject(String key, Class<?> matchsClazz) {
 		if (!entity.containsField(key)) {
-			throw new MetadataException(
-					"No such field [ " + key + " ] in entity [ " + entity.getName() + " ]");
+			throw new MissingMetaExcetion(key, entity.getName());
 		}
-		
+
 		Object value = recordMap.get(key);
 		Class<?> valueClazz = value == null ? null : value.getClass();
 		if (value == null || NullValue.is(value)) {
@@ -392,7 +391,7 @@ public class StandardRecord implements Record {
 			
 			if (idInvalid) {
 				throw new FieldValueException(
-						"Field " + field + " value [ " + id + " ] is wrong. can't reference non-specify record of entity");
+						"Field [ " + field + " ] value [ " + id + " ] is wrong. Cannot reference non-specify record of entity");
 			}
 		}
 	}

@@ -128,7 +128,7 @@ public class AjqlResultImpl implements Result {
 				}
 
 				if (pVal == null) {
-					throw new QueryException(((index) ? "index" : "named") + " parameter unset, " + ((index) ? "index " : "name ") + e.getKey());
+					throw new QueryException("The " + ((index) ? "index" : "named") + " parameter `" + e.getKey() + "` unset");
 				}
 				paramatersMapping.put(e.getValue(), pVal);
 			}

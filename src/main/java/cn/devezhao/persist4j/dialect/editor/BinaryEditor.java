@@ -34,7 +34,7 @@ public class BinaryEditor extends AbstractFieldEditor {
 //			size = ByteUtils.size(stream);  // NOTE does not read
 			size = stream.available();
 		} catch (IOException e) {
-			throw new PersistException("can't read size of stream", e);
+			throw new PersistException("Cannot read size of stream", e);
 		}
 		if (size == 0) {
 			System.out.println("## STREAM IS EMPTY");

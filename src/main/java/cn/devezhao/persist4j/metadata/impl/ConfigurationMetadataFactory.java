@@ -9,6 +9,7 @@ import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.metadata.CascadeModel;
 import cn.devezhao.persist4j.metadata.MetadataException;
 import cn.devezhao.persist4j.metadata.MetadataFactory;
+import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import cn.devezhao.persist4j.util.StringHelper;
 import cn.devezhao.persist4j.util.XmlHelper;
@@ -77,7 +78,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		waitForRefreshLocked();
 		Entity e = entityMap.get(type);
 		if (e == null) {
-			throw new MetadataException("entity [ " + type + " ] dose not exists");
+			throw new MissingMetaExcetion("No such entity [" + type + "]");
 		}
 		return e;
 	}
@@ -91,7 +92,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	protected Entity getEntityNoLock(String name) {
 		Integer aType = name2TypeMap.get(name);
 		if (aType == null) {
-			throw new MetadataException("entity [ " + name + " ] dose not exists");
+			throw new MissingMetaExcetion("No such entity [" + name + "]");
 		}
 		return entityMap.get(aType);
 	}
@@ -165,16 +166,16 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			document = XML_HELPER.createSAXReader("",
 					errors, XmlHelper.DEFAULT_DTD_RESOLVER).read(Objects.requireNonNull(url).openStream());
 		} catch (IOException e) {
-			throw new MetadataException("could not load metadata config [ " + url + " ]", e);
+			throw new MetadataException("Cannot load metadata config [ " + url + " ]", e);
 		} catch (DocumentException e) {
-			throw new MetadataException("could not parse metadata config [ " + url + " ]", e);
+			throw new MetadataException("Cannot parse metadata config [ " + url + " ]", e);
 		}
 		return document;
 	}
 
 	private void namingPolicy(String ident, String type) {
 		if (!StringHelper.isIdentifier(ident)) {
-			throw new MetadataException(type + " name [ " + ident + " ] is wrong! must start with ['a-zA-Z'|'_'|'#'] and contains ['a-zA-Z'|'_'|'#'|'0-9'] only");
+			throw new MetadataException(type + " name [ " + ident + " ] is wrong! Must starts with ['a-zA-Z'|'_'|'#'] and contains ['a-zA-Z'|'_'|'#'|'0-9'] only");
 		}
 	}
 
@@ -372,7 +373,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 			LOG.debug("register entity " + entity);
 		}
 		if (name2TypeMap.get(entity.getName()) != null || entityMap.get(entity.getEntityCode()) != null) {
-			throw new MetadataException("repeated entity : " + entity);
+			throw new MetadataException("Repeated entity : " + entity);
 		}
 		name2TypeMap.put(entity.getName(), entity.getEntityCode());
 		entityMap.put(entity.getEntityCode(), entity);

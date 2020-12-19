@@ -93,7 +93,7 @@ public class JsonRecordCreator implements RecordCreator {
 
 		JSONObject metadata = source.getJSONObject(META_FIELD);
 		if (metadata == null) {
-			throw new FieldValueException("`metadata` element must not be null");
+			throw new FieldValueException("The `metadata` element must not be null");
 		}
 
 		String id = metadata.getString("id");

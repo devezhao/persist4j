@@ -67,8 +67,9 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		}
 		if (containsField(nameFieldName)) {
 			return getField(nameFieldName);
+		} else {
+			return getPrimaryField();
 		}
-		return null;
 	}
 
 	@Override

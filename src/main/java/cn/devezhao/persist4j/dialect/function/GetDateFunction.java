@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * <tt>$GETDATE</tt>
+ * Usage: <tt>$getdate()</tt>
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">Zhao Fangfang</a>
  * @since 0.2, 2010-9-2
@@ -26,12 +26,7 @@ public class GetDateFunction implements SqlFunction {
 	}
 
 	@Override
-    public boolean hasArguments() {
-		return false;
-	}
-
-	@Override
-    public String render(Object[] arguments) {
+    public String eval(Object[] arguments) {
 		return new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 	}
 }

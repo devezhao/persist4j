@@ -24,7 +24,7 @@
 
 ## 如何使用
 
-### 基础对象
+### 基础操作对象
 
 使用 [persist4j](https://github.com/devezhao/persist4j) 首先需要了解两个基础对象 `Record` 和 `Query`。`Record` 是一个 Map 实现，他承担了 DAO 职责，而 `Query` 是查询入口，是日常编码中使用最为频繁的类。
 
@@ -78,6 +78,8 @@ Record found = PM.createQuery(ajql).setParameter(1, "SomeValue").unique();
 
 元数据的配置最终会被映射为 `Entity` 和 `Field` 对象，可以对元数据进行操作。
 
+#### 主键 ID
+`ID` 对象即主键对象，其生成规则为 `([0-9]{3}-[0-9a-hA-H]{16})`，其中前 3 位为实体码（不足 3 位前面补 0），其后为 `-` 分隔符，最后为 16 位随机 Hash 码（不区分大小写）。可以看出，通过 ID 我们可以识别其属于哪个实体。
 
 ### 最佳实践
 

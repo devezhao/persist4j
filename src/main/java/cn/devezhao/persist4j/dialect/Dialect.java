@@ -2,6 +2,7 @@ package cn.devezhao.persist4j.dialect;
 
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.function.GetDateFunction;
+import cn.devezhao.persist4j.dialect.function.SqlFunction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,9 +32,9 @@ public abstract class Dialect implements Serializable {
 	// types of raw
 	final private Map<Integer, String> columnTypes = new HashMap<>();
 	// system to raw mapping
-	final private Map<Integer, Integer> field2columnMapping = new HashMap<>();
+	final private Map<Integer, Integer> field2columnMappings = new HashMap<>();
 	// function of sql in ajql query
-	final private Map<String, Class<?>> sqlFunctions = new HashMap<>();
+	final private Map<String, SqlFunction> sqlFunctions = new HashMap<>();
 
 	/**
 	 * Create a new Dialect
@@ -61,7 +62,7 @@ public abstract class Dialect implements Serializable {
 		registerFieldType(FieldType.NTEXT);
 		registerFieldType(FieldType.BINARY);
 		
-		registerSqlFunction("getdate", GetDateFunction.class);
+		registerSqlFunction(new GetDateFunction());
 	}
 	
 	protected void registerFieldType(Type type) {
@@ -76,18 +77,23 @@ public abstract class Dialect implements Serializable {
 			LOG.info("Register column(sql) type <" + mask + ':' + columnType + ">");
 		}
 		columnTypes.put(mask, columnType);
-		field2columnMapping.put(mask, sqlType);
+		field2columnMappings.put(mask, sqlType);
 	}
 
-	protected void registerSqlFunction(String name, Class<?> funcClazz) {
-		String upName = name.toUpperCase();
+	/**
+	 * 注册 SQL 函数
+	 *
+	 * @param func
+	 */
+	public void registerSqlFunction(SqlFunction func) {
+		String name = func.getToken().toUpperCase();
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Register sql function: $" + upName + " > " + funcClazz);
+			LOG.debug("Register sql function: $" + name + " > " + func.getClass());
 		}
-		if (sqlFunctions.containsKey(upName)) {
-			LOG.warn("Overlay function: " + upName);
+		if (sqlFunctions.containsKey(name)) {
+			LOG.warn("Overlay function: " + name);
 		}
-		sqlFunctions.put(upName, funcClazz);
+		sqlFunctions.put(name, func);
 	}
 	
 	public Type getFieldType(int mask) {
@@ -116,14 +122,22 @@ public abstract class Dialect implements Serializable {
 		return ct;
 	}
 	
-	public int getSQLType(int mask) {
-		Integer sqlt = field2columnMapping.get(mask);
+	public int getSqlType(int mask) {
+		Integer sqlt = field2columnMappings.get(mask);
 		if (sqlt == null) {
 			throw new DialectException("No sql type mapping for mask: " + mask);
 		}
 		return sqlt;
 	}
-	
+
+	public SqlFunction getSqlFunction(String name) {
+		SqlFunction func = sqlFunctions.get(name.toUpperCase());
+		if (func == null) {
+			throw new DialectException("No sql function defined: " + name);
+		}
+		return func;
+	}
+
 	public String generateColumnDDL(Field field, Integer length) {
 		String cType = columnTypes.get(field.getType().getMask());
 		if (cType.contains("%d")) {

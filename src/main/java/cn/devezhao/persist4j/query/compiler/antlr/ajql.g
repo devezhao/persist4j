@@ -54,6 +54,8 @@ tokens {
 	FALSE = "false";
 	
 	MATCH = "match";
+
+	FUNC_PREFIX = "$";
 }
 
 statement
@@ -138,6 +140,10 @@ aggregate
 	| aggregateWithMode
 	| aggregateWithFields
 	;
+
+function
+    : FUNC_PREFIX^ IDENT LPAREN! (selectItem | QUOTED_STRING) ( COMMA (selectItem | QUOTED_STRING) )* RPAREN!
+    ;
 	
 simpleCondition
 	: subSimpleCondition ( (AND | OR) subSimpleCondition )*
@@ -171,6 +177,7 @@ subExpression
 	| dbObject
 	| LPAREN ((selectStatement) => selectStatement | expression) RPAREN 
 	| constantSimple AND constantSimple
+	| function
 	)
 	;
 
@@ -253,7 +260,7 @@ IDENT options { testLiterals = true; }
 	;
 protected
 IDENT_START 
-	: '_' | '$' | '&' | '#' | '^' | 'a'..'z'
+	: '_' | '&' | '#' | '^' | 'a'..'z'
 	;
 protected
 IDENT_LETTER 

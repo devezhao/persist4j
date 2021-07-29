@@ -6,6 +6,7 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.Filter;
 import cn.devezhao.persist4j.dialect.Dialect;
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.dialect.function.SqlFunction;
 import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.query.compiler.JoinTree.JoinNode;
 import cn.devezhao.persist4j.query.compiler.antlr.AjQLParser;
@@ -296,7 +297,7 @@ public class QueryCompiler implements Serializable {
 		if (where == null) {
 			sql.append("( 1 = 1 ) ");
 		} else {
-			JoinField aJF = null;
+			JoinField lastJoinField = null;
 			
 			next = where.getFirstChild();
 			int prevType = 0;
@@ -313,8 +314,8 @@ public class QueryCompiler implements Serializable {
 				
 				switch (type) {
 				case AjQLParserTokenTypes.IDENT:
-					aJF = getJoinField(next, null, sqlExecutorContext.getDialect());
-					clause.append(aJF.getName());
+					lastJoinField = getJoinField(next, null, sqlExecutorContext.getDialect());
+					clause.append(lastJoinField.getName());
 					break;
 				case AjQLParserTokenTypes.QUOTED_STRING:
 					clause.append('\'').append(text).append('\'');
@@ -330,7 +331,7 @@ public class QueryCompiler implements Serializable {
 					clause.append(INDEX_PARAM);
 					inParametersIndex++;
 					text = (text.charAt(0) == INDEX_PARAM) ? String.valueOf(inParametersIndex) : text;
-					inParameters.put(text, new ParameterItem(text, inParametersIndex, aJF.getField()));
+					inParameters.put(text, new ParameterItem(text, inParametersIndex, Objects.requireNonNull(lastJoinField).getField()));
 					break;
 				case AjQLParserTokenTypes.MATCH:
 					clause.append(compileMatchClause(next, lastField));
@@ -340,6 +341,9 @@ public class QueryCompiler implements Serializable {
 				case AjQLParserTokenTypes.BAND: 
 				case AjQLParserTokenTypes.NBAND: 
 					clause.append('&');
+					break;
+				case AjQLParserTokenTypes.FUNC_PREFIX:
+					clause.append(compileMatchClause(next, lastField));
 					break;
 				default:
 					if (ParserHelper.isAggregator(type)) {
@@ -609,6 +613,12 @@ public class QueryCompiler implements Serializable {
 		}
 		clause.append(" )");
 		return clause.toString();
+	}
+
+	private String compileSqlFunction(AST funcPrefix) {
+		AST name = funcPrefix.getNextSibling();
+		SqlFunction func = sqlExecutorContext.getDialect().getSqlFunction(name.getText());
+		return func.eval(null);
 	}
 	
 	/**

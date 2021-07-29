@@ -206,4 +206,16 @@ public class QueryCompilerTest extends Compiler {
 				"select count( _t0.`YEAR` ) as _c0, quarter( _t0.`YEAR` ) as _c1 from `test4` as _t0 where 'year' = '1' order by 'year'");
 		
 	}
+
+	@Test
+	public void testSqlFunction() {
+		String ajql = "select tString from TestAllType where $getdate(1)";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+
+		// Unsupport kw in where after
+		assertEquals(compiler.getCompiledSql(),
+				"select count( _t0.`YEAR` ) as _c0, quarter( _t0.`YEAR` ) as _c1 from `test4` as _t0 where 'year' = '1' order by 'year'");
+
+	}
 }

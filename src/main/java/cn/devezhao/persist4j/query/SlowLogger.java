@@ -44,7 +44,8 @@ public class SlowLogger {
 		if (start == null) {
 			start = 0L;
 		}
-		
+		QUERY_START.remove();
+
 		int time = start == 0 ? loggerTime : (int) (System.currentTimeMillis() - start);
 		if (time <= loggerTime && resultSize <= 10000) {
 			return;

@@ -149,8 +149,9 @@ public class RecordVisitor {
 		}
 		return literalValue;
 	}
-	
+
 	/**
+	 * @return
 	 * @see #DATE_FORMAT_STRING
 	 */
 	public static DateFormat getDefaultDateFormat() {

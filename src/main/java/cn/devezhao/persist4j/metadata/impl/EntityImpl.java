@@ -189,7 +189,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	 * @param entity
 	 */
 	protected void setMainEntity(Entity entity) {
-		Assert.notNull(this.mainEntity, "Cannot reset `mainEntity`");
+		Assert.isNull(this.mainEntity, "Cannot reset `mainEntity`");
 		this.mainEntity = entity;
 		((EntityImpl) entity).detailEntity = this;
 	}

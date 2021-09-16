@@ -180,9 +180,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	}
 
 	/**
+	 * 构建元数据
+	 *
 	 * @param document
 	 */
-	private void build(Document document) {
+	protected void build(Document document) {
 		Element root = document.getRootElement();
 		schemaNameOptimize = BooleanUtils.toBoolean(root.valueOf("@schema-name-optimize"));
 

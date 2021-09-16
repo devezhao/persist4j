@@ -9,6 +9,7 @@ import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -152,6 +153,15 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	}
 
 	/**
+	 * 获取按顺序排列的字段
+	 * 
+	 * @return
+	 */
+	public Set<String> getFieldSorted() {
+		return new LinkedHashSet<>(fieldSorted);
+	}
+
+	/**
 	 * @param field
 	 */
 	protected void addField(Field field) {
@@ -164,14 +174,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 			}
 		}
 	}
-	
-	/**
-	 * @return
-	 */
-	public Set<String> getFieldSorted() {
-		return fieldSorted;
-	}
-	
+
 	/**
 	 * @param field
 	 */
@@ -183,6 +186,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	 * @param entity
 	 */
 	protected void setMainEntity(Entity entity) {
+		Assert.notNull(this.mainEntity, "Cannot reset `mainEntity`");
 		this.mainEntity = entity;
 		((EntityImpl) entity).detailEntity = this;
 	}

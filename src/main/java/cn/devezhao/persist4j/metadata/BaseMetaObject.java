@@ -58,7 +58,7 @@ public abstract class BaseMetaObject implements BaseMeta {
 	
 	@Override
 	public JSONObject getExtraAttrs() {
-		return extraAttrs;
+		return extraAttrs == null ? null : (JSONObject) extraAttrs.clone();
 	}
 
 	@Override

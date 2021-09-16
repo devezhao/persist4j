@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">Zhao Fangfang</a>
  * @since 0.2, 2010-12-4
- * @version $Id: LongEditor.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
+ * @version $Id: LongEditor.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  */
 public class LongEditor extends AbstractFieldEditor {
 

@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
  * @since 0.1, 03/19/08
- * @version $Id: ConstraintViolationException.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: ConstraintViolationException.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class ConstraintViolationException extends JdbcException {
 	private static final long serialVersionUID = -6763398332806161179L;

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 15, 2009
- * @version $Id: SelectItem.java 120 2016-01-07 11:49:05Z zhaoff@wisecrm.com $
+ * @version $Id: SelectItem.java 120 2016-01-07 11:49:05Z zhaofang123@gmail.com $
  */
 public interface SelectItem extends Serializable {
 

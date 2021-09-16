@@ -18,7 +18,7 @@ import java.io.Serializable;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, 06/12/08
- * @version $Id: ID.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: ID.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class ID implements Serializable {
 	private static final long serialVersionUID = 5861261456599575527L;

@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">Zhao Fangfang</a>
  * @since 2011-4-11
- * @version $Id: SlowLogger.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: SlowLogger.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class SlowLogger {
 	

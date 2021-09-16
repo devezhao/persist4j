@@ -10,7 +10,7 @@ import java.util.Properties;
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
  * @since 0.1, 12/04/08
- * @version $Id: SecurityPreferencesConfigurer.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: SecurityPreferencesConfigurer.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class SecurityPreferencesConfigurer extends PreferencesPlaceholderConfigurer {
 	

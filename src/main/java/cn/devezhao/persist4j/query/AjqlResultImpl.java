@@ -24,7 +24,7 @@ import java.util.*;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 15, 2009
- * @version $Id: AjqlResultImpl.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: AjqlResultImpl.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class AjqlResultImpl implements Result {
 	private static final long serialVersionUID = -4514273807145664184L;

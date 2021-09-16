@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 14, 2009
- * @version $Id: BinaryEditor.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
+ * @version $Id: BinaryEditor.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  */
 public class BinaryEditor extends AbstractFieldEditor {
 

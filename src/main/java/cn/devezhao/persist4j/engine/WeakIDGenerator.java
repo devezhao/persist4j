@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">Zhao Fangfang</a>
  * @since 0.2, 2010-8-11
- * @version $Id: WeakIDGenerator.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: WeakIDGenerator.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class WeakIDGenerator extends IDGenerator {
 

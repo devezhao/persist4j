@@ -11,7 +11,7 @@ import java.util.Calendar;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">Zhao Fangfang</a>
  * @since 0.2, 2010-9-2
- * @version $Id: GetDateFunction.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: GetDateFunction.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class GetDateFunction implements SqlFunction {
 

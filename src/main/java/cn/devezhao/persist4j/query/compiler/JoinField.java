@@ -10,7 +10,7 @@ import java.util.Objects;
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
  * @since 0.1, 10/11/08
- * @version $Id: JoinField.java 120 2016-01-07 11:49:05Z zhaoff@wisecrm.com $
+ * @version $Id: JoinField.java 120 2016-01-07 11:49:05Z zhaofang123@gmail.com $
  */
 public class JoinField implements SelectItem {
 	private static final long serialVersionUID = 6578159656188301525L;

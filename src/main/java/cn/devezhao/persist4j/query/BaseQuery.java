@@ -5,7 +5,7 @@ package cn.devezhao.persist4j.query;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, May 25, 2009
- * @version $Id: BaseQuery.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: BaseQuery.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public abstract class BaseQuery<T> implements IQuery<T> {
 	private static final long serialVersionUID = -5599409110546399955L;

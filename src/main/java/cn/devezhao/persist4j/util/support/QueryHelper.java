@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @author Zhao Fangfang
- * @version $Id: QueryHelper.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: QueryHelper.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  * @since 2.6, 2012-10-22
  */
 public class QueryHelper {

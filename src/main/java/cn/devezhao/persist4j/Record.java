@@ -17,7 +17,7 @@ import java.util.Set;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Jan 22, 2009
- * @version $Id: Record.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
+ * @version $Id: Record.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  */
 public interface Record extends Cloneable, Serializable {
 

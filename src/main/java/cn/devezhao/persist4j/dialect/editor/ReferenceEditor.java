@@ -7,7 +7,7 @@ import cn.devezhao.persist4j.dialect.FieldType;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 12, 2009
- * @version $Id: ReferenceEditor.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
+ * @version $Id: ReferenceEditor.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  * @see AnyReferenceEditor
  */
 public class ReferenceEditor extends PrimaryEditor {

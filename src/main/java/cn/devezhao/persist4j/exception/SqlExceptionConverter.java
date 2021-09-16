@@ -15,7 +15,7 @@ import java.util.Set;
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
  * @since 0.1, 03/19/08
- * @version $Id: SqlExceptionConverter.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: SqlExceptionConverter.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class SqlExceptionConverter {
 

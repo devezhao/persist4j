@@ -20,7 +20,7 @@ import java.util.Set;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, 06/23/08
- * @version $Id: Table.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: Table.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class Table {
 

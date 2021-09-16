@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
  * @since 0.1, 06/13/08
- * @version $Id: IDGenerator.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: IDGenerator.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class IDGenerator extends UUIDHexGenerator {
 

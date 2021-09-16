@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * 布尔
  *
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
- * @version $Id: BoolEditor.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
+ * @version $Id: BoolEditor.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  * @since 0.1, Feb 14, 2009
  */
 public class BoolEditor extends CharEditor {

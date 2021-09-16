@@ -13,7 +13,7 @@ import java.util.Set;
  * 
  * @author <a href="mailto:devezhao@126.com">FANGFANG ZHAO</a>
  * @since 0.1, 11/22/2008
- * @version $Id: JoinTree.java 121 2016-01-08 04:07:07Z zhaoff@wisecrm.com $
+ * @version $Id: JoinTree.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  */
 public class JoinTree implements Serializable {
 	

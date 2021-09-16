@@ -17,7 +17,7 @@ import java.util.Set;
  * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Jan 22, 2009
- * @version $Id: Dialect.java 8 2015-06-08 09:09:03Z zhaoff@wisecrm.com $
+ * @version $Id: Dialect.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public abstract class Dialect implements Serializable {
 	private static final long serialVersionUID = 2651165738037766620L;

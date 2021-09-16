@@ -148,13 +148,16 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	protected Object clone() throws CloneNotSupportedException {
 		EntityImpl clone = (EntityImpl) super.clone();
 		clone.fieldMap = new CaseInsensitiveMap<>(this.fieldMap);
+		clone.fieldSorted = new LinkedHashSet<>(this.fieldSorted);
 		clone.referenceTo = new ArrayList<>(this.referenceTo);
+		clone.mainEntity = null;
+		clone.detailEntity = null;
 		return clone;
 	}
 
 	/**
 	 * 获取按顺序排列的字段
-	 * 
+	 *
 	 * @return
 	 */
 	public Set<String> getFieldSorted() {

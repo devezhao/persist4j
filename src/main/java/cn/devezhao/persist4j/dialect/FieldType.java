@@ -15,7 +15,7 @@ public class FieldType implements Type, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final int NO_NEED_LENGTH = -1;
-	public static final int DEFAULT_TEXT_LENGTH = 21845; // TEXT类型默认长度
+	public static final int DEFAULT_TEXT_LENGTH = 65535; // TEXT类型默认长度
 	public static final int DEFAULT_STRING_LENGTH = 255; // STRING类型默认长度
 	public static final int DEFAULT_PRECISION = 19; 	 // 数字精度(整数位+小数位=精度)
 	public static final int DEFAULT_DECIMAL_SCALE = 4; 	 // 默认小数精度

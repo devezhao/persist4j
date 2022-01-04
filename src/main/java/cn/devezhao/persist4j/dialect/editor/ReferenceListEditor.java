@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 多引用（任意实体）
+ * NOTE 存储为 ID 列表，更好的方式应为三方表
  *
  * @author zhaofang123@gmail.com
  * @since 12/28/2018

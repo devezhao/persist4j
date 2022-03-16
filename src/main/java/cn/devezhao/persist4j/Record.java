@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -164,6 +165,20 @@ public interface Record extends Cloneable, Serializable {
 	 * @param value
 	 * @return
 	 */
+	Record setTime(String key, LocalTime value);
+
+	/**
+	 * @param key
+	 * @return
+	 * @see cn.devezhao.persist4j.record.RecordVisitor#tryParseTime(String)
+	 */
+	LocalTime getTime(String key);
+
+	/**
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	Record setBoolean(String key, Boolean value);
 
 	/**
@@ -264,4 +279,9 @@ public interface Record extends Cloneable, Serializable {
 	 * @return JSON K/V
 	 */
 	JSON serialize();
+
+	/**
+	 * @return
+	 */
+	boolean isEmpty();
 }

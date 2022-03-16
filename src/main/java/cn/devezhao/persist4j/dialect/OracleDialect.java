@@ -30,6 +30,7 @@ public class OracleDialect extends Dialect {
 		registerColumnType(FieldType.TEXT.getMask(), "LONG VARCHAR", Types.LONGVARCHAR);
 		registerColumnType(FieldType.DATE.getMask(), "DATE", Types.DATE);
 		registerColumnType(FieldType.TIMESTAMP.getMask(), "TIMESTAMP", Types.TIMESTAMP);
+		registerColumnType(FieldType.TIME.getMask(), "TIME", Types.TIME);
 		registerColumnType(FieldType.BOOL.getMask(), "CHAR(1)", Types.CHAR);
 		registerColumnType(FieldType.NTEXT.getMask(), "CLOB", Types.CLOB);
 		registerColumnType(FieldType.BINARY.getMask(), "BLOB", Types.BLOB);

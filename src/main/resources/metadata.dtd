@@ -79,7 +79,7 @@
 <!ATTLIST field
 	name   				CDATA #REQUIRED
 	type   				(primary | reference | any-reference | reference-list | char | string | text | ntext
-							| int | small-int | double | decimal | long | date | timestamp | bool | binary) #REQUIRED
+							| int | small-int | double | decimal | long | date | timestamp | time | bool | binary) #REQUIRED
 	physical-name 		CDATA #IMPLIED
 	ref-entity 			CDATA #IMPLIED
 	max-length      	CDATA #IMPLIED

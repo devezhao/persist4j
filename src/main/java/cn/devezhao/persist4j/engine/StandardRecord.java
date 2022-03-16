@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -188,6 +190,19 @@ public class StandardRecord implements Record {
 	}
 
 	@Override
+	public LocalTime getTime(String key) {
+		Object v = recordMap.get(key);
+		if (v instanceof Time) v = ((Time) v).toLocalTime();
+		return (LocalTime) v;
+	}
+
+	@Override
+	public Record setTime(String key, LocalTime value) {
+		setObject(key, value);
+		return this;
+	}
+
+	@Override
 	public Boolean getBoolean(String key) {
 		return (Boolean) getObject(key, Boolean.class);
 	}
@@ -303,6 +318,13 @@ public class StandardRecord implements Record {
 	@Override
 	public JSON serialize() {
 		return new JSONObject(this.recordMap);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		if (recordMap.isEmpty()) return true;
+		// 仅有一个主键
+		return recordMap.size() == 1 && getPrimary() != null;
 	}
 
 	/**

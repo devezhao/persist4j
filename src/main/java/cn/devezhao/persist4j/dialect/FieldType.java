@@ -33,6 +33,7 @@ public class FieldType implements Type, Serializable {
 
 	public static final Type DATE = new FieldType(10021, "date", new DateEditor());
 	public static final Type TIMESTAMP = new FieldType(10023, "timestamp", new TimestampEditor());
+	public static final Type TIME = new FieldType(10024, "time", new TimeEditor());
 
 	public static final Type CHAR = new FieldType(10031, "char", new CharEditor());
 	public static final Type STRING = new FieldType(10032, "string", new StringEditor());

@@ -21,6 +21,14 @@ public class NullValue implements Serializable {
 		return value instanceof NullValue;
 	}
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static boolean isNull(Object value) {
+		return value == null || is(value);
+	}
+
 	@Override
 	public String toString() {
 		return StringUtils.EMPTY;

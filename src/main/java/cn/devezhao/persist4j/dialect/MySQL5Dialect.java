@@ -32,6 +32,7 @@ public class MySQL5Dialect extends Dialect {
 		registerColumnType(FieldType.TEXT.getMask(), "text(%d)", Types.VARCHAR);
 		registerColumnType(FieldType.DATE.getMask(), "date", Types.DATE);
 		registerColumnType(FieldType.TIMESTAMP.getMask(), "timestamp", Types.TIMESTAMP);
+		registerColumnType(FieldType.TIME.getMask(), "time", Types.TIME);
 		registerColumnType(FieldType.BOOL.getMask(), "char(1)", Types.CHAR);
 		registerColumnType(FieldType.NTEXT.getMask(), "longtext", Types.LONGVARCHAR);
 		registerColumnType(FieldType.BINARY.getMask(), "longblob", Types.BLOB);

@@ -14,16 +14,15 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
- * 
- * 
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 0.1, Feb 14, 2009
  * @version $Id: RecordVisitor.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
@@ -84,6 +83,9 @@ public class RecordVisitor {
 				|| FieldType.TIMESTAMP.equals(ft)) {
 			pVal = tryParseDate(value);
 			
+		} else if (FieldType.TIME.equals(ft)) {
+			pVal = tryParseTime(value);
+
 		} else if (FieldType.BOOL.equals(ft)) {
 			char ch = value.toUpperCase().charAt(0);
 			pVal = ch == BoolEditor.TRUE;
@@ -133,6 +135,10 @@ public class RecordVisitor {
 		} else if (FieldType.TIMESTAMP.equals(ft)) {
 			literalValue = getDefaultDateTimeFormat().format((Date) value);
 			
+		} else if (FieldType.TIME.equals(ft)) {
+			LocalTime lt = value instanceof Time ? ((Time) value).toLocalTime() : (LocalTime) value;
+			literalValue = String.format("%02d:%02d:%02d", lt.getHour(), lt.getMinute(), lt.getSecond());
+
 		} else if (FieldType.BOOL.equals(ft)) {
 			literalValue = (Boolean) value ? "T" : "F";
 			
@@ -185,5 +191,27 @@ public class RecordVisitor {
 			}
 		}
 		throw new FieldValueException("Invalid value of date: " + source);
+	}
+
+	/**
+	 * @param source
+	 * @return
+	 */
+	public static LocalTime tryParseTime(String source) {
+		if (NumberUtils.isNumber(source)) {
+			long s = NumberUtils.toLong(source, 0);
+			return LocalTime.ofSecondOfDay(s);
+		}
+
+		String[] ss = source.split(":");
+		try {
+			int h = Integer.parseInt(ss[0]);
+			int m = ss.length > 1 ? Integer.parseInt(ss[1]) : 0;
+			int s = ss.length > 2 ? Integer.parseInt(ss[2]) : 0;
+
+			return LocalTime.of(h, m, s);
+		} catch (Exception ex) {
+			throw new FieldValueException("Invalid value of time: " + source);
+		}
 	}
 }

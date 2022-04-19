@@ -161,7 +161,7 @@ public class RecordVisitor {
 	 * @return
 	 */
 	protected static String clearNumber(String num) {
-		if (StringUtils.isBlank(num)) return "";
+		if (StringUtils.isBlank(num)) return "0";
 		return num.replace(",", "").trim();
 	}
 

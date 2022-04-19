@@ -64,20 +64,20 @@ public class RecordVisitor {
 			for (String id : value.split(ReferenceListEditor.VALUE_SEP)) {
 				if (ID.isId(id)) ids.add(ID.valueOf(id));
 			}
-			pVal = ids.toArray(new ID[0]);
+			pVal = ids.toArray(ID.EMPTY_ID_ARRAY);
 
 		} else if (FieldType.INT.equals(ft)
 				|| FieldType.SMALL_INT.equals(ft)) {
-			pVal = NumberUtils.toInt(value);
+			pVal = NumberUtils.toInt(clearNumber(value));
 			
 		} else if (FieldType.DOUBLE.equals(ft)) {
-			pVal = NumberUtils.toDouble(value);
+			pVal = NumberUtils.toDouble(clearNumber(value));
 			
 		} else if (FieldType.DECIMAL.equals(ft)) {
-			pVal = new BigDecimal(value.toCharArray());
+			pVal = new BigDecimal(clearNumber(value).toCharArray());
 			
 		} else if (FieldType.LONG.equals(ft)) {
-			pVal = NumberUtils.toLong(value);
+			pVal = NumberUtils.toLong(clearNumber(value));
 			
 		} else if (FieldType.DATE.equals(ft)
 				|| FieldType.TIMESTAMP.equals(ft)) {
@@ -154,6 +154,15 @@ public class RecordVisitor {
 			
 		}
 		return literalValue;
+	}
+
+	/**
+	 * @param num
+	 * @return
+	 */
+	protected static String clearNumber(String num) {
+		if (StringUtils.isBlank(num)) return "0";
+		return num.replace(",", "").trim();
 	}
 
 	/**

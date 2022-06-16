@@ -1,5 +1,6 @@
 package cn.devezhao.persist4j.engine;
 
+import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.*;
 import cn.devezhao.persist4j.dialect.Editor;
 import cn.devezhao.persist4j.dialect.FieldType;

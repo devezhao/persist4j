@@ -1,6 +1,5 @@
 package cn.devezhao.persist4j.dialect.editor;
 
-import cn.devezhao.commons.CalendarUtils;
 import cn.devezhao.persist4j.dialect.FieldType;
 
 import java.sql.PreparedStatement;
@@ -8,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -18,7 +16,6 @@ import java.util.Date;
  * @since 2022/3/9
  */
 public class TimeEditor extends AbstractFieldEditor {
-
     private static final long serialVersionUID = -2499354201101781156L;
 
     @Override
@@ -31,8 +28,7 @@ public class TimeEditor extends AbstractFieldEditor {
             throws SQLException {
         Time v;
         if (value.getClass() == Date.class) {
-            Calendar c = CalendarUtils.getInstance((Date) value);
-            v = new Time(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+            v = new Time(((Date) value).getTime());
         } else if (value.getClass() == LocalTime.class) {
             v = Time.valueOf((LocalTime) value);
         } else if (value instanceof Number) {

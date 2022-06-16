@@ -1,5 +1,6 @@
 package cn.devezhao.persist4j.query;
 
+import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.*;
 import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;

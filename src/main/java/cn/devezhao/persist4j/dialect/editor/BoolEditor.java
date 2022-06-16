@@ -14,7 +14,6 @@ import java.sql.SQLException;
  * @since 0.1, Feb 14, 2009
  */
 public class BoolEditor extends CharEditor {
-
     private static final long serialVersionUID = -2740602793905099065L;
 
     public static final char TRUE = 'T';

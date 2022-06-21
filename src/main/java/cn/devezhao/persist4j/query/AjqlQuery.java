@@ -39,6 +39,11 @@ public class AjqlQuery extends BaseQuery<Query> implements Query {
 		this.filter = filter;
 	}
 
+	// COPY
+	protected AjqlQuery(AjqlQuery query) {
+		this(query.ajql, query.managerFactory, query.filter);
+	}
+	
 	@Override
     public Query setParameter(int position, Object value) {
 		return setParameter(position + "", value);

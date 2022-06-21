@@ -218,8 +218,8 @@ public class AjqlResultImpl implements Result {
 		return dataCache;
 	}
 	
-	// Read one row
-	private Object[] readRow(SelectItem[] selectItems, ResultSet rs) throws SQLException {
+	// Read pre-row
+	protected Object[] readRow(SelectItem[] selectItems, ResultSet rs) throws SQLException {
 		Object[] row = new Object[selectItems.length];
 
 		for (SelectItem item : selectItems) {

@@ -85,22 +85,25 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 
 	@Override
 	public Field[] getReferenceToFields() {
-		return getReferenceToFields(false);
+		return getReferenceToFields(Boolean.FALSE, Boolean.FALSE);
 	}
 	
 	@Override
-	public Field[] getReferenceToFields(boolean excludeNReference) {
-		if (excludeNReference) {
-			List<Field> excluded = new ArrayList<>();
-			for (Field rt : referenceTo) {
-				if (rt.getType() == FieldType.REFERENCE) {
-					excluded.add(rt);
-				}
+	public Field[] getReferenceToFields(boolean excludeNReference, boolean excludeAnyReference) {
+		List<Field> refs = new ArrayList<>();
+		for (Field field : referenceTo) {
+			if (field.getType() == FieldType.REFERENCE) {
+				refs.add(field);
 			}
-			return excluded.toArray(new Field[0]);
-		} else {
-			return referenceTo.toArray(new Field[0]);
+			if (!excludeNReference && field.getType() == FieldType.REFERENCE_LIST) {
+				refs.add(field);
+			}
+			if (!excludeAnyReference && field.getType() == FieldType.ANY_REFERENCE) {
+				refs.add(field);
+			}
 		}
+
+		return refs.toArray(new Field[0]);
 	}
 	
 	@Override

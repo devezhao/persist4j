@@ -78,7 +78,12 @@ public interface RecordCreator {
         if (noValue) {
             record.setNull(field.getName());
         } else {
-            RecordVisitor.setValueByLiteral(field, value, record);
+			try {
+	            RecordVisitor.setValueByLiteral(field, value, record);
+			} catch (Exception ex) {
+				LOG.error("Invalid field value by literal : " + field.getName() + " = " + value);
+				throw ex;
+			}
         }
         return true;
     }

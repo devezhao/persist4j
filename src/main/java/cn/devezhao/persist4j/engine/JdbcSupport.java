@@ -78,9 +78,9 @@ public abstract class JdbcSupport {
 		int[] rowsAffected;
 		try {
 			stmt = connect.createStatement();
-			
+			stmt.setQueryTimeout(getTimeout());
+
 			if (SqlHelper.supportsBatchUpdates(connect)) {
-				stmt.setQueryTimeout(TIMEOUT_DEFAULT * 3);
 				for (String sql : sqls) {
 					if (LOG.isDebugEnabled()) {
 						LOG.debug("add sql to batch: " + sql);
@@ -90,7 +90,6 @@ public abstract class JdbcSupport {
 				}
 				rowsAffected = stmt.executeBatch();
 			} else {
-				stmt.setQueryTimeout(TIMEOUT_DEFAULT);
 				rowsAffected = new int[sqls.length];
 				for (int i = 0; i < sqls.length; i++) {
 					String crtSql = sqls[i];
@@ -129,7 +128,7 @@ public abstract class JdbcSupport {
 		
 		try {
 			stmt = connect.createStatement();
-			stmt.setQueryTimeout(180);
+			stmt.setQueryTimeout(getTimeout());
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("exec query: " + sql);
 			}

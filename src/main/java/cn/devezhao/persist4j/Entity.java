@@ -85,7 +85,14 @@ public interface Entity extends BaseMeta {
 	 * @return
 	 */
 	Entity getDetailEntity();
-	
+
+	/**
+	 * v1.7
+	 *
+	 * @return
+	 */
+	Entity[] getDetialEntities();
+
 	/**
 	 * 获取字段名称
 	 * 

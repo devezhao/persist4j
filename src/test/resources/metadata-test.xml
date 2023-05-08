@@ -53,5 +53,20 @@
 		<field name="week" type="string" />
 		<field name="count" type="string"/>
 	</entity>
+
+	<entity name="MainEntity" type-code="200">
+		<field name="id" type="primary"/>
+		<field name="name" type="string"/>
+	</entity>
+
+	<entity name="DetailEntity1" type-code="201" main="MainEntity">
+		<field name="id" type="primary"/>
+		<field name="name" type="string"/>
+	</entity>
+
+	<entity name="DetailEntity2" type-code="202" main="MainEntity">
+		<field name="id" type="primary"/>
+		<field name="name" type="string"/>
+	</entity>
 	
 </metadata-config>

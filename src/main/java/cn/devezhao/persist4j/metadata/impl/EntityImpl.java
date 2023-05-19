@@ -32,7 +32,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private List<Field> referenceTo = new ArrayList<>();
 	
 	private Entity mainEntity;
-	private Entity detailEntity;
+	private Set<Entity> detailEntities = new HashSet<>();
 
 	public EntityImpl(String name, String physicalName, String description, JSONObject extraAttrs,
 					  boolean creatable, boolean updatable, boolean queryable,
@@ -113,9 +113,14 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	
 	@Override
 	public Entity getDetailEntity() {
-		return detailEntity;
+		return detailEntities.isEmpty() ? null : getDetialEntities()[0];
 	}
-	
+
+	@Override
+	public Entity[] getDetialEntities() {
+		return detailEntities.toArray(new Entity[0]);
+	}
+
 	@Override
 	public String[] getFieldNames() {
 		return fieldMap.keySet().toArray(new String[0]);
@@ -154,7 +159,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		clone.fieldSorted = new LinkedHashSet<>(this.fieldSorted);
 		clone.referenceTo = new ArrayList<>(this.referenceTo);
 		clone.mainEntity = null;
-		clone.detailEntity = null;
+		clone.detailEntities = new HashSet<>();
 		return clone;
 	}
 
@@ -187,13 +192,13 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	protected void addReferenceTo(Field field) {
 		referenceTo.add(field);
 	}
-	
+
 	/**
 	 * @param entity
 	 */
 	protected void setMainEntity(Entity entity) {
 		Assert.isNull(this.mainEntity, "Cannot reset `mainEntity`");
 		this.mainEntity = entity;
-		((EntityImpl) entity).detailEntity = this;
+		((EntityImpl) entity).detailEntities.add(this);
 	}
 }

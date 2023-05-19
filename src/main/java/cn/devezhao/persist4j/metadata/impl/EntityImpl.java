@@ -11,7 +11,11 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
@@ -30,9 +34,11 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	private Map<String, Field> fieldMap = new CaseInsensitiveMap<>();
 	private Set<String> fieldSorted = new LinkedHashSet<>();
 	private List<Field> referenceTo = new ArrayList<>();
-	
+
+	// for Detail
 	private Entity mainEntity;
-	private Set<Entity> detailEntities = new HashSet<>();
+	// for Main
+	private List<Entity> detailEntities = new ArrayList<>();
 
 	public EntityImpl(String name, String physicalName, String description, JSONObject extraAttrs,
 					  boolean creatable, boolean updatable, boolean queryable,
@@ -113,7 +119,13 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	
 	@Override
 	public Entity getDetailEntity() {
-		return detailEntities.isEmpty() ? null : getDetialEntities()[0];
+		if (detailEntities.isEmpty()) return null;
+
+		Entity useMaxCode = detailEntities.get(0);
+		for (Entity de : detailEntities) {
+			if (de.getEntityCode() > useMaxCode.getEntityCode()) useMaxCode = de;
+		}
+		return useMaxCode;
 	}
 
 	@Override
@@ -159,7 +171,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		clone.fieldSorted = new LinkedHashSet<>(this.fieldSorted);
 		clone.referenceTo = new ArrayList<>(this.referenceTo);
 		clone.mainEntity = null;
-		clone.detailEntities = new HashSet<>();
+		clone.detailEntities = new ArrayList<>();
 		return clone;
 	}
 
@@ -194,11 +206,11 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	}
 
 	/**
-	 * @param entity
+	 * @param mainEntity
 	 */
-	protected void setMainEntity(Entity entity) {
+	protected void setMainEntity(Entity mainEntity) {
 		Assert.isNull(this.mainEntity, "Cannot reset `mainEntity`");
-		this.mainEntity = entity;
-		((EntityImpl) entity).detailEntities.add(this);
+		this.mainEntity = mainEntity;
+		((EntityImpl) mainEntity).detailEntities.add(this);
 	}
 }

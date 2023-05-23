@@ -22,7 +22,6 @@ import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,7 +114,7 @@ public class JsonRecordCreator implements RecordCreator {
 			if (fieldValue != null) fieldValue = fieldValue.toString();
 
 			if (ignoreNullValueWhenNew && record.getPrimary() == null
-					&& (fieldValue == null || StringUtils.isEmpty((String) fieldValue))) {
+					&& (fieldValue == null || isNoValue((String) fieldValue, field))) {
 				continue;
 			}
 

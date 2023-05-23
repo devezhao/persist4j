@@ -66,7 +66,7 @@ public interface RecordCreator {
 			}
         }
 
-        boolean noValue = value == null || StringUtils.isEmpty(value);
+        final boolean noValue = isNoValue(value, field);
 
         // 无值
         if (noValue) {

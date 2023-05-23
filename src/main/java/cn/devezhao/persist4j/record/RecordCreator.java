@@ -111,4 +111,15 @@ public interface RecordCreator {
 					+ " ], Fields [ " + StringUtils.join(notNullable.toArray(new String[0]), ", ") + " ]");
 		}
 	}
+
+	/**
+	 * 是否无值/空值
+	 *
+	 * @param value
+	 * @param field
+	 * @return
+	 */
+	default boolean isNoValue(String value, Field field) {
+		return value == null || StringUtils.isEmpty(value);
+	}
 }

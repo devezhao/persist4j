@@ -16,6 +16,7 @@ import org.dom4j.Element;
  * @since 0.1, Feb 14, 2009
  * @version $Id: XMLRecordCreator.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
+@Deprecated
 public class XmlRecordCreator implements RecordCreator {
 	
 	private static final Log LOG = LogFactory.getLog(XmlRecordCreator.class);

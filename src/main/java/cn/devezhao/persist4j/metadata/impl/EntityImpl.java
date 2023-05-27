@@ -8,6 +8,7 @@ import cn.devezhao.persist4j.metadata.BaseMetaObject;
 import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 
@@ -211,6 +212,9 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	protected void setMainEntity(Entity mainEntity) {
 		Assert.isNull(this.mainEntity, "Cannot reset `mainEntity`");
 		this.mainEntity = mainEntity;
+		if (!BooleanUtils.toBoolean(System.getProperty("persist4j.detailEntities"))) {
+			((EntityImpl) mainEntity).detailEntities.clear();
+		}
 		((EntityImpl) mainEntity).detailEntities.add(this);
 	}
 }

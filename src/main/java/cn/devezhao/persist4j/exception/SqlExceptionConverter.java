@@ -7,6 +7,7 @@ import cn.devezhao.persist4j.exception.jdbc.SqlSyntaxException;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,6 +64,10 @@ public class SqlExceptionConverter {
 			String classCode = stateCode.substring(0, 2);
 			
 			if (SQL_GRAMMAR_CATEGORIES.contains(classCode)) {
+				if (sqlex instanceof SQLSyntaxErrorException
+						&& sqlex.getLocalizedMessage().contains("this is incompatible with sql_mode=only_full_group_by")) {
+					message = "INCOMPATIBLE SQLMODE(ONLY_FULL_GROUP_BY)";
+				}
 				return new SqlSyntaxException(message, sqlex, sql);
 			} else if (INTEGRITY_VIOLATION_CATEGORIES.contains(classCode)
 					|| sqlex instanceof SQLIntegrityConstraintViolationException) {

@@ -97,6 +97,7 @@ public class ParserHelper {
 			|| type == AjQLParserTokenTypes.LPAREN
 			|| type == AjQLParserTokenTypes.RPAREN
 			|| type == AjQLParserTokenTypes.COMMA
+			|| type == AjQLParserTokenTypes.MINUS
 			|| isOperator(type)
 			|| isInIgnoreValue(type);
 	}

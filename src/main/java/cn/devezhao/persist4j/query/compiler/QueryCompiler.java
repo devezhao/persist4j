@@ -17,7 +17,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * AJQL 编译器
@@ -342,6 +348,11 @@ public class QueryCompiler implements Serializable {
 					clause.append('&');
 					break;
 				default:
+					// FIXME 07/27/2023 特殊处理负数，应该由 antlr 处理
+					if (type == AjQLParserTokenTypes.LITERAL && prevType == AjQLParserTokenTypes.MINUS) {
+						clause.deleteCharAt(clause.length() - 1);
+					}
+
 					if (ParserHelper.isAggregator(type)) {
 						clause.append(compileAggregator(next));
 						

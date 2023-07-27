@@ -72,10 +72,10 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testBetween() {
-		String ajql = "select tPrimary from TestAllType where tInt between 1 and 2";
+		String ajql = "select tPrimary from TestAllType where tInt = 12.12 and tInt = -10 and tInt between -1 and 2";
 		String sql = compile(ajql);
 		System.out.println(ajql + "\n>>\n" + sql);
-		assertEquals(sql, "select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where _t0.`T_INT` between 1 and 2");
+		assertEquals(sql, "select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where _t0.`T_INT` = 12.12 and _t0.`T_INT` = -10 and _t0.`T_INT` between -1 and 2");
 		
 		ajql = "select tPrimary from TestAllType where tInt between '2010-09-01' and '2010-10-01'";
 		sql = compile(ajql);

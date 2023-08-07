@@ -16,7 +16,9 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.awt.peer.ScrollbarPeer;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -196,8 +198,16 @@ public class QueryCompiler implements Serializable {
 				aJF.setAggregator(item.getText(), withDistinct ? "distinct" : null);
 				
 				if (ParserHelper.isAggregatorWithMode(item.getType())) {
-					String mode = column.getNextSibling().getNextSibling().getText();  // [, '%Y']
-					aJF.setAggregatorMode(mode);
+					column = column.getNextSibling();
+
+					// group_concat
+					if (column != null && column.getType() == AjQLParserTokenTypes.SEPARATOR) {
+						String sep = column.getNextSibling().getText();
+						aJF.setAggregatorMode(String.format("separator '%s'", sep));
+					} else if (column != null) {
+						String mode = column.getNextSibling().getText();  // [, '%Y']
+						aJF.setAggregatorMode(mode);
+					}
 				}
 				
 			} else {
@@ -273,6 +283,14 @@ public class QueryCompiler implements Serializable {
 					concat.insert(6, "( ").append(") as ");
 					clause = concat.toString();
 					
+				} else if ("GROUP_CONCAT".equalsIgnoreCase(aJF.getAggregator())) {
+					StringBuilder s = new StringBuilder(aJF.getAggregator())
+							.append("( ");
+					if (aJF.getAggregatorSibling() != null) s.append("distinct ");
+					s.append(aJF.getName()).append(" ");
+					if (aJF.getAggregatorMode() != null) s.append(aJF.getAggregatorMode()).append(" ");
+					clause = s.append(")").toString();
+
 				} else {
 					if (aJF.getAggregatorMode() != null) {
 						clause = String.format("%s( %s, '%s' ) as ", aJF.getAggregator(), aJF.getName(), aJF.getAggregatorMode());

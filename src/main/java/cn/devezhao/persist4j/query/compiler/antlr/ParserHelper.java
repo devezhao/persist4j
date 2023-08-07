@@ -52,7 +52,7 @@ public class ParserHelper {
 	 * @return
 	 */
 	public static boolean isAggregatorWithMode(int type) {
-		return type == AjQLParserTokenTypes.DATE_FORMAT;
+		return type == AjQLParserTokenTypes.DATE_FORMAT || type == AjQLParserTokenTypes.GROUP_CONCAT;
 	}
 	
 	/**

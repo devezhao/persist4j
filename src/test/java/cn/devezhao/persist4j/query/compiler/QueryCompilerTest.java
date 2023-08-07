@@ -206,4 +206,20 @@ public class QueryCompilerTest extends Compiler {
 				"select count( _t0.`YEAR` ) as _c0, quarter( _t0.`YEAR` ) as _c1 from `test4` as _t0 where 'year' = '1' order by 'year'");
 		
 	}
+
+	// FIXME 不支持 order by 子句
+	@Test
+	public void testGroupConcat() {
+		String ajql = "select group_concat(DISTINCT tText SEPARATOR ';;;') from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+
+		ajql = "select group_concat(DISTINCT tText) from TestAllType";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+
+		ajql = "select group_concat(tText) from TestAllType";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+	}
 }

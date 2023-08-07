@@ -54,6 +54,9 @@ tokens {
 	FALSE = "false";
 	
 	MATCH = "match";
+
+	GROUP_CONCAT = "group_concat";
+	SEPARATOR = "separator";
 }
 
 statement
@@ -107,6 +110,10 @@ rollupClause
 	: WITH^ ROLLUP
 	;
 
+groupConcatClause
+    : GROUP_CONCAT^ LPAREN! (DISTINCT)? selectItem (SEPARATOR QUOTED_STRING)? RPAREN!
+    ;
+
 selectList
 	: selectItem (COMMA! selectItem)*
 	;
@@ -137,6 +144,7 @@ aggregate
 	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
 	| aggregateWithMode
 	| aggregateWithFields
+	| groupConcatClause
 	;
 	
 simpleCondition

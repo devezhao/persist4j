@@ -11,6 +11,8 @@ import cn.devezhao.persist4j.dialect.editor.ReferenceListEditor;
 import cn.devezhao.persist4j.engine.ID;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -28,6 +30,8 @@ import java.util.List;
  * @version $Id: RecordVisitor.java 8 2015-06-08 09:09:03Z zhaofang123@gmail.com $
  */
 public class RecordVisitor {
+
+	private static final Log LOG = LogFactory.getLog(RecordVisitor.class);
 
 	public static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
 	public static final String DATETIME_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss";
@@ -162,7 +166,11 @@ public class RecordVisitor {
 	 */
 	protected static String clearNumber(String num) {
 		if (StringUtils.isBlank(num)) return "0";
-		return num.replace(",", "").trim();
+		num = num.replace(",", "").trim();
+		if (NumberUtils.isNumber(num)) return num;
+
+		LOG.warn("Bad number format : " + num);
+		return "0";
 	}
 
 	/**

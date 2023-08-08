@@ -10,5 +10,6 @@ public class RecordVisitorTest {
         System.out.println(RecordVisitor.clearNumber("123d "));
         System.out.println(RecordVisitor.clearNumber("1,123 "));
         System.out.println(RecordVisitor.clearNumber("111,1,11,,123.00 "));
+        System.out.println(RecordVisitor.clearNumber("NaN"));
     }
 }

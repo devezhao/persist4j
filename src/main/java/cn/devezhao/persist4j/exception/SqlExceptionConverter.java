@@ -1,10 +1,12 @@
 package cn.devezhao.persist4j.exception;
 
 import cn.devezhao.persist4j.exception.jdbc.ConstraintViolationException;
+import cn.devezhao.persist4j.exception.jdbc.DataTruncationException;
 import cn.devezhao.persist4j.exception.jdbc.GenericJdbcException;
 import cn.devezhao.persist4j.exception.jdbc.LockAcquisitionException;
 import cn.devezhao.persist4j.exception.jdbc.SqlSyntaxException;
 
+import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLSyntaxErrorException;
@@ -82,6 +84,10 @@ public class SqlExceptionConverter {
 		if ("61000".equals(stateCode)) {
 			// oracle sql-state code for deadlock
 			return new LockAcquisitionException(message, sqlex, sql);
+		}
+
+		if (sqlex instanceof DataTruncation) {
+			return new DataTruncationException(message, sqlex, sql);
 		}
 		
 		return handledNonSpecificException(sqlex, message, sql);

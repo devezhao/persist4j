@@ -8,6 +8,7 @@ import cn.devezhao.persist4j.dialect.editor.DecimalEditor;
 import cn.devezhao.persist4j.dialect.editor.DoubleEditor;
 import cn.devezhao.persist4j.exception.SqlExceptionConverter;
 import cn.devezhao.persist4j.metadata.CascadeModel;
+import cn.devezhao.persist4j.query.QueryedRecord;
 import cn.devezhao.persist4j.util.SqlHelper;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,8 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	@Override
 	public Record save(final Record record) throws DataAccessException {
 		Validate.isTrue(record.getPrimary() == null);
+		Validate.isTrue(record instanceof QueryedRecord, "QueryedRecord cannot be used for save");
+
 		Entity e = record.getEntity();
 		return saveInternal(record, ID.newId(e.getEntityCode()));
 	}
@@ -131,7 +134,8 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	@Override
 	public Record update(final Record record) throws DataAccessException {
 		Validate.notNull(record.getPrimary());
-		
+		Validate.isTrue(record instanceof QueryedRecord, "QueryedRecord cannot be used for update");
+
 		Entity e = record.getEntity();
 		
 		StringBuilder update = new StringBuilder("update ");
@@ -337,7 +341,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 					conn = stmt == null ? null : stmt.getConnection();
 					SqlHelper.close(stmt);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					LOG.debug(null, e);
 				}
 				
 				if (conn != null) {

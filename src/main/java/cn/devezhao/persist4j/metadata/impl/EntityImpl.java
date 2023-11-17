@@ -121,16 +121,12 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	@Override
 	public Entity getDetailEntity() {
 		if (detailEntities.isEmpty()) return null;
-
-		Entity useMaxCode = detailEntities.get(0);
-		for (Entity de : detailEntities) {
-			if (de.getEntityCode() > useMaxCode.getEntityCode()) useMaxCode = de;
-		}
-		return useMaxCode;
+		return getDetialEntities()[0];
 	}
 
 	@Override
 	public Entity[] getDetialEntities() {
+		if (detailEntities.isEmpty()) return null;
 		return detailEntities.toArray(new Entity[0]);
 	}
 
@@ -216,5 +212,8 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 			((EntityImpl) mainEntity).detailEntities.clear();
 		}
 		((EntityImpl) mainEntity).detailEntities.add(this);
+
+		// Sort by code
+		((EntityImpl) mainEntity).detailEntities.sort((o1, o2) -> o2.getEntityCode().compareTo(o1.getEntityCode()));
 	}
 }

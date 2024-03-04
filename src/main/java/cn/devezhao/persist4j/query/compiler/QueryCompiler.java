@@ -98,7 +98,7 @@ public class QueryCompiler implements Serializable {
 		try {
 			parser.statement();
 		} catch (Exception ex) {
-			handleParseException(ex);
+			handleParseException(ex, ajql);
 		}
 		compiledSql = compileQuery( parser.getAST(), filter );
 		return compiledSql;
@@ -249,7 +249,7 @@ public class QueryCompiler implements Serializable {
 			try {
 				parser.whereClause();
 			} catch (Exception ex) {
-				handleParseException(ex);
+				handleParseException(ex, fstrs);
 			}
 			
 			AST nood = parser.getAST();
@@ -820,18 +820,19 @@ public class QueryCompiler implements Serializable {
 			throw new IllegalStateException("uncompile");
 		}
 	}
-	
+
 	/**
 	 * @param ex
+	 * @param ajql
 	 */
-	private void handleParseException(Exception ex) {
+	private void handleParseException(Exception ex, String ajql) {
 		if (ex instanceof ParserException) {
 			Throwable cause = ex.getCause();
 			throw new CompileException(
 					"ANTLR cannot parse AjQL stream, threw an exception [ "
-					+ cause.getClass().getName() + ": " + ex.getCause() + " ]", ex.getCause());
+					+ cause.getClass().getName() + ": " + ex.getCause() + " {" + ajql + "} ]", ex.getCause());
 		}
-		throw new CompileException("Parse AjQL error", ex);
+		throw new CompileException("Parse AjQL error {" + ajql + "}", ex);
 	}
 	
 	// ----------------------------------------------------------- Just for Nested SQL

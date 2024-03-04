@@ -6,7 +6,10 @@ import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.engine.StandardRecord;
 import cn.devezhao.persist4j.query.compiler.QueryCompiler;
 import cn.devezhao.persist4j.query.compiler.SelectItem;
+import cn.devezhao.persist4j.record.FieldValueException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 
@@ -18,8 +21,9 @@ import java.util.Map;
  * @version $Id: CapriciousRecord.java 121 2016-01-08 04:07:07Z zhaofang123@gmail.com $
  */
 public class QueryedRecord extends StandardRecord {
-
 	private static final long serialVersionUID = 5113799283331109208L;
+
+	private static final Log LOG = LogFactory.getLog(QueryedRecord.class);
 	
 	private final Map<String, Object> idLabel = new CaseInsensitiveMap<>();
 	private SelectItem[] selectItems;
@@ -47,10 +51,14 @@ public class QueryedRecord extends StandardRecord {
 	protected void setObject(String key, Object value) {
 		Entity e = getEntity();
 		if (e.containsField(key)) {
-			super.setObject(key, value);
+			try {
+				super.setObject(key, value);
+			} catch (FieldValueException ex) {
+				LOG.warn("QueryedRecord#setObject error : " + key + "=" + value, ex);
+			}
 			return;
 		}
-		
+
 		if (key.charAt(0) == QueryCompiler.NAME_FIELD_PREFIX) {
 			key = key.substring(1);
 			ID id = getID(key);

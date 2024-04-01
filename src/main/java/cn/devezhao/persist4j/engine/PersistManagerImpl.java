@@ -47,7 +47,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	@Override
 	public Record save(final Record record) throws DataAccessException {
 		Validate.isTrue(record.getPrimary() == null);
-		Validate.isTrue(!(record instanceof QueryedRecord), "QueryedRecord cannot be used for save");
+		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for save");
 
 		Entity e = record.getEntity();
 		return saveInternal(record, ID.newId(e.getEntityCode()));
@@ -134,7 +134,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	@Override
 	public Record update(final Record record) throws DataAccessException {
 		Validate.notNull(record.getPrimary());
-		Validate.isTrue(!(record instanceof QueryedRecord), "QueryedRecord cannot be used for update");
+		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for update");
 
 		Entity e = record.getEntity();
 		

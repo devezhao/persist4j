@@ -69,7 +69,9 @@ public class StringHelper {
             } else {
                 if (lastAZ) {
                     if (!lastInsert && i > 1) {
-                        sb.insert(sb.length() - 1, '_');
+                        if (!(ch >= '0' && ch <= '9')) {
+                            sb.insert(sb.length() - 1, '_');
+                        }
                     }
                 }
 

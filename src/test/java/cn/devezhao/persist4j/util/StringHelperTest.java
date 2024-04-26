@@ -6,6 +6,9 @@ import junit.framework.TestCase;
 public class StringHelperTest extends TestCase {
 
     public void testHyphenate() {
+        System.out.println(StringHelper.hyphenate("TEST999"));
+        System.out.println(StringHelper.hyphenate("TEST999Id"));
+        System.out.println(StringHelper.hyphenate("TEST999Name"));
         System.out.println(StringHelper.hyphenate("ishttp_Req"));
         System.out.println(StringHelper.hyphenate("ishttp_req"));
         System.out.println(StringHelper.hyphenate("ISHTTP_REQ"));

@@ -228,7 +228,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 		if (StringUtils.isEmpty(physicalName)) {
 			physicalName = name;
 			if (fieldSchemaNameOptimize) {
-				physicalName = StringHelper.hyphenate(physicalName).toLowerCase();
+				physicalName = StringHelper.hyphenate(physicalName);
 			}
 		}
 		namingPolicy(physicalName, "Entity physical");

@@ -5,7 +5,7 @@
 
 	<groupId>cn.devezhao</groupId>
 	<artifactId>persist4j</artifactId>
-	<version>1.7.9</version>
+	<version>1.7.10</version>
 	<packaging>jar</packaging>
 	
 	<name>persist4j</name>

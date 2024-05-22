@@ -72,16 +72,16 @@ public class RecordVisitor {
 
 		} else if (FieldType.INT.equals(ft)
 				|| FieldType.SMALL_INT.equals(ft)) {
-			pVal = NumberUtils.toInt(clearNumber(value));
+			pVal = NumberUtils.toInt(clearNumber(value, Boolean.TRUE));
 			
 		} else if (FieldType.DOUBLE.equals(ft)) {
-			pVal = NumberUtils.toDouble(clearNumber(value));
+			pVal = NumberUtils.toDouble(clearNumber(value, Boolean.FALSE));
 			
 		} else if (FieldType.DECIMAL.equals(ft)) {
-			pVal = new BigDecimal(clearNumber(value).toCharArray());
+			pVal = new BigDecimal(clearNumber(value, Boolean.FALSE).toCharArray());
 			
 		} else if (FieldType.LONG.equals(ft)) {
-			pVal = NumberUtils.toLong(clearNumber(value));
+			pVal = NumberUtils.toLong(clearNumber(value, Boolean.TRUE));
 			
 		} else if (FieldType.DATE.equals(ft)
 				|| FieldType.TIMESTAMP.equals(ft)) {
@@ -162,12 +162,16 @@ public class RecordVisitor {
 
 	/**
 	 * @param num
+	 * @param clearDecimal
 	 * @return
 	 */
-	protected static String clearNumber(String num) {
+	protected static String clearNumber(String num, boolean clearDecimal) {
 		if (StringUtils.isBlank(num)) return "0";
 		num = num.replace(",", "").trim();
-		if (NumberUtils.isNumber(num)) return num;
+		if (NumberUtils.isNumber(num)) {
+			if (clearDecimal) return num.split("\\.")[0];
+			return num;
+		}
 
 		LOG.warn("Bad number format : " + num);
 		return "0";

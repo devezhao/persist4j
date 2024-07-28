@@ -133,13 +133,14 @@ public class QueryCompilerTest extends Compiler {
 	
 	@Test
 	public void testFulltextMatch() {
-//		String ajql = "select tPrimary,tInt,tBool from TestAllType where tLong > 100 and match(tReference.tLong,tText) against ('123 abc NB' in boolean mode)";
-//		QueryCompiler compiler = createCompiler(ajql);
-//		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
-		
-		String ajql2 = "select tPrimary from TestAllType where (tInt > 100 and tText match '123 abc NB')";
-		QueryCompiler compiler2 = createCompiler(ajql2);
-		System.out.println(ajql2 + "\n>> FULLTEXT MATCH\n" + compiler2.getCompiledSql());
+		// 推荐
+		String ajqlV2 = "select tPrimary,tInt,tBool from TestAllType where match2 (tReference, '123 abc NB')";
+		QueryCompiler compilerV2 = createCompiler(ajqlV2);
+		System.out.println(ajqlV2 + "\n>> FULLTEXT MATCH\n" + compilerV2.getCompiledSql());
+
+		String ajql = "select tPrimary from TestAllType where tInt > 100 and tText match '123 abc NB'";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
 	}
 	
 	@Test
@@ -150,7 +151,7 @@ public class QueryCompilerTest extends Compiler {
 		assertEquals(compiler.getCompiledSql(), 
 				"select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where ( _t0.`T_INT` & 1 = 0 ) and _t0.`T_INT` & 1");
 	}
-	
+
 	@Test
 	public void testCount() {
 		String ajql = "select count(tPrimary) from TestAllType";
@@ -221,5 +222,16 @@ public class QueryCompilerTest extends Compiler {
 		ajql = "select group_concat(tText) from TestAllType";
 		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+	}
+
+	@Test
+	public void testFnDistinct() {
+		String ajql = "select distinct DATE_FORMAT(tDate, '%Y-%m') from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+
+		String ajql2 = "select distinct tDate from TestAllType";
+		QueryCompiler compiler2 = createCompiler(ajql2);
+		System.out.println(ajql2 + "\n>>\n" + compiler2.getCompiledSql());
 	}
 }

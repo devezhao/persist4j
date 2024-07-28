@@ -167,16 +167,24 @@ public class QueryCompiler implements Serializable {
 		final JoinTree aJTree = new JoinTree(entity.getPhysicalName(),
 				nestedSelectContext == null ? -1 : nestedSelectContext.getTableIncrease() /* nested-sql */ );
 		
+		boolean distinctAggregator = false;
 		Set<JoinField> distinctFields = new HashSet<>();
 		Map<JoinField, AST> mutliFieldsAggregators = new HashMap<>();
-		
+
 		List<JoinField> selectFields = new LinkedList<>();
 		AST item = select.getFirstChild();
 		do {
 			JoinField aJF;
-			
+
 			if (item.getType() == AjQLParserTokenTypes.DISTINCT) {
-				item = item.getNextSibling();
+				AST next = item.getNextSibling();
+				// eg. distinct DATE_FORMAT(x, x)
+				if (ParserHelper.isAggregator(next.getType())) {
+					distinctAggregator = true;
+					continue;
+				}
+
+				item = next;
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Field);
 				distinctFields.add(aJF);
 				
@@ -184,7 +192,7 @@ public class QueryCompiler implements Serializable {
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Aggregator);
 				aJF.setAggregator(item.getText(), null);
 				mutliFieldsAggregators.put(aJF, item);
-				
+
 			} else if (ParserHelper.isAggregator(item.getType())) {
 				AST column = item.getFirstChild();
 				boolean withDistinct = column.getType() == AjQLParserTokenTypes.DISTINCT;
@@ -207,11 +215,16 @@ public class QueryCompiler implements Serializable {
 						aJF.setAggregatorMode(mode);
 					}
 				}
-				
+
+				if (distinctAggregator) {
+					distinctFields.add(aJF);
+					distinctAggregator = false;
+				}
+
 			} else {
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Field);
 			}
-			
+
 			selectFields.add(aJF);
 		} while ((item = item.getNextSibling()) != null);
 		selectList.clear();

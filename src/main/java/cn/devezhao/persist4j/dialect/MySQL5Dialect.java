@@ -32,6 +32,7 @@ public class MySQL5Dialect extends Dialect {
 		registerColumnType(FieldType.TEXT.getMask(), "text(%d)", Types.VARCHAR);
 		registerColumnType(FieldType.DATE.getMask(), "date", Types.DATE);
 		registerColumnType(FieldType.TIMESTAMP.getMask(), "timestamp", Types.TIMESTAMP);
+		registerColumnType(FieldType.DATETIME.getMask(), "datetime", Types.TIMESTAMP);
 		registerColumnType(FieldType.TIME.getMask(), "time", Types.TIME);
 		registerColumnType(FieldType.BOOL.getMask(), "char(1)", Types.CHAR);
 		registerColumnType(FieldType.NTEXT.getMask(), "longtext", Types.LONGVARCHAR);
@@ -55,10 +56,9 @@ public class MySQL5Dialect extends Dialect {
 
 	@Override
 	public String insertLimit(String query, int limit, int offset) {
-		return new StringBuilder(query)
-				.append(" limit ").append(limit)
-				.append(offset > 0 ? (" offset " + offset) : "")
-				.toString();
+		return query +
+                " limit " + limit +
+                (offset > 0 ? (" offset " + offset) : "");
 	}
 
 	@Override

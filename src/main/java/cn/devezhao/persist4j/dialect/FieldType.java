@@ -1,6 +1,24 @@
 package cn.devezhao.persist4j.dialect;
 
-import cn.devezhao.persist4j.dialect.editor.*;
+import cn.devezhao.persist4j.dialect.editor.AnyReferenceEditor;
+import cn.devezhao.persist4j.dialect.editor.BinaryEditor;
+import cn.devezhao.persist4j.dialect.editor.BoolEditor;
+import cn.devezhao.persist4j.dialect.editor.CharEditor;
+import cn.devezhao.persist4j.dialect.editor.DateEditor;
+import cn.devezhao.persist4j.dialect.editor.DateTimeEditor;
+import cn.devezhao.persist4j.dialect.editor.DecimalEditor;
+import cn.devezhao.persist4j.dialect.editor.DoubleEditor;
+import cn.devezhao.persist4j.dialect.editor.IntEditor;
+import cn.devezhao.persist4j.dialect.editor.LongEditor;
+import cn.devezhao.persist4j.dialect.editor.NTextEditor;
+import cn.devezhao.persist4j.dialect.editor.PrimaryEditor;
+import cn.devezhao.persist4j.dialect.editor.ReferenceEditor;
+import cn.devezhao.persist4j.dialect.editor.ReferenceListEditor;
+import cn.devezhao.persist4j.dialect.editor.SmallIntEditor;
+import cn.devezhao.persist4j.dialect.editor.StringEditor;
+import cn.devezhao.persist4j.dialect.editor.TextEditor;
+import cn.devezhao.persist4j.dialect.editor.TimeEditor;
+import cn.devezhao.persist4j.dialect.editor.TimestampEditor;
 
 import java.io.Serializable;
 
@@ -32,6 +50,7 @@ public class FieldType implements Type, Serializable {
 	public static final Type LONG = new FieldType(10016, "long", new LongEditor());
 
 	public static final Type DATE = new FieldType(10021, "date", new DateEditor());
+	public static final Type DATETIME = new FieldType(10022, "datetime", new DateTimeEditor());
 	public static final Type TIMESTAMP = new FieldType(10023, "timestamp", new TimestampEditor());
 	public static final Type TIME = new FieldType(10024, "time", new TimeEditor());
 

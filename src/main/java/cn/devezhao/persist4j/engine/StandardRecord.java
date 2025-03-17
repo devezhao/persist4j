@@ -41,6 +41,9 @@ public class StandardRecord implements Record {
 
 	protected Map<String, Object> recordMap = new CaseInsensitiveMap<>();
 
+	// 扩展参数
+	private Map<String, Object> extras = new HashMap<>();
+
 	/**
 	 * for Serializable
 	 */
@@ -416,5 +419,15 @@ public class StandardRecord implements Record {
 						"Field [ " + field + " ] value [ " + id + " ] is wrong. Cannot reference non-specify record of entity");
 			}
 		}
+	}
+
+	@Override
+	public void addExtra(String name, Object value) {
+		this.extras.put(name, value);
+	}
+
+	@Override
+	public Map<String, Object> getExtras() {
+		return extras;
 	}
 }

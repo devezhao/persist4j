@@ -51,7 +51,18 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for save");
 
 		Entity e = record.getEntity();
-		return saveInternal(record, ID.newId(e.getEntityCode()));
+
+		ID newId;
+		Object _id = record.getExtras().get("_id");
+		if (ID.isId(_id)) {
+			String idPrefix = StringUtils.leftPad(e.getEntityCode() + "", 3, '0') + '-';
+			String keep000Id =  idPrefix + _id.toString().substring(3);
+			newId = ID.valueOf(keep000Id);
+		} else {
+			newId = ID.newId(e.getEntityCode());
+		}
+
+		return saveInternal(record, newId);
 	}
 
 	/**
@@ -138,13 +149,6 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for update");
 
 		Entity e = record.getEntity();
-
-		// force save
-		if (record.getPrimary().getEntityCode() == 0) {
-			String idPrefix = StringUtils.leftPad(e.getEntityCode() + "", 3, '0') + '-';
-			String keep000Id = record.getPrimary().toString().replace("000-", idPrefix);
-			return saveInternal(record, ID.valueOf(keep000Id));
-		}
 
 		StringBuilder update = new StringBuilder("update ");
 		update.append(quote(e.getPhysicalName())).append(" set ");

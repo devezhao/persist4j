@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -284,4 +285,15 @@ public interface Record extends Cloneable, Serializable {
 	 * @return
 	 */
 	boolean isEmpty();
+
+	/**
+	 * @return
+	 */
+	Map<String, Object> getExtras();
+
+	/**
+	 * @param name
+	 * @param value
+	 */
+	void addExtra(String name, Object value);
 }

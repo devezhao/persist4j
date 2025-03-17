@@ -10,6 +10,7 @@ import cn.devezhao.persist4j.exception.SqlExceptionConverter;
 import cn.devezhao.persist4j.metadata.CascadeModel;
 import cn.devezhao.persist4j.query.QueryedRecord;
 import cn.devezhao.persist4j.util.SqlHelper;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -137,7 +138,14 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for update");
 
 		Entity e = record.getEntity();
-		
+
+		// force save
+		if (record.getPrimary().getEntityCode() == 0) {
+			String idPrefix = StringUtils.leftPad(e.getEntityCode() + "", 3, '0') + '-';
+			String keep000Id = record.getPrimary().toString().replace("000-", idPrefix);
+			return saveInternal(record, ID.valueOf(keep000Id));
+		}
+
 		StringBuilder update = new StringBuilder("update ");
 		update.append(quote(e.getPhysicalName())).append(" set ");
 		

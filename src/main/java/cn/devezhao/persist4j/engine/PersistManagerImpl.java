@@ -55,7 +55,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		ID newId;
 		Object _id = record.getExtras().get("_id");
 		if (ID.isId(_id)) {
-			String idPrefix = StringUtils.leftPad(e.getEntityCode() + "", 3, '0') + '-';
+			String idPrefix = StringUtils.leftPad(e.getEntityCode() + "", 3, '0');
 			String keep000Id =  idPrefix + _id.toString().substring(3);
 			newId = ID.valueOf(keep000Id);
 		} else {

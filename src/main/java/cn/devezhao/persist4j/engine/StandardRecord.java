@@ -315,6 +315,7 @@ public class StandardRecord implements Record {
 			throw new RuntimeException(e);
 		}
 		o.recordMap = new CaseInsensitiveMap<>(this.recordMap);
+		o.extras = new HashMap<>(this.extras);
 		return o;
 	}
 	

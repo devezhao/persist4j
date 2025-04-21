@@ -1,6 +1,8 @@
 package cn.devezhao.persist4j.query;
 
 import cn.devezhao.persist4j.Entity;
+import cn.devezhao.persist4j.Field;
+import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.engine.ID;
 import cn.devezhao.persist4j.engine.SqlExecutorContext;
 import cn.devezhao.persist4j.engine.StandardRecord;
@@ -79,6 +81,12 @@ public class QueryedRecord extends StandardRecord {
 			return super.getObject(key, clazz);
 		}
 		return recordMap.get(key);
+	}
+
+	@Override
+	protected void checkReferenceValue(Field field, Object value) {
+		if (field.getType() == FieldType.ANY_REFERENCE) return;
+		super.checkReferenceValue(field, value);
 	}
 
 	/**

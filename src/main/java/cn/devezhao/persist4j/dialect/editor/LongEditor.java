@@ -26,15 +26,9 @@ public class LongEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		Long longValue;
-		if (value instanceof Integer) {
-			longValue = ((Integer) value).longValue();
-		} else {
-			longValue = (Long) value;
-		}
-		pstmt.setLong(index, longValue);
+		pstmt.setLong(index, ObjectUtils.toLong(value));
 	}
-	
+
 	@Override
 	public Object get(ResultSet rs, int index) throws SQLException {
 		Object hasVal = rs.getObject(index);

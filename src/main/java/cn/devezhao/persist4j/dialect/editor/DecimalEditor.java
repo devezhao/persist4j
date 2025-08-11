@@ -1,5 +1,6 @@
 package cn.devezhao.persist4j.dialect.editor;
 
+import cn.devezhao.commons.ObjectUtils;
 import cn.devezhao.persist4j.dialect.FieldType;
 
 import java.math.BigDecimal;
@@ -33,11 +34,15 @@ public class DecimalEditor extends AbstractFieldEditor {
 	
 	public void set(PreparedStatement pstmt, int index, Object value, int scale)
 			throws SQLException {
-		if (value instanceof Double) {
-			value = BigDecimal.valueOf((Double) value);
-		}
-		
-		BigDecimal decimalValue = (BigDecimal) value;
+        BigDecimal decimalValue;
+        if (value instanceof BigDecimal) {
+            decimalValue = (BigDecimal) value;
+        } else if (value instanceof Double) {
+            decimalValue = BigDecimal.valueOf((Double) value);
+		} else {
+            decimalValue = BigDecimal.valueOf(ObjectUtils.toDouble(value));
+        }
+
 		decimalValue = decimalValue
 				.setScale(scale < 0 ? FieldType.DEFAULT_DECIMAL_SCALE : scale, RoundingMode.HALF_UP);
 		pstmt.setBigDecimal(index, decimalValue);

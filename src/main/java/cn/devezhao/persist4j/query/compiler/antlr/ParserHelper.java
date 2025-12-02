@@ -43,6 +43,9 @@ public class ParserHelper {
 				|| type == AjQLParserTokenTypes.QUARTER
 				|| type == AjQLParserTokenTypes.MONTH
 				|| type == AjQLParserTokenTypes.WEEK
+				|| type == AjQLParserTokenTypes.DAY
+				|| type == AjQLParserTokenTypes.DAYOFWEEK
+				|| type == AjQLParserTokenTypes.DATE
 				|| isAggregatorWithMode(type)
 				|| isAggregatorWithNested(type);
 	}

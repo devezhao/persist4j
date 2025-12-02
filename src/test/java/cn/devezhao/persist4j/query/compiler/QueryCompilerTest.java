@@ -234,4 +234,11 @@ public class QueryCompilerTest extends Compiler {
 		QueryCompiler compiler2 = createCompiler(ajql2);
 		System.out.println(ajql2 + "\n>>\n" + compiler2.getCompiledSql());
 	}
+
+    @Test
+    public void testFnForDate() {
+        String ajql = "select YEAR(tDate),QUARTER(tDate),MONTH(tDate),WEEK(tDate),DAY(tDate),DAYOFWEEK(tDate),DATE(tDate) from TestAllType";
+        QueryCompiler compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+    }
 }

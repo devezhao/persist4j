@@ -235,10 +235,12 @@ public class AjqlResultImpl implements Result {
 					editor = FieldType.STRING.getFieldEditor();
 					
 				} else if ("YEAR".contentEquals(aggregator)
-						|| "QUARTER".contentEquals(aggregator)
-						|| "MONTH".contentEquals(aggregator)
-						|| "WEEK".contentEquals(aggregator)
-						|| "DATE".contentEquals(aggregator)) {
+                        || "QUARTER".contentEquals(aggregator)
+                        || "MONTH".contentEquals(aggregator)
+                        || "WEEK".contentEquals(aggregator)
+                        || "DAY".contentEquals(aggregator)
+                        || "DAYOFWEEK".contentEquals(aggregator)
+                        || "DATE".contentEquals(aggregator)) {
 					editor = FieldType.INT.getFieldEditor();
 					
 				} else {

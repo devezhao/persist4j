@@ -1,6 +1,6 @@
 // Manual: https://www.antlr2.org/doc/antlr_2_7_5_ChineseVer.pdf
 // Usage: 
-// `java -cp antlr-2.7.7.jar antlr.Tool ajql.g`
+// `java -cp antlr-2.7.7.jar antlr.Tool ../src/main/java/cn/devezhao/persist4j/query/compiler/antlr/ajql.g`
 
 header {
 package cn.devezhao.persist4j.query.compiler.antlr;
@@ -40,8 +40,11 @@ tokens {
 	QUARTER = "quarter";
     MONTH = "month";
 	WEEK = "week";
+	DAY = "day";
+	DAYOFWEEK = "DAYOFWEEK";
+	DATE = "date";
 	CONCAT = "concat";
-	
+
 	IS = "is";
 	NOT = "not";
 	NULL = "null";
@@ -140,7 +143,7 @@ aggregateWithFields
 	;
 	
 aggregate
-	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^) LPAREN! column RPAREN!
+	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DAY^ | DAYOFWEEK^ | DATE^) LPAREN! column RPAREN!
 	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
 	| aggregateWithMode
 	| aggregateWithFields

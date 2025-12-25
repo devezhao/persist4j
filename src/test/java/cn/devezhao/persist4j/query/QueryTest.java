@@ -5,6 +5,8 @@ import cn.devezhao.persist4j.Query;
 import cn.devezhao.persist4j.engine.ID;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 04/16/2020
@@ -44,6 +46,14 @@ public class QueryTest extends BaseTest {
 				.setParameter(3, ID.newId(0))
 				.unique();
 	}
+
+    @Test
+    public void testFnForDate() throws Exception {
+        readySchemes();
+        Object[] res = createQuery("select count(tPrimary) from TestAllType where ( DAYOFWEEK(tDate) = 5 )")
+                .unique();
+        System.out.println(Arrays.toString(res));
+    }
 
 	/**
 	 * 创建查询

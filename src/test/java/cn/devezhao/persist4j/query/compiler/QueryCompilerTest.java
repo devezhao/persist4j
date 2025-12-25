@@ -160,13 +160,22 @@ public class QueryCompilerTest extends Compiler {
 		assertEquals(compiler.getCompiledSql(), 
 				"select count( _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
 		
-		ajql = "select count(distinct tPrimary) from TestAllType";
+		ajql = "select count(tPrimary) from TestAllType order by count(tPrimary) desc";
 		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 		assertEquals(compiler.getCompiledSql(),
 				"select count( distinct _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
 	}
-	
+
+    @Test
+    public void testCountDistinct() {
+        String ajql = "select count(distinct tPrimary) from TestAllType order by count(distinct tPrimary)";
+        QueryCompiler compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+        assertEquals("select count( distinct _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) order by count( distinct _t0.`T_PRIMARY` )",
+                compiler.getCompiledSql());
+    }
+
 	@Test
 	public void testDateAggregator() {
 		String ajql = "select year(tDate),quarter(tDate),month(tDate),week(tDate),date_format(tDate, '%Y') from TestAllType where year(tDate) = 2020";
@@ -239,6 +248,10 @@ public class QueryCompilerTest extends Compiler {
     public void testFnForDate() {
         String ajql = "select YEAR(tDate),QUARTER(tDate),MONTH(tDate),WEEK(tDate),DAY(tDate),DAYOFWEEK(tDate),DATE(tDate) from TestAllType";
         QueryCompiler compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+
+        ajql = "select tDate from TestAllType where DAYOFWEEK(tDate) = 5";
+        compiler = createCompiler(ajql);
         System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
     }
 }

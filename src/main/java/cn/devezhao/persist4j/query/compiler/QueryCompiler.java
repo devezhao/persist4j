@@ -635,10 +635,18 @@ public class QueryCompiler implements Serializable {
 			concat.insert(6, "( ").append(")");
 			return concat.toString();
 		}
-		
-		JoinField aJF = getJoinField(next.getFirstChild(), next, sqlExecutorContext.getDialect());
+
+        AST column = next.getFirstChild();
+        boolean withDistinct = column.getType() == AjQLParserTokenTypes.DISTINCT;
+        if (withDistinct) {
+            column = column.getNextSibling();
+        }
+
+		JoinField aJF = getJoinField(column, next, sqlExecutorContext.getDialect());
 		StringBuilder clause = new StringBuilder(next.getText())
 				.append("( ");
+        if (withDistinct) clause.append("distinct ");
+
 		if (aJF.getAggregatorMode() != null) {
 			clause.append(aJF.getName()).append(", '").append(aJF.getAggregatorMode()).append('\'');
 		} else {

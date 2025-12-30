@@ -55,6 +55,14 @@ public class QueryTest extends BaseTest {
         System.out.println(Arrays.toString(res));
     }
 
+    @Test
+    public void testAvg() throws Exception {
+        readySchemes();
+        Object[] res = createQuery("select count(tPrimary),avg(tInt) from TestAllType")
+                .unique();
+        System.out.println(Arrays.toString(res));
+    }
+
 	/**
 	 * 创建查询
 	 * 

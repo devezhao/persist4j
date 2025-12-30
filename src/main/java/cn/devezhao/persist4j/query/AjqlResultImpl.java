@@ -226,12 +226,18 @@ public class AjqlResultImpl implements Result {
 			if (item.getType() == SelectItemType.Aggregator) {
 				Editor editor;
 				String aggregator = ((JoinField) item).getAggregator();
-				
+
+                // @see ParserHelper#isAggregator
+
 				if ("COUNT".equalsIgnoreCase(aggregator)) {
 					editor = FieldType.LONG.getFieldEditor();
 					
-				} else if ("DATE_FORMAT".equalsIgnoreCase(aggregator) 
-						|| "CONCAT".equalsIgnoreCase(aggregator)) {
+				} else if ("AVG".equalsIgnoreCase(aggregator)) {
+                    editor = FieldType.DECIMAL.getFieldEditor();
+
+                } else if ("DATE_FORMAT".equalsIgnoreCase(aggregator)
+						|| "CONCAT".equalsIgnoreCase(aggregator)
+                        || "GROUP_CONCAT".equalsIgnoreCase(aggregator)) {
 					editor = FieldType.STRING.getFieldEditor();
 					
 				} else if ("YEAR".contentEquals(aggregator)

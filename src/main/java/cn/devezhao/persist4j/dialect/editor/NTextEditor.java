@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.hutool.core.io.IoUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -98,6 +99,14 @@ public class NTextEditor extends AbstractFieldEditor {
 //		}
 		// TASK can't put reader to column
 //		pstmt.setCharacterStream(index, reader, (int) size);
-		pstmt.setString(index, value.toString());
+
+		String value2str;
+		if (value instanceof Reader) {
+			value2str = IoUtil.read((Reader) value, true);
+		} else {
+			value2str = value.toString();
+		}
+
+		pstmt.setString(index, value2str);
 	}
 }

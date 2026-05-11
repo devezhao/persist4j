@@ -46,6 +46,7 @@ public class ParserHelper {
 				|| type == AjQLParserTokenTypes.DAY
 				|| type == AjQLParserTokenTypes.DAYOFWEEK
 				|| type == AjQLParserTokenTypes.DATE
+				|| type == AjQLParserTokenTypes.TIME
 				|| isAggregatorWithMode(type)
 				|| isAggregatorWithNested(type);
 	}

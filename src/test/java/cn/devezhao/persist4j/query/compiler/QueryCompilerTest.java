@@ -246,11 +246,11 @@ public class QueryCompilerTest extends Compiler {
 
     @Test
     public void testFnForDate() {
-        String ajql = "select YEAR(tDate),QUARTER(tDate),MONTH(tDate),WEEK(tDate),DAY(tDate),DAYOFWEEK(tDate),DATE(tDate) from TestAllType";
+        String ajql = "select YEAR(tDate),QUARTER(tDate),MONTH(tDate),WEEK(tDate),DAY(tDate),DAYOFWEEK(tDate),DATE(tDate),TIME(tDate) from TestAllType";
         QueryCompiler compiler = createCompiler(ajql);
         System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 
-        ajql = "select tDate from TestAllType where DAYOFWEEK(tDate) = 5";
+        ajql = "select tDate from TestAllType where DAYOFWEEK(tDate) = 5 and DATE(tDate) = '2026-05-01' and TIME(tDate) > '08:00:00'";
         compiler = createCompiler(ajql);
         System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
     }

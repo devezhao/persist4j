@@ -43,6 +43,7 @@ tokens {
 	DAY = "day";
 	DAYOFWEEK = "DAYOFWEEK";
 	DATE = "date";
+	TIME = "time";
 	CONCAT = "concat";
 
 	IS = "is";
@@ -143,7 +144,7 @@ aggregateWithFields
 	;
 	
 aggregate
-	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DAY^ | DAYOFWEEK^ | DATE^) LPAREN! column RPAREN!
+	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DAY^ | DAYOFWEEK^ | DATE^ | TIME^) LPAREN! column RPAREN!
 	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
 	| aggregateWithMode
 	| aggregateWithFields

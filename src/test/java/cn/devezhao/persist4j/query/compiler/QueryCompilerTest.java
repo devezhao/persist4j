@@ -250,7 +250,7 @@ public class QueryCompilerTest extends Compiler {
         QueryCompiler compiler = createCompiler(ajql);
         System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 
-        ajql = "select tDate from TestAllType where DAYOFWEEK(tDate) = 5 and DATE(tDate) = '2026-05-01' and TIME(tDate) > '08:00:00'";
+        ajql = "select tDate from TestAllType where DAYOFWEEK(tDate) = 5 and DATE(tDate) = '2026-05-01' and TIME(tDate) > '08:00:00' and TIME(tDate) BETWEEN '08:00:00' AND '18:00:00'";
         compiler = createCompiler(ajql);
         System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
     }

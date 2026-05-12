@@ -254,4 +254,11 @@ public class QueryCompilerTest extends Compiler {
         compiler = createCompiler(ajql);
         System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
     }
+
+	@Test
+	public void testFnInSelect() {
+		String ajql = "select 'TIME','DATE' from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+	}
 }

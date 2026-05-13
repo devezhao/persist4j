@@ -102,25 +102,33 @@ public class AjqlQuery extends BaseQuery<Query> implements Query {
 		return queryCompiler.getSelectItems();
 	}
 
+	/**
+	 * @return
+	 */
+	public QueryCompiler getQueryCompiler() {
+		compileQueryIfNeed();
+		return queryCompiler;
+	}
+
+	/**
+	 * @return
+	 */
+	public Map<String, Object> getInParameters() {
+		return inParameters;
+	}
+
+	/**
+	 * @return
+	 */
+	protected PersistManagerFactory getPersistManagerFactory() {
+		return managerFactory;
+	}
+
 	private void compileQueryIfNeed() {
 		if (queryCompiler != null) {
 			return;
 		}
 		queryCompiler = new QueryCompiler(this.ajql);
 		queryCompiler.compile(managerFactory.getSQLExecutorContext(), this.filter);
-	}
-
-	// ---------------------------------------------------------------------
-
-	protected PersistManagerFactory getPersistManagerFactory() {
-		return managerFactory;
-	}
-
-	protected QueryCompiler getQueryCompiler() {
-		return queryCompiler;
-	}
-
-	protected Map<String, Object> getInParameters() {
-		return inParameters;
 	}
 }

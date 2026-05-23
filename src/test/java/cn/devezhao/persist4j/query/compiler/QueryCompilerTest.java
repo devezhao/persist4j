@@ -261,4 +261,11 @@ public class QueryCompilerTest extends Compiler {
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 	}
+
+	@Test
+	public void testCoalesce() {
+		String ajql = "select CONCAT('tText','tText2'), COALESCE('tText','tText2','tText3') from TestAllType";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+	}
 }

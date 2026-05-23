@@ -64,7 +64,7 @@ public class ParserHelper {
 	 * @return
 	 */
 	public static boolean isAggregatorWithNested(int type) {
-		return type == AjQLParserTokenTypes.CONCAT;
+		return type == AjQLParserTokenTypes.CONCAT || type == AjQLParserTokenTypes.COALESCE;
 	}
 
 	/**

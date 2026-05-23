@@ -45,6 +45,7 @@ tokens {
 	DATE = "date";
 	TIME = "time";
 	CONCAT = "concat";
+	COALESCE = "coalesce";
 
 	IS = "is";
 	NOT = "not";
@@ -141,8 +142,9 @@ aggregateWithMode
 
 aggregateWithFields
 	: CONCAT^ LPAREN! (selectItem | QUOTED_STRING) ( COMMA (selectItem | QUOTED_STRING) )* RPAREN!
+	| COALESCE^ LPAREN! (selectItem | QUOTED_STRING) ( COMMA (selectItem | QUOTED_STRING) )* RPAREN!
 	;
-	
+
 aggregate
 	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DAY^ | DAYOFWEEK^ | DATE^ | TIME^) LPAREN! column RPAREN!
 	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!

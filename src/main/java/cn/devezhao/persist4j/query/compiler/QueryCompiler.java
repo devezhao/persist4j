@@ -188,7 +188,8 @@ public class QueryCompiler implements Serializable {
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Field);
 				distinctFields.add(aJF);
 				
-			} else if (item.getType() == AjQLParserTokenTypes.CONCAT) {
+			} else if (item.getType() == AjQLParserTokenTypes.CONCAT
+					|| item.getType() == AjQLParserTokenTypes.COALESCE) {
 				aJF = bindJoinField(aJTree, entity, item, SelectItemType.Aggregator);
 				aJF.setAggregator(item.getText(), null);
 				mutliFieldsAggregators.put(aJF, item);
@@ -288,7 +289,8 @@ public class QueryCompiler implements Serializable {
 			String clause = aJF.as(columnIncrease, sqlExecutorContext.getDialect());
 			
 			if (aJF.getType() == SelectItemType.Aggregator) {
-				if ("CONCAT".equalsIgnoreCase(aJF.getAggregator())) {
+				if ("CONCAT".equalsIgnoreCase(aJF.getAggregator())
+						|| "COALESCE".equalsIgnoreCase(aJF.getAggregator())) {
 					AST node = mutliFieldsAggregators.get(aJF);
 					StringBuilder concat = compileByClause(node, "concat");
 					concat.insert(6, "( ").append(") as ");

@@ -2,29 +2,26 @@
 
 package cn.devezhao.persist4j.query.compiler.antlr;
 
-import java.io.InputStream;
+import antlr.ANTLRHashString;
+import antlr.ByteBuffer;
+import antlr.CharBuffer;
+import antlr.CharScanner;
+import antlr.CharStreamException;
+import antlr.CharStreamIOException;
+import antlr.InputBuffer;
+import antlr.LexerSharedInputState;
+import antlr.NoViableAltForCharException;
+import antlr.RecognitionException;
+import antlr.Token;
+import antlr.TokenStream;
 import antlr.TokenStreamException;
 import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
-import antlr.CharStreamException;
-import antlr.CharStreamIOException;
-import antlr.ANTLRException;
+import antlr.collections.impl.BitSet;
+
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.Hashtable;
-import antlr.CharScanner;
-import antlr.InputBuffer;
-import antlr.ByteBuffer;
-import antlr.CharBuffer;
-import antlr.Token;
-import antlr.CommonToken;
-import antlr.RecognitionException;
-import antlr.NoViableAltForCharException;
-import antlr.MismatchedCharException;
-import antlr.TokenStream;
-import antlr.ANTLRHashString;
-import antlr.LexerSharedInputState;
-import antlr.collections.impl.BitSet;
-import antlr.SemanticException;
 
 public class AjQLLexer extends CharScanner implements AjQLParserTokenTypes, TokenStream
  {
@@ -47,8 +44,8 @@ public AjQLLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("DAYOFWEEK", this), new Integer(29));
 	literals.put(new ANTLRHashString("min", this), new Integer(19));
 	literals.put(new ANTLRHashString("month", this), new Integer(26));
-	literals.put(new ANTLRHashString("false", this), new Integer(41));
-	literals.put(new ANTLRHashString("true", this), new Integer(40));
+	literals.put(new ANTLRHashString("false", this), new Integer(42));
+	literals.put(new ANTLRHashString("true", this), new Integer(41));
 	literals.put(new ANTLRHashString("time", this), new Integer(31));
 	literals.put(new ANTLRHashString("rollup", this), new Integer(17));
 	literals.put(new ANTLRHashString("and", this), new Integer(8));
@@ -56,32 +53,33 @@ public AjQLLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("asc", this), new Integer(11));
 	literals.put(new ANTLRHashString("desc", this), new Integer(12));
 	literals.put(new ANTLRHashString("select", this), new Integer(4));
-	literals.put(new ANTLRHashString("exists", this), new Integer(38));
+	literals.put(new ANTLRHashString("exists", this), new Integer(39));
 	literals.put(new ANTLRHashString("distinct", this), new Integer(5));
 	literals.put(new ANTLRHashString("day", this), new Integer(28));
 	literals.put(new ANTLRHashString("group", this), new Integer(13));
 	literals.put(new ANTLRHashString("where", this), new Integer(7));
 	literals.put(new ANTLRHashString("year", this), new Integer(24));
-	literals.put(new ANTLRHashString("match", this), new Integer(42));
+	literals.put(new ANTLRHashString("match", this), new Integer(43));
 	literals.put(new ANTLRHashString("avg", this), new Integer(20));
 	literals.put(new ANTLRHashString("order", this), new Integer(10));
-	literals.put(new ANTLRHashString("in", this), new Integer(36));
-	literals.put(new ANTLRHashString("null", this), new Integer(35));
+	literals.put(new ANTLRHashString("in", this), new Integer(37));
+	literals.put(new ANTLRHashString("null", this), new Integer(36));
 	literals.put(new ANTLRHashString("having", this), new Integer(15));
 	literals.put(new ANTLRHashString("quarter", this), new Integer(25));
 	literals.put(new ANTLRHashString("date_format", this), new Integer(23));
-	literals.put(new ANTLRHashString("between", this), new Integer(39));
+	literals.put(new ANTLRHashString("between", this), new Integer(40));
 	literals.put(new ANTLRHashString("or", this), new Integer(9));
 	literals.put(new ANTLRHashString("max", this), new Integer(18));
 	literals.put(new ANTLRHashString("from", this), new Integer(6));
-	literals.put(new ANTLRHashString("is", this), new Integer(33));
-	literals.put(new ANTLRHashString("like", this), new Integer(37));
+	literals.put(new ANTLRHashString("is", this), new Integer(34));
+	literals.put(new ANTLRHashString("like", this), new Integer(38));
 	literals.put(new ANTLRHashString("date", this), new Integer(30));
-	literals.put(new ANTLRHashString("group_concat", this), new Integer(43));
+	literals.put(new ANTLRHashString("group_concat", this), new Integer(44));
 	literals.put(new ANTLRHashString("week", this), new Integer(27));
-	literals.put(new ANTLRHashString("separator", this), new Integer(44));
+	literals.put(new ANTLRHashString("separator", this), new Integer(45));
 	literals.put(new ANTLRHashString("with", this), new Integer(16));
-	literals.put(new ANTLRHashString("not", this), new Integer(34));
+	literals.put(new ANTLRHashString("not", this), new Integer(35));
+	literals.put(new ANTLRHashString("coalesce", this), new Integer(33));
 	literals.put(new ANTLRHashString("by", this), new Integer(14));
 }
 
@@ -501,17 +499,17 @@ tryAgain:
 		{
 		mCOLON(false);
 		{
-		int _cnt103=0;
-		_loop103:
+		int _cnt107=0;
+		_loop107:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				mIDENT_LETTER(false);
 			}
 			else {
-				if ( _cnt103>=1 ) { break _loop103; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt107>=1 ) { break _loop107; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt103++;
+			_cnt107++;
 		} while (true);
 		}
 		}
@@ -571,13 +569,13 @@ tryAgain:
 		
 		mIDENT_START(false);
 		{
-		_loop106:
+		_loop110:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				mIDENT_LETTER(false);
 			}
 			else {
-				break _loop106;
+				break _loop110;
 			}
 			
 		} while (true);
@@ -663,17 +661,17 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		int _cnt112=0;
-		_loop112:
+		int _cnt116=0;
+		_loop116:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mDIGIT(false);
 			}
 			else {
-				if ( _cnt112>=1 ) { break _loop112; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt116>=1 ) { break _loop116; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt112++;
+			_cnt116++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -693,17 +691,17 @@ tryAgain:
 		if ((LA(1)=='.')) {
 			mDOT(false);
 			{
-			int _cnt116=0;
-			_loop116:
+			int _cnt120=0;
+			_loop120:
 			do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mDIGIT(false);
 				}
 				else {
-					if ( _cnt116>=1 ) { break _loop116; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt120>=1 ) { break _loop120; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt116++;
+				_cnt120++;
 			} while (true);
 			}
 		}
@@ -724,8 +722,8 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		int _cnt119=0;
-		_loop119:
+		int _cnt123=0;
+		_loop123:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				mIDENT_LETTER(false);
@@ -734,10 +732,10 @@ tryAgain:
 				matchRange('\u0080','\uFFFE');
 			}
 			else {
-				if ( _cnt119>=1 ) { break _loop119; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt123>=1 ) { break _loop123; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt119++;
+			_cnt123++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -756,12 +754,12 @@ tryAgain:
 		match('\'');
 		text.setLength(_saveIndex);
 		{
-		_loop124:
+		_loop128:
 		do {
-			boolean synPredMatched123 = false;
+			boolean synPredMatched127 = false;
 			if (((LA(1)=='\'') && (LA(2)=='\''))) {
-				int _m123 = mark();
-				synPredMatched123 = true;
+				int _m127 = mark();
+				synPredMatched127 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -769,19 +767,19 @@ tryAgain:
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched123 = false;
+					synPredMatched127 = false;
 				}
-				rewind(_m123);
+				rewind(_m127);
 inputState.guessing--;
 			}
-			if ( synPredMatched123 ) {
+			if ( synPredMatched127 ) {
 				mESCqs(false);
 			}
 			else if ((_tokenSet_3.member(LA(1)))) {
 				matchNot('\'');
 			}
 			else {
-				break _loop124;
+				break _loop128;
 			}
 			
 		} while (true);

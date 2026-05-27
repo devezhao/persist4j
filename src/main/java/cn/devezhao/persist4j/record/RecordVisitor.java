@@ -14,7 +14,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.DateFormat;
@@ -95,8 +94,9 @@ public class RecordVisitor {
 			pVal = ch == BoolEditor.TRUE;
 			
 		} else if (FieldType.NTEXT.equals(ft)) {
-			pVal = new StringReader(value);
-			
+//			pVal = new StringReader(value);  // fix:1.8.9
+			pVal = value;
+
 		} else if (FieldType.BINARY.equals(ft)) {
 			// TODO BINARY
 			throw new UnsupportedOperationException("Unsupported Type: BINARY");
@@ -147,8 +147,8 @@ public class RecordVisitor {
 			literalValue = (Boolean) value ? "T" : "F";
 			
 		} else if (FieldType.NTEXT.equals(ft)) {
-			literalValue = new NTextEditor().read2String(value).toString();
-			
+			literalValue = NTextEditor.read2String(value).toString();
+
 		} else if (FieldType.BINARY.equals(ft)) {
 			// TODO BINARY
 			throw new UnsupportedOperationException("Unsupported Type: BINARY");

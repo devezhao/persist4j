@@ -6,6 +6,7 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.PersistException;
 import cn.devezhao.persist4j.Record;
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.dialect.editor.NTextEditor;
 import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.record.FieldValueException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
@@ -391,7 +392,7 @@ public class StandardRecord implements Record {
 		}
 		// NTEXT StringReader
 		if (String.class.isAssignableFrom(matchsClazz)  && Reader.class.isAssignableFrom(valueClazz)) {
-			return IoUtil.read((Reader) value, true);
+			return NTextEditor.read2String(value);
 		}
 
 		throw new PersistException(

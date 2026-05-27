@@ -33,53 +33,6 @@ public class NTextEditor extends AbstractFieldEditor {
 		return read2String(val);
 	}
 	
-	/**
-	 * @param ntext
-	 * @return
-	 */
-	public Object read2String(Object ntext) {
-		if (ntext == null) {
-			return null;
-		} 
-		else if (ntext instanceof Clob) {
-			try (Reader reader = ((Clob) ntext).getCharacterStream()) {
-				try (BufferedReader br = new BufferedReader(reader)) {
-					StringBuilder sb = new StringBuilder();
-					String line = br.readLine();
-					while (line != null) {
-						sb.append(line);
-						line = br.readLine();
-					}
-					ntext = sb.toString();
-				}
-				
-			} catch (Exception ex) {
-				LOG.error("Reading Clob failed", ex);
-			}
-		}
-		else if (ntext instanceof Reader) {
-			try (BufferedReader br = ntext instanceof BufferedReader
-					? ((BufferedReader) ntext) : new BufferedReader((Reader) ntext)) {
-				StringBuilder sb = new StringBuilder();
-				String line;
-				try {
-					while ((line = br.readLine()) != null) {
-						sb.append(line);
-					}
-					ntext = sb.toString();
-					
-				} catch (IOException ex) {
-					LOG.error("Reading Reader failed", ex);
-				}
-				
-			} catch (IOException ex) {
-				LOG.error("Reading Reader failed", ex);
-			}
-		}
-		
-		return ntext;
-	}
-	
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
@@ -100,13 +53,54 @@ public class NTextEditor extends AbstractFieldEditor {
 		// TASK can't put reader to column
 //		pstmt.setCharacterStream(index, reader, (int) size);
 
-		String value2str;
-		if (value instanceof Reader) {
-			value2str = IoUtil.read((Reader) value, true);
-		} else {
-			value2str = value.toString();
+		value = value instanceof Reader ? read2String(value) : value.toString();
+		pstmt.setString(index, String.valueOf(value));
+	}
+
+	/**
+	 * @param ntext
+	 * @return
+	 */
+	public static Object read2String(Object ntext) {
+		if (ntext == null) {
+			return null;
+		}
+		else if (ntext instanceof Clob) {
+			try (Reader reader = ((Clob) ntext).getCharacterStream()) {
+				try (BufferedReader br = new BufferedReader(reader)) {
+					StringBuilder sb = new StringBuilder();
+					String line = br.readLine();
+					while (line != null) {
+						sb.append(line);
+						line = br.readLine();
+					}
+					ntext = sb.toString();
+				}
+
+			} catch (Exception ex) {
+				LOG.error("Reading Clob failed", ex);
+			}
+		}
+		else if (ntext instanceof Reader) {
+			try (BufferedReader br = ntext instanceof BufferedReader
+					? ((BufferedReader) ntext) : new BufferedReader((Reader) ntext)) {
+				StringBuilder sb = new StringBuilder();
+				String line;
+				try {
+					while ((line = br.readLine()) != null) {
+						sb.append(line);
+					}
+					ntext = sb.toString();
+
+				} catch (IOException ex) {
+					LOG.error("Reading Reader failed", ex);
+				}
+
+			} catch (IOException ex) {
+				LOG.error("Reading Reader failed", ex);
+			}
 		}
 
-		pstmt.setString(index, value2str);
+		return ntext;
 	}
 }

@@ -9,6 +9,7 @@ import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.metadata.MissingMetaExcetion;
 import cn.devezhao.persist4j.record.FieldValueException;
 import cn.devezhao.persist4j.util.CaseInsensitiveMap;
+import cn.hutool.core.io.IoUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.Validate;
@@ -18,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalTime;
@@ -387,7 +389,11 @@ public class StandardRecord implements Record {
 		} else if (BigDecimal.class.isAssignableFrom(matchsClazz)  && Double.class.isAssignableFrom(valueClazz)) {
 			return BigDecimal.valueOf((Double) value);
 		}
-		
+		// NTEXT StringReader
+		if (String.class.isAssignableFrom(matchsClazz)  && Reader.class.isAssignableFrom(valueClazz)) {
+			return IoUtil.read((Reader) value, true);
+		}
+
 		throw new PersistException(
 				"Can't cast field [ " + key + " ] value type " + value.getClass() + " to " + matchsClazz);
 	}

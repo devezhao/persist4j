@@ -3,6 +3,7 @@ package cn.devezhao.persist4j.engine;
 import cn.devezhao.commons.ByteUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -65,11 +66,17 @@ public class ID implements Serializable {
         }
 		
 		if (id == null || StringUtils.isEmpty(id.toString())
-				|| id.toString().length() != idLength) {
+				|| id.toString().trim().length() != idLength) {
 			return false;
 		}
 
-		return id.toString().charAt(3) == '-';
+		String id2str = id.toString().trim();
+		if (id2str.contains(" ")) return false;
+
+		String code = id2str.substring(0, 3);
+		if (!NumberUtils.isNumber(code)) return false;
+
+		return id2str.charAt(3) == '-';
 	}
 
 	/**

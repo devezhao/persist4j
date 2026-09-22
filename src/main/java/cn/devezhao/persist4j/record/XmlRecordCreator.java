@@ -76,7 +76,7 @@ public class XmlRecordCreator implements RecordCreator {
 
 			Field field = entity.containsField(fieldName) ? entity.getField(fieldName) : null;
 			if (field == null) {
-				LOG.warn("Unable found field [ " + entity.getName() + '#' + fieldName  + " ], will ignore");
+				LOG.warn("Unable to find field [ " + entity.getName() + '#' + fieldName  + " ], will ignore");
 				continue;
 			}
 

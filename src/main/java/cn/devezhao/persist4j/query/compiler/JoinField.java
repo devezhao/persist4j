@@ -131,7 +131,12 @@ public class JoinField implements SelectItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return o.hashCode() == hashCode();
+        JoinField that = (JoinField) o;
+        return Objects.equals(tableNode, that.tableNode)
+                && Objects.equals(field, that.field)
+                && Objects.equals(fieldPath, that.fieldPath)
+                && Objects.equals(aggregator, that.aggregator)
+                && Objects.equals(aggregatorMode, that.aggregatorMode);
     }
 
     @Override

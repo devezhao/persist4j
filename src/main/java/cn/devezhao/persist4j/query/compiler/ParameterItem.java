@@ -39,7 +39,8 @@ public class ParameterItem implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return hashCode() == o.hashCode();
+        ParameterItem that = (ParameterItem) o;
+        return index == that.index && Objects.equals(named, that.named);
     }
 
     @Override

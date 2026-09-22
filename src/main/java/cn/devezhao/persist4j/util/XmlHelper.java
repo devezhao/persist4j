@@ -13,6 +13,7 @@ import org.dom4j.io.XMLWriter;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import java.io.InputStream;
@@ -34,7 +35,6 @@ public class XmlHelper {
 	public static final XmlHelper INSTANCE = new XmlHelper();
 
 	private DOMReader domReader;
-	private SAXReader saxReader;
 
 	/**
 	 * Create a dom4j SAXReader which will append all validation errors to
@@ -42,18 +42,27 @@ public class XmlHelper {
 	 */
 	public SAXReader createSAXReader(String file, List<String> errorsList,
 			EntityResolver entityResolver) {
-		if (saxReader == null) {
-			saxReader = new SAXReader();
-		}
+		SAXReader reader = new SAXReader();
+		
+		setFeatureQuietly(reader, "http://xml.org/sax/features/external-general-entities", false);
+		setFeatureQuietly(reader, "http://xml.org/sax/features/external-parameter-entities", false);
 		
 		if (entityResolver != null) {
-			saxReader.setEntityResolver(entityResolver);
-			saxReader.setValidation(true);
+			reader.setEntityResolver(entityResolver);
+			reader.setValidation(true);
 		}
 		
-		saxReader.setErrorHandler(new ErrorLogger(file, errorsList));
-		saxReader.setMergeAdjacentText(true);
-		return saxReader;
+		reader.setErrorHandler(new ErrorLogger(file, errorsList));
+		reader.setMergeAdjacentText(true);
+		return reader;
+	}
+
+	private void setFeatureQuietly(SAXReader reader, String name, boolean value) {
+		try {
+			reader.setFeature(name, value);
+		} catch (SAXException ex) {
+			LOG.warn("Cannot set SAX feature [ " + name + " ]", ex);
+		}
 	}
 
 	/**

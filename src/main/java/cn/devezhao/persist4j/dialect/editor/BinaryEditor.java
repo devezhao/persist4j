@@ -1,13 +1,13 @@
 package cn.devezhao.persist4j.dialect.editor;
 
-import cn.devezhao.persist4j.PersistException;
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.hutool.core.io.IoUtil;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * 二进制
@@ -28,18 +28,11 @@ public class BinaryEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		InputStream stream = (InputStream) value;
-		long size;
-		try {
-//			size = ByteUtils.size(stream);  // NOTE does not read
-			size = stream.available();
-		} catch (IOException e) {
-			throw new PersistException("Cannot read size of stream", e);
+		if (value == null) {
+			pstmt.setNull(index, Types.BLOB);
+			return;
 		}
-		if (size == 0) {
-			System.out.println("## STREAM IS EMPTY");
-		}
-		pstmt.setBinaryStream(index, stream, (int) size);
+		pstmt.setBytes(index, IoUtil.readBytes((InputStream) value));
 	}
 	
 	@Override

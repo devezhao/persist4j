@@ -27,7 +27,7 @@ public class StringEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		if (value == null || NullValue.is(value)) {
+		if (NullValue.isNull(value)) {
 			pstmt.setNull(index, Types.VARCHAR);
 		} else {
 			pstmt.setString(index, value.toString());

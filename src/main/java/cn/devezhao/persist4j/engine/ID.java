@@ -3,11 +3,11 @@ package cn.devezhao.persist4j.engine;
 import cn.devezhao.commons.ByteUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
 
 /**
  * Id of record
@@ -27,21 +27,20 @@ public class ID implements Serializable {
 	private static final Log LOG = LogFactory.getLog(ID.class);
 
 	private static IDGenerator idGenerator;
-	private static int idLength;
+	private static final Pattern ID_PATTERN = Pattern.compile("[0-9]{3}-[0-9a-z_-]+");
 	static {
 		String idClazz = StringUtils.defaultIfEmpty(
 				System.getProperty("org.qdss.persist.id"), WeakIDGenerator.class.getName());
 		try {
 			idGenerator = (IDGenerator) Class.forName(idClazz).getConstructor().newInstance();
 		} catch (Throwable ex) {
-			LOG.error("Could't instance ID clazz: " + idClazz);
+			LOG.error("Couldn't instantiate ID generator: " + idClazz);
 		}
 		if (idGenerator == null) {
 			idGenerator = new IDGenerator();
 		}
-		idLength = idGenerator.getLength();
 		if (LOG.isInfoEnabled()) {
-			LOG.warn("Using ID provider: " + idGenerator.getClass() + " (eg: " + idGenerator.generate(0) + ')');
+			LOG.warn("Using ID provider: " + idGenerator.getClass() + " (e.g. " + idGenerator.generate(0) + ')');
 		}
 	}
 	
@@ -65,18 +64,11 @@ public class ID implements Serializable {
             return true;
         }
 		
-		if (id == null || StringUtils.isEmpty(id.toString())
-				|| id.toString().trim().length() != idLength) {
+		if (NullValue.isNull(id) || StringUtils.isEmpty(id.toString())) {
 			return false;
 		}
-
-		String id2str = id.toString().trim();
-		if (id2str.contains(" ")) return false;
-
-		String code = id2str.substring(0, 3);
-		if (!NumberUtils.isNumber(code)) return false;
-
-		return id2str.charAt(3) == '-';
+		String s = id.toString().trim().toLowerCase();
+		return s.length() == idGenerator.getLength() && ID_PATTERN.matcher(s).matches();
 	}
 
 	/**
@@ -85,7 +77,7 @@ public class ID implements Serializable {
 	 */
 	public static ID valueOf(String id) {
 		if (!isId(id)) {
-			throw new IllegalArgumentException("Invaild id character: " + id);
+			throw new IllegalArgumentException("Invalid id character: " + id);
 		}
 		return (new ID(id));
 	}
@@ -116,7 +108,7 @@ public class ID implements Serializable {
 	/**
 	 * @return
 	 */
-	public Integer getEntityCode() {
+	public int getEntityCode() {
 		return entityCode;
 	}
 
@@ -163,6 +155,6 @@ public class ID implements Serializable {
 		if (!(obj instanceof ID)) {
 			return false;
 		}
-		return obj.hashCode() == hashCode();
+		return id.equals(((ID) obj).id);
 	}
 }

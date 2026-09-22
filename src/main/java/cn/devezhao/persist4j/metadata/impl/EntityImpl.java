@@ -1,6 +1,5 @@
 package cn.devezhao.persist4j.metadata.impl;
 
-import cn.devezhao.commons.ByteUtils;
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.dialect.FieldType;
@@ -86,7 +85,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 	}
 
 	@Override
-	public Integer getEntityCode() {
+	public int getEntityCode() {
 		return typeCode;
 	}
 
@@ -142,7 +141,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 
 	@Override
 	public int hashCode() {
-		return ByteUtils.hash(getEntityCode());
+		return getEntityCode();
 	}
 
 	@Override
@@ -153,7 +152,7 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		if (!(obj instanceof EntityImpl)) {
 			return false;
 		}
-		return obj.hashCode() == hashCode();
+		return getEntityCode() == ((EntityImpl) obj).getEntityCode();
 	}
 
 	@Override
@@ -214,6 +213,6 @@ public class EntityImpl extends BaseMetaObject implements Entity, Cloneable {
 		((EntityImpl) mainEntity).detailEntities.add(this);
 
 		// MUST! sort by code
-		((EntityImpl) mainEntity).detailEntities.sort((o1, o2) -> o2.getEntityCode().compareTo(o1.getEntityCode()));
+		((EntityImpl) mainEntity).detailEntities.sort((o1, o2) -> Integer.compare(o2.getEntityCode(), o1.getEntityCode()));
 	}
 }

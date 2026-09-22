@@ -1,6 +1,11 @@
 package cn.devezhao.persist4j.util;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 大小写不敏感 Map
@@ -95,7 +100,7 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 	}
 	
 	private String convertKey(final Object key) {
-		return key.toString().toUpperCase();
+		return key == null ? null : key.toString().toUpperCase();
     }
 
     /**
@@ -120,8 +125,9 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 		}
 		@Override
 		public V setValue(V value) {
+			V old = this.value;
 			this.value = value;
-			return value;
+			return old;
 		}
 		@Override
 		public String toString() {
@@ -131,8 +137,10 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            return o.hashCode() == hashCode();
+            if (!(o instanceof Entry)) return false;
+            Entry<?, ?> other = (Entry<?, ?>) o;
+            return Objects.equals(key, other.getKey())
+                    && Objects.equals(value, other.getValue());
         }
 
         @Override

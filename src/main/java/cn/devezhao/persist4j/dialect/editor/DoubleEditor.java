@@ -2,12 +2,14 @@ package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.commons.ObjectUtils;
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * 双精度数字
@@ -33,6 +35,11 @@ public class DoubleEditor extends AbstractFieldEditor {
 	
 	public void set(PreparedStatement pstmt, int index, Object value, int scale)
 			throws SQLException {
+        if (NullValue.isNull(value)) {
+            pstmt.setNull(index, Types.DOUBLE);
+            return;
+        }
+
         BigDecimal decimalValue;
         if (value instanceof BigDecimal) {
             decimalValue = (BigDecimal) value;

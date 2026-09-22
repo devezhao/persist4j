@@ -106,7 +106,7 @@ public class JsonRecordCreator implements RecordCreator {
 
 			final Field field = entity.containsField(fileName) ? entity.getField(fileName) : null;
 			if (field == null) {
-				LOG.warn("Unable found field [ " + entity.getName() + '#' + fileName  + " ], will ignore");
+				LOG.warn("Unable to find field [ " + entity.getName() + '#' + fileName  + " ], will ignore");
 				continue;
 			}
 

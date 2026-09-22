@@ -251,7 +251,10 @@ public class JoinTree implements Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            return o.hashCode() == hashCode();
+            JoinNode that = (JoinNode) o;
+            return Objects.equals(table, that.table)
+                    && Objects.equals(joinOnLeft, that.joinOnLeft)
+                    && Objects.equals(joinOnRight, that.joinOnRight);
         }
 
         @Override

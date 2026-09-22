@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public class QueryCompiler implements Serializable {
 	
 	final private Map<String, JoinField> joinFieldMap = new HashMap<>();
 	
-	final private Map<String, ParameterItem> inParameters = new HashMap<>();
+	final private List<ParameterItem> inParameters = new ArrayList<>();
 	private int inParametersIndex = 0;
 	
 	private SqlExecutorContext sqlExecutorContext;
@@ -142,7 +143,7 @@ public class QueryCompiler implements Serializable {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	public Map<String, ParameterItem> getInParameters() throws IllegalStateException {
+	public List<ParameterItem> getInParameters() throws IllegalStateException {
 		throwIfUncompile();
 		return inParameters;
 	}
@@ -367,7 +368,7 @@ public class QueryCompiler implements Serializable {
 					clause.append(INDEX_PARAM);
 					inParametersIndex++;
 					text = (text.charAt(0) == INDEX_PARAM) ? String.valueOf(inParametersIndex) : text;
-					inParameters.put(text, new ParameterItem(text, inParametersIndex, aJF.getField()));
+					inParameters.add(new ParameterItem(text, inParametersIndex, aJF.getField()));
 					break;
 				case AjQLParserTokenTypes.MATCH:
 					clause.append(compileMatchClause(next, lastField));
@@ -396,7 +397,7 @@ public class QueryCompiler implements Serializable {
 						}
 						
 					} else {
-						LOG.warn("Unknow token in `where` clause : <" + type + ", " + text + ">");
+						LOG.warn("Unknown token in `where` clause : <" + type + ", " + text + ">");
 					}
 				}
 				
@@ -452,7 +453,7 @@ public class QueryCompiler implements Serializable {
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
 				} else {
-					LOG.warn("Unknow token in `in` clause [ " + ttype + ":" + text + " ]");
+					LOG.warn("Unknown token in `in` clause [ " + ttype + ":" + text + " ]");
 				}
 				break;
 			}
@@ -492,7 +493,7 @@ public class QueryCompiler implements Serializable {
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
 				} else {
-					LOG.warn("Unknow token in `exists` clause [ " + ttype + ":" + text + " ]");
+					LOG.warn("Unknown token in `exists` clause [ " + ttype + ":" + text + " ]");
 				}
 				break;
 			}
@@ -517,7 +518,7 @@ public class QueryCompiler implements Serializable {
 		}
 		
 		if (!nested.inParameters.isEmpty()) {
-			this.inParameters.putAll(nested.inParameters);
+			this.inParameters.addAll(nested.inParameters);
 			this.inParametersIndex = nested.inParametersIndex;
 		}
 		
@@ -716,7 +717,7 @@ public class QueryCompiler implements Serializable {
 				}
 				
 				if (referenceTo == null) {
-					throw new CompileException("Entity " + joinEntity.getName() + " no reference-to " + rootEntity.getName());
+					throw new CompileException("Entity " + joinEntity.getName() + " has no reference to " + rootEntity.getName());
 				}
 				
 				JoinNode jNode = tree.addChildJoin(
@@ -731,12 +732,12 @@ public class QueryCompiler implements Serializable {
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
-			throw new CompileException("Force join must has two nodes");
+			throw new CompileException("Force join must have two nodes");
 		}
 		
 		if (joined.length == 1) {  // No joins
 			Field field = entity.getField(joined[0]);
-			Validate.notNull(field, "Unknow field [ " + joined[0] + " ] in entity [ " + entity.getName() + " ]");
+			Validate.notNull(field, "Unknown field [ " + joined[0] + " ] in entity [ " + entity.getName() + " ]");
 			JoinField aJF = new JoinField(tree.getRootJoinNode(), field, itemName, type);
 			joinFieldMap.put(itemName, aJF);
 			return aJF;
@@ -748,7 +749,7 @@ public class QueryCompiler implements Serializable {
 		for (int i = 0; i < joined.length; i++) {  // eg. `accountId.ownUser.fullName`
 			String fn = joined[i];
 			crtf = crte.getField(fn);
-			Validate.notNull(crtf, "Unknow field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
+			Validate.notNull(crtf, "Unknown field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
 			crte = getReferenceEntity(crtf);
 			
 			if (pjn == null) {
@@ -762,14 +763,14 @@ public class QueryCompiler implements Serializable {
 			
 			if (i + 2 == joined.length) {
 				Field last = crte.getField(joined[i + 1]);
-				Validate.notNull(last, "Unknow field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
+				Validate.notNull(last, "Unknown field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
 				
 				JoinField aJF = new JoinField(pjn, last, itemName, type);
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
 		}
-		throw new CompileException("Unknow error on bind JoinField");
+		throw new CompileException("Unknown error on binding JoinField");
 	}
 	
 	/**
@@ -815,7 +816,7 @@ public class QueryCompiler implements Serializable {
 	private JoinField getJoinField(AST item, AST aggregator, Dialect dialect) {
 		JoinField aJF = joinFieldMap.get(item.getText());
 		if (aJF == null) {
-			throw new CompileException("Unknow JoinField in clause [ " + item.getType() + ", " + item.getText() + " ]");
+			throw new CompileException("Unknown JoinField in clause [ " + item.getType() + ", " + item.getText() + " ]");
 		}
 		
 		// Use clone
@@ -840,7 +841,7 @@ public class QueryCompiler implements Serializable {
 	 */
 	private void throwIfUncompile() {
 		if (this.compiledSql == null) {
-			throw new IllegalStateException("uncompile");
+			throw new IllegalStateException("Not compiled");
 		}
 	}
 
@@ -855,7 +856,7 @@ public class QueryCompiler implements Serializable {
 					"ANTLR cannot parse AjQL stream, threw an exception [ "
 					+ cause.getClass().getName() + ": " + ex.getCause() + " {" + ajql + "} ]", ex.getCause());
 		}
-		throw new CompileException("Parse AjQL error {" + ajql + "}", ex);
+		throw new CompileException("Error parsing AjQL: {" + ajql + "}", ex);
 	}
 	
 	// ----------------------------------------------------------- Just for Nested SQL

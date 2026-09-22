@@ -59,6 +59,7 @@ public abstract class Dialect implements Serializable {
 		registerFieldType(FieldType.DATE);
 		registerFieldType(FieldType.TIMESTAMP);
 		registerFieldType(FieldType.TIME);
+		registerFieldType(FieldType.DATETIME);
 		registerFieldType(FieldType.BOOL);
 		registerFieldType(FieldType.NTEXT);
 		registerFieldType(FieldType.BINARY);

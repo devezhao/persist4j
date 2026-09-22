@@ -16,7 +16,7 @@ public interface Entity extends BaseMeta {
 	 * 
 	 * @return
 	 */
-	Integer getEntityCode();
+	int getEntityCode();
 	
 	/**
 	 * 获取主键字段

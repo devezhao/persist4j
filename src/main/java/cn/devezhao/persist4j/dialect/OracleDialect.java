@@ -24,7 +24,7 @@ public class OracleDialect extends Dialect {
 		registerColumnType(FieldType.SMALL_INT.getMask(), "SMALLINT", Types.SMALLINT);
 		registerColumnType(FieldType.DOUBLE.getMask(), "NUMBER(19, 8)", Types.NUMERIC);
 		registerColumnType(FieldType.DECIMAL.getMask(), "NUMBER(19, 8)", Types.NUMERIC);
-		registerColumnType(FieldType.LONG.getMask(), "LONG", Types.BIGINT);
+		registerColumnType(FieldType.LONG.getMask(), "NUMBER(19)", Types.BIGINT);
 		registerColumnType(FieldType.CHAR.getMask(), "CHAR(1)", Types.CHAR);
 		registerColumnType(FieldType.STRING.getMask(), "VARCHAR2(%d)", Types.VARCHAR);
 		registerColumnType(FieldType.TEXT.getMask(), "LONG VARCHAR", Types.LONGVARCHAR);
@@ -62,7 +62,7 @@ public class OracleDialect extends Dialect {
 
 		String pagingSelect;
 		if (offset > 0) {
-			pagingSelect = "select * from ( select row_.*, ROWNUM rownum_ from ( %s ) where rownum_ <= ? and rownum_ > ?";
+			pagingSelect = "select * from ( select row_.*, ROWNUM rownum_ from ( %s ) row_ where rownum_ <= %d ) where rownum_ > %d";
 			pagingSelect = String.format(pagingSelect, query, limit + offset, offset);
 		} else {
 			pagingSelect = "select * from ( %s ) where ROWNUM <= %d";

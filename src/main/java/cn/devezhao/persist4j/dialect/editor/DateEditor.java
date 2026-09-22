@@ -1,10 +1,12 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * 日期
@@ -25,6 +27,11 @@ public class DateEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
+		if (NullValue.isNull(value)) {
+			pstmt.setNull(index, Types.DATE);
+			return;
+		}
+		
 		java.sql.Date v;
 		if (value.getClass() == java.util.Date.class) {
 			v = new java.sql.Date( ((java.util.Date) value).getTime() );

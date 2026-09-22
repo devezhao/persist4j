@@ -27,7 +27,11 @@ import org.dom4j.Node;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -126,7 +130,7 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				this.wait(1000 * 10);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
-				throw new MetadataException("Wait for refresh lock fail");
+				throw new MetadataException("Failed to wait for refresh lock");
 			}
 		}
 	}
@@ -140,13 +144,24 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 	public void refresh(boolean initState) {
 		final Document newlyDocument = readConfiguration(initState);
 		
+		final Map<String, Integer> backupName2TypeMap = this.name2TypeMap;
+		final Map<Integer, Entity> backupEntityMap = this.entityMap;
+		final Document backupDocument = this.configDocument;
+		
 		this.refreshLocked = true;
-		this.name2TypeMap.clear();
-		this.entityMap.clear();
+		this.name2TypeMap = new CaseInsensitiveMap<>();
+		this.entityMap = new HashMap<>();
 		this.configDocument = null;
 		try {
 			build(newlyDocument);
 			this.configDocument = newlyDocument;
+		} catch (Throwable ex) {
+			this.name2TypeMap = backupName2TypeMap;
+			this.entityMap = backupEntityMap;
+			this.configDocument = backupDocument;
+			REFFIELD_REFS.clear();
+			SM_MAPPING.clear();
+			throw ex;
 		} finally {
 			this.refreshLocked = false;
 			this.notifyAll();

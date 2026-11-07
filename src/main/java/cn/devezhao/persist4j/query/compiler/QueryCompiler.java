@@ -207,10 +207,10 @@ public class QueryCompiler implements Serializable {
 					column = column.getNextSibling();
 				}
 
-				// eg. count(distinct DATE_FORMAT(x, '%Y'))
+				// 嵌套聚合 eg. count(distinct DATE_FORMAT(x, '%Y'))、group_concat(DATE_FORMAT(x, '%Y'))
 				AST nested = null;
-				if (item.getType() == AjQLParserTokenTypes.COUNT
-						&& ParserHelper.isAggregatorWithMode(column.getType())) {
+				if ((item.getType() == AjQLParserTokenTypes.COUNT || item.getType() == AjQLParserTokenTypes.GROUP_CONCAT)
+						&& column.getType() == AjQLParserTokenTypes.DATE_FORMAT) {
 					nested = column;
 					column = column.getFirstChild();
 				}
@@ -219,19 +219,20 @@ public class QueryCompiler implements Serializable {
 				aJF.setAggregator(item.getText(), withDistinct ? "distinct" : null);
 
 				if (nested != null) {
-					// NOTE 不设置 aggregatorMode，格式串在生成 SQL 时从 nested 取
+					// NOTE 格式串不设置到 aggregatorMode，生成 SQL 时从 nested 取
 					nestedAggregators.put(aJF, nested);
+				}
 
-				} else if (ParserHelper.isAggregatorWithMode(item.getType())) {
-					column = column.getNextSibling();
+				if (ParserHelper.isAggregatorWithMode(item.getType())) {
+					// 嵌套时 separator 在 nested 之后，否则在字段之后
+					AST mode = (nested != null) ? nested.getNextSibling() : column.getNextSibling();
 
 					// group_concat
-					if (column != null && column.getType() == AjQLParserTokenTypes.SEPARATOR) {
-						String sep = column.getNextSibling().getText();
+					if (mode != null && mode.getType() == AjQLParserTokenTypes.SEPARATOR) {
+						String sep = mode.getNextSibling().getText();
 						aJF.setAggregatorMode(String.format("separator '%s'", sep));
-					} else if (column != null) {
-						String mode = column.getNextSibling().getText();  // [, '%Y']
-						aJF.setAggregatorMode(mode);
+					} else if (mode != null && nested == null) {
+						aJF.setAggregatorMode(mode.getNextSibling().getText());  // [, '%Y']
 					}
 				}
 
@@ -310,15 +311,22 @@ public class QueryCompiler implements Serializable {
 				if ("CONCAT".equalsIgnoreCase(aJF.getAggregator())
 						|| "COALESCE".equalsIgnoreCase(aJF.getAggregator())) {
 					AST node = mutliFieldsAggregators.get(aJF);
-					StringBuilder concat = compileByClause(node, "concat");
-					concat.insert(6, "( ").append(") as ");
+					StringBuilder concat = compileByClause(node, aJF.getAggregator());
+					concat.insert(aJF.getAggregator().length(), "( ").append(") as ");
 					clause = concat.toString();
 					
 				} else if ("GROUP_CONCAT".equalsIgnoreCase(aJF.getAggregator())) {
 					StringBuilder s = new StringBuilder(aJF.getAggregator())
 							.append("( ");
 					if (aJF.getAggregatorSibling() != null) s.append("distinct ");
-					s.append(aJF.getName()).append(" ");
+					AST nested = nestedAggregators.get(aJF);
+					if (nested != null) {
+						// eg. group_concat( DATE_FORMAT( _t0.`X`, '%Y' ) )
+						s.append(nested.getText()).append("( ").append(aJF.getName())
+								.append(", '").append(getNestedAggregatorMode(nested)).append("' ) ");
+					} else {
+						s.append(aJF.getName()).append(" ");
+					}
 					if (aJF.getAggregatorMode() != null) s.append(aJF.getAggregatorMode()).append(" ");
 					clause = s.append(")").toString();
 
@@ -326,10 +334,9 @@ public class QueryCompiler implements Serializable {
 					AST nested = nestedAggregators.get(aJF);
 					if (nested != null) {
 						// eg. count( distinct DATE_FORMAT( _t0.`X`, '%Y' ) )
-						String mode = nested.getFirstChild().getNextSibling().getNextSibling().getText();  // [x, '%Y']
 						clause = String.format("%s( %s%s( %s, '%s' ) ) as ", aJF.getAggregator(),
 								aJF.getAggregatorSibling() == null ? "" : aJF.getAggregatorSibling() + " ",
-								nested.getText(), aJF.getName(), mode);
+								nested.getText(), aJF.getName(), getNestedAggregatorMode(nested));
 					} else if (aJF.getAggregatorMode() != null) {
 						clause = String.format("%s( %s, '%s' ) as ", aJF.getAggregator(), aJF.getName(), aJF.getAggregatorMode());
 					} else if (aJF.getAggregatorSibling() != null) {
@@ -599,7 +606,7 @@ public class QueryCompiler implements Serializable {
 		
 		AST next;
 		if (who.toUpperCase().startsWith("HAVING")
-				|| "CONCAT".equalsIgnoreCase(who)) {
+				|| ParserHelper.isAggregatorWithNested(ast.getType())) {  // CONCAT/COALESCE 的首个孩子即参数
 			next = ast.getFirstChild();
 		} else {
 			next = ast.getFirstChild().getNextSibling();
@@ -658,8 +665,8 @@ public class QueryCompiler implements Serializable {
 	 */
 	private String compileAggregator(AST next) {
 		if (ParserHelper.isAggregatorWithNested(next.getType())) {
-			StringBuilder concat = compileByClause(next, "concat");
-			concat.insert(6, "( ").append(")");
+			StringBuilder concat = compileByClause(next, next.getText());
+			concat.insert(next.getText().length(), "( ").append(")");
 			return concat.toString();
 		}
 
@@ -693,6 +700,16 @@ public class QueryCompiler implements Serializable {
 		}
 		clause.append(" )");
 		return clause.toString();
+	}
+	
+	/**
+	 * 获取嵌套聚合（DATE_FORMAT）的格式串
+	 * 
+	 * @param nested
+	 * @return
+	 */
+	private static String getNestedAggregatorMode(AST nested) {
+		return nested.getFirstChild().getNextSibling().getNextSibling().getText();  // [x, '%Y']
 	}
 	
 	/**
@@ -829,7 +846,25 @@ public class QueryCompiler implements Serializable {
 		do {
 			AST node = ast;
 			if (node.getType() != AjQLParserTokenTypes.IDENT) {
-				node = node.getFirstChild();
+				if (ParserHelper.isAggregatorWithNested(node.getType())) {
+					// CONCAT/COALESCE 有多个字段，递归绑定全部参数
+					// @see #bindJoinField 虚拟 JF
+					findJoinFields(node, aJTree, entity);
+					continue;
+
+				} else if (ParserHelper.isAggregator(node.getType())) {
+					// 聚合函数逐层下探到字段 eg. count(distinct DATE_FORMAT(x, '%Y'))
+					node = node.getFirstChild();
+					if (node != null && node.getType() == AjQLParserTokenTypes.DISTINCT) {
+						node = node.getNextSibling();
+					}
+					if (node != null && ParserHelper.isAggregator(node.getType())) {
+						node = node.getFirstChild();
+					}
+				} else {
+					node = node.getFirstChild();
+				}
+
 				if (node == null || node.getType() != AjQLParserTokenTypes.IDENT) {
 					continue;
 				}

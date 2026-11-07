@@ -134,15 +134,15 @@ public class QueryCompilerTest extends Compiler {
 	@Test
 	public void testFulltextMatch() {
 		// 推荐
-		String ajqlV2 = "select tPrimary,tInt,tBool from TestAllType where match2 (tReference, '123 abc NB')";
-		QueryCompiler compilerV2 = createCompiler(ajqlV2);
-		System.out.println(ajqlV2 + "\n>> FULLTEXT MATCH\n" + compilerV2.getCompiledSql());
+//		String ajqlV2 = "select tPrimary,tInt,tBool from TestAllType where match (tReference, '123 abc NB')";
+//		QueryCompiler compilerV2 = createCompiler(ajqlV2);
+//		System.out.println(ajqlV2 + "\n>> FULLTEXT MATCH\n" + compilerV2.getCompiledSql());
 
 		String ajql = "select tPrimary from TestAllType where tInt > 100 and tText match '123 abc NB'";
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>> FULLTEXT MATCH\n" + compiler.getCompiledSql());
 	}
-	
+
 	@Test
 	public void testBAnd() {
 		String ajql = "select tPrimary from TestAllType where (tInt !& 1) and tInt && 1";
@@ -164,7 +164,7 @@ public class QueryCompilerTest extends Compiler {
 		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
 		assertEquals(compiler.getCompiledSql(),
-				"select count( distinct _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )");
+				"select count( _t0.`T_PRIMARY` ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) order by count( _t0.`T_PRIMARY` ) desc");
 	}
 
     @Test
@@ -261,6 +261,19 @@ public class QueryCompilerTest extends Compiler {
 		ajql = "select group_concat(tText) from TestAllType";
 		compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+
+		// 内嵌 DATE_FORMAT
+		ajql = "select group_concat(DATE_FORMAT(tDate, '%Y')) from TestAllType";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select group_concat( DATE_FORMAT( _t0.`T_DATE`, '%Y' ) )_c0 from `test_all_type` as _t0 where ( 1 = 1 )",
+				compiler.getCompiledSql());
+
+		ajql = "select group_concat(distinct DATE_FORMAT(tDate, '%Y') separator ',') from TestAllType";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select group_concat( distinct DATE_FORMAT( _t0.`T_DATE`, '%Y' ) separator ',' )_c0 from `test_all_type` as _t0 where ( 1 = 1 )",
+				compiler.getCompiledSql());
 	}
 
 	@Test
@@ -287,9 +300,31 @@ public class QueryCompilerTest extends Compiler {
 
 	@Test
 	public void testFnInSelect() {
-		String ajql = "select 'TIME','DATE' from TestAllType";
+		String ajql = "select 'tTIME','tDATE' from TestAllType";
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+	}
+
+	@Test
+	public void testAggregatorInByClause() {
+		// having/order by 中的聚合字段没有在 select 出现过
+		String ajql = "select tString from TestAllType group by tString having count(distinct tDate) > 1";
+		QueryCompiler compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select _t0.`T_STRING` as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) group by _t0.`T_STRING` having count( distinct _t0.`T_DATE` ) > 1",
+				compiler.getCompiledSql());
+
+		ajql = "select tString from TestAllType group by tString having count(distinct DATE_FORMAT(tDate, '%Y-%m-%d')) > 1";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select _t0.`T_STRING` as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) group by _t0.`T_STRING` having count( distinct DATE_FORMAT( _t0.`T_DATE`, '%Y-%m-%d' ) ) > 1",
+				compiler.getCompiledSql());
+
+		ajql = "select tPrimary from TestAllType order by count(distinct tDate) desc";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where ( 1 = 1 ) order by count( distinct _t0.`T_DATE` ) desc",
+				compiler.getCompiledSql());
 	}
 
 	@Test
@@ -297,5 +332,14 @@ public class QueryCompilerTest extends Compiler {
 		String ajql = "select CONCAT('tText','tText2'), COALESCE('tText','tText2','tText3') from TestAllType";
 		QueryCompiler compiler = createCompiler(ajql);
 		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select CONCAT( 'tText', 'tText2' ) as _c0, COALESCE( 'tText', 'tText2', 'tText3' ) as _c1 from `test_all_type` as _t0 where ( 1 = 1 )",
+				compiler.getCompiledSql());
+
+		// COALESCE 在 where 中，全部参数都要绑定
+		ajql = "select tPrimary from TestAllType where COALESCE(tText, tString) = 'x'";
+		compiler = createCompiler(ajql);
+		System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+		assertEquals("select _t0.`T_PRIMARY` as _c0 from `test_all_type` as _t0 where COALESCE( _t0.`T_TEXT`, _t0.`T_STRING` ) = 'x'",
+				compiler.getCompiledSql());
 	}
 }

@@ -17,7 +17,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -107,54 +112,35 @@ public class AjqlResultImpl implements Result {
 		
 		SelectItem[] selectItems = query.getSelectItems();
 		
-		Map<String, ParameterItem> inParamaters = query.getQueryCompiler().getInParameters();
+		List<ParameterItem> inParamaters = query.getQueryCompiler().getInParameters();
 		Map<ParameterItem, Object> paramatersMapping = null;
 		if (!inParamaters.isEmpty()) {
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Use in-paramaters : " + inParamaters);
+				LOG.debug("Use in-parameters : " + inParamaters);
 			}
 			
 			paramatersMapping = new HashMap<>();
 			Map<String, Object> inParamatersRaw = query.getInParameters();
 
-			for (Map.Entry<String, ParameterItem> e : inParamaters.entrySet()) {
-				boolean index = (e.getKey().charAt(0) != ':');
-
-				Object pVal;
-				if (index) {
-					pVal = inParamatersRaw.get(e.getKey());
-				} else {
-					pVal = inParamatersRaw.get(e.getKey().substring(1));
-				}
+			for (ParameterItem item : inParamaters) {
+				String name = item.getNamed();
+				boolean index = (name.charAt(0) != ':');
+				Object pVal = inParamatersRaw.get(index ? name : name.substring(1));
 
 				if (pVal == null) {
-					throw new QueryException("The " + ((index) ? "index" : "named") + " parameter `" + e.getKey() + "` unset");
+					throw new QueryException("The " + ((index) ? "index" : "named") + " parameter `" + name + "` is unset");
 				}
-				paramatersMapping.put(e.getValue(), pVal);
+				paramatersMapping.put(item, pVal);
 			}
 		}
 		
-		// Optimize limit offset
-//		boolean limitOffset = query.getPersistManagerFactory().getDialect().supportsLimitOffset();
 		String aSql = query.getQueryCompiler().getCompiledSql();
 		if (query.limit > 0) {
 			int offset = query.offset;
-//			/*
-//			 * supports limit-offset && limit offset not been specified && first-result has been specified
-//			 */
-//			if (limitOffset && offset <= 0 && query.getFirstResult() > 0)
-//				offset = query.getFirstResult();
 			
 			aSql = query.getPersistManagerFactory().getDialect().insertLimit(
 					aSql, query.limit, offset);
 		}
-		/*
-		 * supports limit-offset, max-results has been specified
-		 */
-//		else if (limitOffset && (query.getMaxResults() > 0)) {
-//			sql = query.getPersistManagerFactory().getDialect().insertLimit(
-//					sql, query.getMaxResults(), query.getFirstResult());
-//		}
 		
 		if (LOG.isInfoEnabled()) {
 			LOG.info(">> " + aSql);
@@ -245,9 +231,11 @@ public class AjqlResultImpl implements Result {
                         || "MONTH".contentEquals(aggregator)
                         || "WEEK".contentEquals(aggregator)
                         || "DAY".contentEquals(aggregator)
-                        || "DAYOFWEEK".contentEquals(aggregator)
-                        || "DATE".contentEquals(aggregator)) {
+                        || "DAYOFWEEK".contentEquals(aggregator)) {
 					editor = FieldType.INT.getFieldEditor();
+					
+				} else if ("DATE".contentEquals(aggregator)) {
+					editor = FieldType.DATE.getFieldEditor();
 					
 				} else {
 					editor = item.getField().getType().getFieldEditor();

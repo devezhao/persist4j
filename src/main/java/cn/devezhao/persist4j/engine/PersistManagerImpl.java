@@ -1,7 +1,12 @@
 package cn.devezhao.persist4j.engine;
 
+import cn.devezhao.persist4j.DataAccessException;
+import cn.devezhao.persist4j.Entity;
+import cn.devezhao.persist4j.Field;
+import cn.devezhao.persist4j.PersistException;
+import cn.devezhao.persist4j.PersistManager;
+import cn.devezhao.persist4j.PersistManagerFactory;
 import cn.devezhao.persist4j.Record;
-import cn.devezhao.persist4j.*;
 import cn.devezhao.persist4j.dialect.Editor;
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.dialect.editor.DecimalEditor;
@@ -16,9 +21,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 持久化对象
@@ -48,7 +62,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	@Override
 	public Record save(final Record record) throws DataAccessException {
 		Validate.isTrue(record.getPrimary() == null);
-		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for save");
+		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord should not be used for save");
 
 		Entity e = record.getEntity();
 
@@ -146,7 +160,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 	@Override
 	public Record update(final Record record) throws DataAccessException {
 		Validate.notNull(record.getPrimary());
-		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord do not use for update");
+		if (record instanceof QueryedRecord) LOG.warn("QueryedRecord should not be used for update");
 
 		Entity e = record.getEntity();
 
@@ -227,13 +241,12 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		Entity entity = managerFactory.getMetadataFactory().getEntity(id.getEntityCode());
 		Field[] referenceTos = entity.getReferenceToFields();
 		
-		final String delete = MessageFormat.format("delete from {0} where {1} = ''{2}''",
-				quote(entity.getPhysicalName()),
-				quote(entity.getPrimaryField().getPhysicalName()),
-				id.toLiteral());
+		final String idLiteral = id.toLiteral();
 		
-		final List<String> sqlList = new ArrayList<>();
-		sqlList.add(delete);
+		final List<StatementCallback> sqlList = new ArrayList<>();
+		sqlList.add(bindIdCallback(MessageFormat.format("delete from {0} where {1} = ?",
+				quote(entity.getPhysicalName()),
+				quote(entity.getPrimaryField().getPhysicalName())), idLiteral));
 		
 		Map<Field, ID[]> refToIdMap;
 		if (referenceTos.length > 0) {
@@ -257,24 +270,29 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 
 				if (cField.getType() == FieldType.REFERENCE || cField.getType() == FieldType.ANY_REFERENCE) {
 					String formatted = null;
+					boolean setEmptyValue = false;
 					if (cField.getCascadeModel() == CascadeModel.Delete) {
-						formatted = "delete from {0} where {1} = ''{2}''";
+						formatted = "delete from {0} where {1} = ?";
 					} else if (cField.getCascadeModel() == CascadeModel.RemoveLinks) {
 						if (cField.isNullable()) {
-							formatted = "update {0} set {1} = NULL where {1} = ''{2}''";
+							formatted = "update {0} set {1} = NULL where {1} = ?";
 						} else {
-							formatted = "update {0} set {1} = '''' where {1} = ''{2}''";
+							formatted = "update {0} set {1} = ? where {1} = ?";
+								setEmptyValue = true;
 						}
 					} else {
-						LOG.warn("Unknow CascadeModel: " + cField.getCascadeModel());
+						LOG.warn("Unknown CascadeModel: " + cField.getCascadeModel());
 					}
 
 					if (formatted != null) {
 						String cql = MessageFormat.format(formatted,
 								quote(cField.getOwnEntity().getPhysicalName()),
-								quote(cField.getPhysicalName()),
-								id.toLiteral());
-						sqlList.add(cql);
+								quote(cField.getPhysicalName()));
+						if (setEmptyValue) {
+							sqlList.add(bindIdCallback(cql, StringUtils.EMPTY, idLiteral));
+						} else {
+							sqlList.add(bindIdCallback(cql, idLiteral));
+						}
 					}
 				}
 			}
@@ -282,7 +300,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		
 		int[] batchAffected;
 		try {
-			batchAffected = executeBatch(sqlList.toArray(new String[0]));
+			batchAffected = executeBatch(sqlList.toArray(new StatementCallback[0]));
 		} catch (SQLException sqlex) {
 			throw SqlExceptionConverter.convert(sqlex, "#DELETE", null);
 		}
@@ -320,15 +338,31 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		return this.managerFactory.getDialect().quote(ident);
 	}
 	
+	private static StatementCallback bindIdCallback(final String sql, final String... params) {
+		return new StatementCallback() {
+			@Override
+			public String getSql() {
+				return sql;
+			}
+			
+			@Override
+			public Object doInParameters(PreparedStatement pstmt) throws SQLException {
+				for (int i = 0; i < params.length; i++) {
+					pstmt.setString(i + 1, params[i]);
+				}
+				return null;
+			}
+		};
+	}
+	
 	private ID[] getReferenceToIds(Field referenceToField, ID masterId) {
 		String sql;
 		Entity own = referenceToField.getOwnEntity();
 		if (referenceToField.getType() == FieldType.REFERENCE || referenceToField.getType() == FieldType.ANY_REFERENCE) {
-			sql = MessageFormat.format("select {0} from {1} where {2} = ''{3}'' and {2} is not null",
+			sql = MessageFormat.format("select {0} from {1} where {2} = ? and {2} is not null",
 					quote(own.getPrimaryField().getPhysicalName()),
 					quote(own.getPhysicalName()),
-					quote(referenceToField.getPhysicalName()),
-					masterId.toLiteral());
+					quote(referenceToField.getPhysicalName()));
 		} else {
 			return ID.EMPTY_ID_ARRAY;
 		}
@@ -336,7 +370,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 		List<ID> ids = new ArrayList<>();
 		ResultSet rs = null;
 		try {
-			rs =  nativeQuery(sql);
+			rs = nativeQuery(sql, masterId.toLiteral());
 			while (rs.next()) {
 				String val = rs.getString(1);
 				ids.add(ID.valueOf(val));
@@ -353,7 +387,7 @@ public class PersistManagerImpl extends JdbcSupport implements PersistManager {
 					conn = stmt == null ? null : stmt.getConnection();
 					SqlHelper.close(stmt);
 				} catch (SQLException e) {
-					LOG.debug(null, e);
+					LOG.debug("Could not close statement", e);
 				}
 				
 				if (conn != null) {

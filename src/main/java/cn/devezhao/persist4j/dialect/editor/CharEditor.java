@@ -24,6 +24,6 @@ public class CharEditor extends StringEditor {
 	@Override
 	public Object get(ResultSet rs, int index) throws SQLException {
 		String v = rs.getString(index);
-		return (v == null) ? null : v.charAt(0);
+		return (v == null || v.isEmpty()) ? null : v.charAt(0);
 	}
 }

@@ -122,21 +122,20 @@ public class FieldImpl extends BaseMetaObject implements Field, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this) {
+		if (this == obj) {
 			return true;
 		}
 		if (!(obj instanceof FieldImpl)) {
 			return false;
 		}
-		return obj.hashCode() == hashCode();
+		FieldImpl other = (FieldImpl) obj;
+		return ownEntity.getName().equals(other.ownEntity.getName())
+				&& getName().equals(other.getName());
 	}
 
 	@Override
 	public String toString() {
 		return (ownEntity.getName() + "#" + getName()).toUpperCase();
-//		return new StringBuilder().append("<").append(
-//				ownEntity.getName()).append("#").append(getName()).append(
-//				"(").append(getType()).append(",").append(getMaxLength()).append(")>@").append(super.toString()).toString();
 	}
 
 	@Override

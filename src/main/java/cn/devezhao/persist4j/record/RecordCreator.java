@@ -53,7 +53,7 @@ public interface RecordCreator {
         // 忽略更新
         if (!isNew && !field.isUpdatable()) {
         	if (!onSetFieldValueWarn(field, value, record)) {
-				LOG.warn("Could not put value to un-updatable field : " + field);
+				LOG.warn("Could not put value to non-updatable field : " + field);
 				return false;
 			}
         }
@@ -61,7 +61,7 @@ public interface RecordCreator {
         // 忽略新建
         if (isNew && !field.isCreatable()) {
 			if (!onSetFieldValueWarn(field, value, record)) {
-            	LOG.warn("Could not put value to un-creatable field : " + field);
+            	LOG.warn("Could not put value to non-creatable field : " + field);
 				return false;
 			}
         }
@@ -81,7 +81,7 @@ public interface RecordCreator {
 			try {
 	            RecordVisitor.setValueByLiteral(field, value, record);
 			} catch (Exception ex) {
-				LOG.error("Invalid field value by literal : " + field.getName() + " = " + value);
+				LOG.error("Invalid field value from literal : " + field.getName() + " = " + value);
 				throw ex;
 			}
         }

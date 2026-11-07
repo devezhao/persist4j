@@ -192,7 +192,7 @@ public class Table {
 		} else if (StringUtils.isNotBlank(defaultValue)) {  // 默认值
 			if (canNull.contains("default")) {
 				canNull = canNull.split("default")[0];
-				canNull += " " + defaultValue.replaceAll("'", "") + "'";
+				canNull += " default '" + defaultValue.replaceAll("'", "") + "'";
 			} else {
 				canNull += " default '" + defaultValue.replaceAll("'", "") + "'";
 			}
@@ -213,7 +213,7 @@ public class Table {
 		
 		// 为自增列加唯一索引
 		if (field.isAutoValue()) {
-			String aix = String.format("unique index AIX%d_%s (`%s`)", this.indexNo++, entity.getPhysicalName(), column);
+			String aix = String.format("unique index AIX%d_%s (%s)", this.indexNo++, entity.getPhysicalName(), dialect.quote(column));
 			autoValueIndex.add(aix);
 		}
 	}

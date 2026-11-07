@@ -8,7 +8,13 @@ import org.springframework.jdbc.SQLWarningException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 
 /**
  * Sql helper.
@@ -91,7 +97,7 @@ public final class SqlHelper {
 	}
 	
 	/**
-	 * clear statement <tt>btach</tt>, <tt>warnings</tt>
+	 * clear statement <tt>batch</tt>, <tt>warnings</tt>
 	 * 
 	 * @param stmt
 	 */
@@ -176,9 +182,9 @@ public final class SqlHelper {
 		} else if (ex.getCause() instanceof SQLException) {
 			LOG.error(SqlExceptionConverter.convert((SQLException) ex.getCause(), message, null));
 		} else if (ex instanceof AbstractMethodError) {
-			LOG.error("JDBC driver does not support. " + ex);
+			LOG.error("JDBC driver does not support this operation. " + ex);
 		} else {
-			LOG.error("Unexception exception. " + ex);
+			LOG.error("Unexpected exception. " + ex);
 		}
 	}
 	

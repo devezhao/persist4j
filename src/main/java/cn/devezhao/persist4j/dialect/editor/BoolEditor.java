@@ -1,6 +1,7 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,6 +28,10 @@ public class BoolEditor extends CharEditor {
     @Override
     public void set(PreparedStatement pstmt, int index, Object value)
             throws SQLException {
+        if (NullValue.isNull(value)) {
+            super.set(pstmt, index, null);
+            return;
+        }
         char ch = ((Boolean) value) ? TRUE : FALSE;
         super.set(pstmt, index, ch);
     }

@@ -1,11 +1,13 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Types;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -26,6 +28,11 @@ public class TimeEditor extends AbstractFieldEditor {
     @Override
     public void set(PreparedStatement pstmt, int index, Object value)
             throws SQLException {
+        if (NullValue.isNull(value)) {
+            pstmt.setNull(index, Types.TIME);
+            return;
+        }
+
         Time v;
         if (value.getClass() == Date.class) {
             v = new Time(((Date) value).getTime());

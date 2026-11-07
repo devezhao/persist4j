@@ -147,7 +147,7 @@ aggregateWithFields
 
 aggregate
 	: (MIN^ | MAX^ | AVG^ | SUM^ | YEAR^ | QUARTER^ | MONTH^ | WEEK^ | DAY^ | DAYOFWEEK^ | DATE^ | TIME^) LPAREN! column RPAREN!
-	| COUNT^ LPAREN! (DISTINCT)? (STAR | column) RPAREN!
+	| COUNT^ LPAREN! (DISTINCT)? (STAR | column | aggregateWithMode) RPAREN!  // eg. count(distinct DATE_FORMAT(x, '%Y'))
 	| aggregateWithMode
 	| aggregateWithFields
 	| groupConcatClause

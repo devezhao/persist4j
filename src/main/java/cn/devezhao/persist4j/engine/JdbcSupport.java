@@ -5,7 +5,11 @@ import cn.devezhao.persist4j.util.SqlHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * 
@@ -51,7 +55,7 @@ public abstract class JdbcSupport {
 		} catch (SQLException sqlex) {
 			throw sqlex;
 		} catch (Throwable unex) {
-			throw new DataAccessException("Unexception on execute", unex);
+			throw new DataAccessException("Unexpected exception on execute", unex);
 		} finally {
 			SqlHelper.close(pstmt);
 			releaseConnection(connect);
@@ -112,7 +116,7 @@ public abstract class JdbcSupport {
 			if (unex instanceof DataAccessException) {
 				throw (DataAccessException) unex;
 			} else {
-				throw new DataAccessException("Unexception on executeBatch", unex);
+				throw new DataAccessException("Unexpected exception on executeBatch", unex);
 			}
 		} finally {
 			SqlHelper.close(stmt);
@@ -122,24 +126,92 @@ public abstract class JdbcSupport {
 	}
 	
 	protected ResultSet nativeQuery(String sql) throws SQLException, DataAccessException {
+		return nativeQuery(sql, null);
+	}
+	
+	protected ResultSet nativeQuery(String sql, String param) throws SQLException, DataAccessException {
 		Connection connect = getConnection();
-		Statement stmt;
+		PreparedStatement pstmt = null;
 		ResultSet rs;
 		
 		try {
-			stmt = connect.createStatement();
-			stmt.setQueryTimeout(getTimeout());
+			pstmt = connect.prepareStatement(sql);
+			pstmt.setQueryTimeout(getTimeout());
+			if (param != null) {
+				pstmt.setString(1, param);
+			}
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("exec query: " + sql);
 			}
 			
-			rs = stmt.executeQuery(sql);
-		} catch (SQLException sqlex) {
-			throw sqlex;
-		} catch (Throwable unex) {
-			throw new DataAccessException("Unexception on nativeQuery", unex);
+			rs = pstmt.executeQuery();
+		} catch (Throwable ex) {
+			SqlHelper.close(pstmt);
+			releaseConnection(connect);
+			if (ex instanceof SQLException) {
+				throw (SQLException) ex;
+			}
+			throw new DataAccessException("Unexpected exception on nativeQuery", ex);
 		}
 		return rs;
+	}
+	
+	public int[] executeBatch(StatementCallback[] callbacks) throws SQLException, DataAccessException {
+		if (callbacks == null || callbacks.length == 0) {
+			return new int[0];
+		}
+		
+		Connection connect = getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			boolean autoCommit = connect.getAutoCommit();
+			if (autoCommit) {
+				connect.setAutoCommit(false);
+			}
+			try {
+				int[] rowsAffected = new int[callbacks.length];
+				for (int i = 0; i < callbacks.length; i++) {
+					StatementCallback callback = callbacks[i];
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("exec sql: " + callback.getSql());
+					}
+					
+					pstmt = connect.prepareStatement(callback.getSql());
+					pstmt.setQueryTimeout(getTimeout());
+					callback.doInParameters(pstmt);
+					rowsAffected[i] = pstmt.executeUpdate();
+					SqlHelper.close(pstmt);
+					pstmt = null;
+				}
+				if (autoCommit) {
+					connect.commit();
+				}
+				return rowsAffected;
+			} catch (Throwable ex) {
+				if (autoCommit) {
+					try {
+						connect.rollback();
+					} catch (SQLException rbex) {
+						LOG.warn("Could not roll back", rbex);
+					}
+				}
+				if (ex instanceof SQLException) {
+					throw (SQLException) ex;
+				}
+				throw new DataAccessException("Unexpected exception on executeBatch", ex);
+			} finally {
+				if (autoCommit) {
+					try {
+						connect.setAutoCommit(true);
+					} catch (SQLException e) {
+						LOG.debug("Could not restore auto-commit", e);
+					}
+				}
+			}
+		} finally {
+			SqlHelper.close(pstmt);
+			releaseConnection(connect);
+		}
 	}
 	
 	public void setTimeout(int timeout) {

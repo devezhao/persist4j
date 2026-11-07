@@ -2,6 +2,7 @@ package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.engine.ID;
+import cn.devezhao.persist4j.engine.NullValue;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.PreparedStatement;
@@ -28,7 +29,7 @@ public class PrimaryEditor extends StringEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		super.set(pstmt, index, ((ID) value).toLiteral());
+		super.set(pstmt, index, (NullValue.isNull(value)) ? null : ((ID) value).toLiteral());
 	}
 	
 	@Override

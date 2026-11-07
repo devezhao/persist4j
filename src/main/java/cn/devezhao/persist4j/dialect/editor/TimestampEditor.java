@@ -1,11 +1,13 @@
 package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 
 /**
@@ -27,6 +29,11 @@ public class TimestampEditor extends DateEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
+		if (NullValue.isNull(value)) {
+			pstmt.setNull(index, Types.TIMESTAMP);
+			return;
+		}
+		
 		Timestamp v;
 		Class<?> vClazz = value.getClass();
 		if (vClazz == java.util.Date.class || vClazz == java.sql.Date.class) {

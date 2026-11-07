@@ -91,11 +91,14 @@ public class FieldType implements Type, Serializable {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() >>> getMask();
+		return getMask().hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
 		if (!(obj instanceof Type)) {
 			return false;
 		}

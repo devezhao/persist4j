@@ -2,6 +2,7 @@ package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.persist4j.dialect.FieldType;
 import cn.devezhao.persist4j.engine.ID;
+import cn.devezhao.persist4j.engine.NullValue;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.PreparedStatement;
@@ -53,7 +54,7 @@ public class ReferenceListEditor extends StringEditor {
 	
 	@Override
 	public String toLiteral(Object value) {
-		if (value == null) {
+		if (NullValue.isNull(value)) {
 			return null;
 		}
 		ID[] ids = (ID[]) value;

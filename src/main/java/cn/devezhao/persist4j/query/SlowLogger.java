@@ -53,7 +53,7 @@ public class SlowLogger {
 		
 		StringBuilder logs = new StringBuilder()
 				.append("\n** SQL Slower/Many ***********************************************************************")
-				.append("\nSQL:        ").append(sql == null ? "Unknow" : sql);
+				.append("\nSQL:        ").append(sql == null ? "Unknown" : sql);
 		if (time > loggerTime) {
 			logs.append("\nTime:       ").append(time).append("ms");
 		}

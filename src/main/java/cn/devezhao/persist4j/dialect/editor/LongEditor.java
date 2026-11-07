@@ -2,10 +2,12 @@ package cn.devezhao.persist4j.dialect.editor;
 
 import cn.devezhao.commons.ObjectUtils;
 import cn.devezhao.persist4j.dialect.FieldType;
+import cn.devezhao.persist4j.engine.NullValue;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * 长整数
@@ -26,7 +28,11 @@ public class LongEditor extends AbstractFieldEditor {
 	@Override
 	public void set(PreparedStatement pstmt, int index, Object value)
 			throws SQLException {
-		pstmt.setLong(index, ObjectUtils.toLong(value));
+		if (NullValue.isNull(value)) {
+			pstmt.setNull(index, Types.BIGINT);
+		} else {
+			pstmt.setLong(index, ObjectUtils.toLong(value));
+		}
 	}
 
 	@Override

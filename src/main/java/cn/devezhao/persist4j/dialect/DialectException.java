@@ -13,7 +13,7 @@ public class DialectException extends PersistException {
 	private static final long serialVersionUID = -5320452369990541421L;
 
 	public DialectException() {
-		this("Unknow dialect error.");
+		this("Unknown dialect error.");
 	}
 
 	public DialectException(String message) {

@@ -17,8 +17,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +58,7 @@ public class QueryCompiler implements Serializable {
 	
 	final private Map<String, JoinField> joinFieldMap = new HashMap<>();
 	
-	final private Map<String, ParameterItem> inParameters = new HashMap<>();
+	final private List<ParameterItem> inParameters = new ArrayList<>();
 	private int inParametersIndex = 0;
 	
 	private SqlExecutorContext sqlExecutorContext;
@@ -142,7 +144,7 @@ public class QueryCompiler implements Serializable {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	public Map<String, ParameterItem> getInParameters() throws IllegalStateException {
+	public List<ParameterItem> getInParameters() throws IllegalStateException {
 		throwIfUncompile();
 		return inParameters;
 	}
@@ -170,6 +172,10 @@ public class QueryCompiler implements Serializable {
 		boolean distinctAggregator = false;
 		Set<JoinField> distinctFields = new HashSet<>();
 		Map<JoinField, AST> mutliFieldsAggregators = new HashMap<>();
+		// 嵌套聚合 eg. count(distinct DATE_FORMAT(x, '%Y'))
+		// NOTE 用 IdentityHashMap 因为 JoinField#equals 不比较 aggregatorSibling，
+		// 同字段不同格式串的 count 会 equals 相等而互相覆盖
+		Map<JoinField, AST> nestedAggregators = new IdentityHashMap<>();
 
 		List<JoinField> selectFields = new LinkedList<>();
 		AST item = select.getFirstChild();
@@ -200,20 +206,33 @@ public class QueryCompiler implements Serializable {
 				if (withDistinct) {
 					column = column.getNextSibling();
 				}
-				
+
+				// 嵌套聚合 eg. count(distinct DATE_FORMAT(x, '%Y'))、group_concat(DATE_FORMAT(x, '%Y'))
+				AST nested = null;
+				if ((item.getType() == AjQLParserTokenTypes.COUNT || item.getType() == AjQLParserTokenTypes.GROUP_CONCAT)
+						&& column.getType() == AjQLParserTokenTypes.DATE_FORMAT) {
+					nested = column;
+					column = column.getFirstChild();
+				}
+
 				aJF = bindJoinField(aJTree, entity, column, SelectItemType.Aggregator);
 				aJF.setAggregator(item.getText(), withDistinct ? "distinct" : null);
-				
+
+				if (nested != null) {
+					// NOTE 格式串不设置到 aggregatorMode，生成 SQL 时从 nested 取
+					nestedAggregators.put(aJF, nested);
+				}
+
 				if (ParserHelper.isAggregatorWithMode(item.getType())) {
-					column = column.getNextSibling();
+					// 嵌套时 separator 在 nested 之后，否则在字段之后
+					AST mode = (nested != null) ? nested.getNextSibling() : column.getNextSibling();
 
 					// group_concat
-					if (column != null && column.getType() == AjQLParserTokenTypes.SEPARATOR) {
-						String sep = column.getNextSibling().getText();
+					if (mode != null && mode.getType() == AjQLParserTokenTypes.SEPARATOR) {
+						String sep = mode.getNextSibling().getText();
 						aJF.setAggregatorMode(String.format("separator '%s'", sep));
-					} else if (column != null) {
-						String mode = column.getNextSibling().getText();  // [, '%Y']
-						aJF.setAggregatorMode(mode);
+					} else if (mode != null && nested == null) {
+						aJF.setAggregatorMode(mode.getNextSibling().getText());  // [, '%Y']
 					}
 				}
 
@@ -292,20 +311,33 @@ public class QueryCompiler implements Serializable {
 				if ("CONCAT".equalsIgnoreCase(aJF.getAggregator())
 						|| "COALESCE".equalsIgnoreCase(aJF.getAggregator())) {
 					AST node = mutliFieldsAggregators.get(aJF);
-					StringBuilder concat = compileByClause(node, "concat");
-					concat.insert(6, "( ").append(") as ");
+					StringBuilder concat = compileByClause(node, aJF.getAggregator());
+					concat.insert(aJF.getAggregator().length(), "( ").append(") as ");
 					clause = concat.toString();
 					
 				} else if ("GROUP_CONCAT".equalsIgnoreCase(aJF.getAggregator())) {
 					StringBuilder s = new StringBuilder(aJF.getAggregator())
 							.append("( ");
 					if (aJF.getAggregatorSibling() != null) s.append("distinct ");
-					s.append(aJF.getName()).append(" ");
+					AST nested = nestedAggregators.get(aJF);
+					if (nested != null) {
+						// eg. group_concat( DATE_FORMAT( _t0.`X`, '%Y' ) )
+						s.append(nested.getText()).append("( ").append(aJF.getName())
+								.append(", '").append(getNestedAggregatorMode(nested)).append("' ) ");
+					} else {
+						s.append(aJF.getName()).append(" ");
+					}
 					if (aJF.getAggregatorMode() != null) s.append(aJF.getAggregatorMode()).append(" ");
 					clause = s.append(")").toString();
 
 				} else {
-					if (aJF.getAggregatorMode() != null) {
+					AST nested = nestedAggregators.get(aJF);
+					if (nested != null) {
+						// eg. count( distinct DATE_FORMAT( _t0.`X`, '%Y' ) )
+						clause = String.format("%s( %s%s( %s, '%s' ) ) as ", aJF.getAggregator(),
+								aJF.getAggregatorSibling() == null ? "" : aJF.getAggregatorSibling() + " ",
+								nested.getText(), aJF.getName(), getNestedAggregatorMode(nested));
+					} else if (aJF.getAggregatorMode() != null) {
 						clause = String.format("%s( %s, '%s' ) as ", aJF.getAggregator(), aJF.getName(), aJF.getAggregatorMode());
 					} else if (aJF.getAggregatorSibling() != null) {
 						clause = String.format("%s( %s %s ) as ", aJF.getAggregator(), aJF.getAggregatorSibling(), aJF.getName());
@@ -367,7 +399,7 @@ public class QueryCompiler implements Serializable {
 					clause.append(INDEX_PARAM);
 					inParametersIndex++;
 					text = (text.charAt(0) == INDEX_PARAM) ? String.valueOf(inParametersIndex) : text;
-					inParameters.put(text, new ParameterItem(text, inParametersIndex, aJF.getField()));
+					inParameters.add(new ParameterItem(text, inParametersIndex, aJF.getField()));
 					break;
 				case AjQLParserTokenTypes.MATCH:
 					clause.append(compileMatchClause(next, lastField));
@@ -396,7 +428,7 @@ public class QueryCompiler implements Serializable {
 						}
 						
 					} else {
-						LOG.warn("Unknow token in `where` clause : <" + type + ", " + text + ">");
+						LOG.warn("Unknown token in `where` clause : <" + type + ", " + text + ">");
 					}
 				}
 				
@@ -452,7 +484,7 @@ public class QueryCompiler implements Serializable {
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
 				} else {
-					LOG.warn("Unknow token in `in` clause [ " + ttype + ":" + text + " ]");
+					LOG.warn("Unknown token in `in` clause [ " + ttype + ":" + text + " ]");
 				}
 				break;
 			}
@@ -492,7 +524,7 @@ public class QueryCompiler implements Serializable {
 				if (ParserHelper.isInIgnoreValue(ttype) || ParserHelper.isInIgnore(ttype)) {
 					clause.append(text);
 				} else {
-					LOG.warn("Unknow token in `exists` clause [ " + ttype + ":" + text + " ]");
+					LOG.warn("Unknown token in `exists` clause [ " + ttype + ":" + text + " ]");
 				}
 				break;
 			}
@@ -517,7 +549,7 @@ public class QueryCompiler implements Serializable {
 		}
 		
 		if (!nested.inParameters.isEmpty()) {
-			this.inParameters.putAll(nested.inParameters);
+			this.inParameters.addAll(nested.inParameters);
 			this.inParametersIndex = nested.inParametersIndex;
 		}
 		
@@ -574,7 +606,7 @@ public class QueryCompiler implements Serializable {
 		
 		AST next;
 		if (who.toUpperCase().startsWith("HAVING")
-				|| "CONCAT".equalsIgnoreCase(who)) {
+				|| ParserHelper.isAggregatorWithNested(ast.getType())) {  // CONCAT/COALESCE 的首个孩子即参数
 			next = ast.getFirstChild();
 		} else {
 			next = ast.getFirstChild().getNextSibling();
@@ -633,8 +665,8 @@ public class QueryCompiler implements Serializable {
 	 */
 	private String compileAggregator(AST next) {
 		if (ParserHelper.isAggregatorWithNested(next.getType())) {
-			StringBuilder concat = compileByClause(next, "concat");
-			concat.insert(6, "( ").append(")");
+			StringBuilder concat = compileByClause(next, next.getText());
+			concat.insert(next.getText().length(), "( ").append(")");
 			return concat.toString();
 		}
 
@@ -643,6 +675,15 @@ public class QueryCompiler implements Serializable {
         if (withDistinct) {
             column = column.getNextSibling();
         }
+
+		// eg. count(distinct DATE_FORMAT(x, '%Y'))
+		if (next.getType() == AjQLParserTokenTypes.COUNT
+				&& ParserHelper.isAggregatorWithMode(column.getType())) {
+			JoinField nestedJF = getJoinField(column.getFirstChild(), column, sqlExecutorContext.getDialect());
+			return String.format("%s( %s%s( %s, '%s' ) )", next.getText(),
+					withDistinct ? "distinct " : "", column.getText(),
+					nestedJF.getName(), nestedJF.getAggregatorMode());
+		}
 
 		JoinField aJF = getJoinField(column, next, sqlExecutorContext.getDialect());
 		StringBuilder clause = new StringBuilder(next.getText())
@@ -659,6 +700,16 @@ public class QueryCompiler implements Serializable {
 		}
 		clause.append(" )");
 		return clause.toString();
+	}
+	
+	/**
+	 * 获取嵌套聚合（DATE_FORMAT）的格式串
+	 * 
+	 * @param nested
+	 * @return
+	 */
+	private static String getNestedAggregatorMode(AST nested) {
+		return nested.getFirstChild().getNextSibling().getNextSibling().getText();  // [x, '%Y']
 	}
 	
 	/**
@@ -716,7 +767,7 @@ public class QueryCompiler implements Serializable {
 				}
 				
 				if (referenceTo == null) {
-					throw new CompileException("Entity " + joinEntity.getName() + " no reference-to " + rootEntity.getName());
+					throw new CompileException("Entity " + joinEntity.getName() + " has no reference to " + rootEntity.getName());
 				}
 				
 				JoinNode jNode = tree.addChildJoin(
@@ -731,12 +782,12 @@ public class QueryCompiler implements Serializable {
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
-			throw new CompileException("Force join must has two nodes");
+			throw new CompileException("Force join must have two nodes");
 		}
 		
 		if (joined.length == 1) {  // No joins
 			Field field = entity.getField(joined[0]);
-			Validate.notNull(field, "Unknow field [ " + joined[0] + " ] in entity [ " + entity.getName() + " ]");
+			Validate.notNull(field, "Unknown field [ " + joined[0] + " ] in entity [ " + entity.getName() + " ]");
 			JoinField aJF = new JoinField(tree.getRootJoinNode(), field, itemName, type);
 			joinFieldMap.put(itemName, aJF);
 			return aJF;
@@ -748,7 +799,7 @@ public class QueryCompiler implements Serializable {
 		for (int i = 0; i < joined.length; i++) {  // eg. `accountId.ownUser.fullName`
 			String fn = joined[i];
 			crtf = crte.getField(fn);
-			Validate.notNull(crtf, "Unknow field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
+			Validate.notNull(crtf, "Unknown field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
 			crte = getReferenceEntity(crtf);
 			
 			if (pjn == null) {
@@ -762,14 +813,14 @@ public class QueryCompiler implements Serializable {
 			
 			if (i + 2 == joined.length) {
 				Field last = crte.getField(joined[i + 1]);
-				Validate.notNull(last, "Unknow field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
+				Validate.notNull(last, "Unknown field [ " + fn + " ] in entity [ " + crte.getName() + " ]");
 				
 				JoinField aJF = new JoinField(pjn, last, itemName, type);
 				joinFieldMap.put(itemName, aJF);
 				return aJF;
 			}
 		}
-		throw new CompileException("Unknow error on bind JoinField");
+		throw new CompileException("Unknown error on binding JoinField");
 	}
 	
 	/**
@@ -795,7 +846,25 @@ public class QueryCompiler implements Serializable {
 		do {
 			AST node = ast;
 			if (node.getType() != AjQLParserTokenTypes.IDENT) {
-				node = node.getFirstChild();
+				if (ParserHelper.isAggregatorWithNested(node.getType())) {
+					// CONCAT/COALESCE 有多个字段，递归绑定全部参数
+					// @see #bindJoinField 虚拟 JF
+					findJoinFields(node, aJTree, entity);
+					continue;
+
+				} else if (ParserHelper.isAggregator(node.getType())) {
+					// 聚合函数逐层下探到字段 eg. count(distinct DATE_FORMAT(x, '%Y'))
+					node = node.getFirstChild();
+					if (node != null && node.getType() == AjQLParserTokenTypes.DISTINCT) {
+						node = node.getNextSibling();
+					}
+					if (node != null && ParserHelper.isAggregator(node.getType())) {
+						node = node.getFirstChild();
+					}
+				} else {
+					node = node.getFirstChild();
+				}
+
 				if (node == null || node.getType() != AjQLParserTokenTypes.IDENT) {
 					continue;
 				}
@@ -815,7 +884,7 @@ public class QueryCompiler implements Serializable {
 	private JoinField getJoinField(AST item, AST aggregator, Dialect dialect) {
 		JoinField aJF = joinFieldMap.get(item.getText());
 		if (aJF == null) {
-			throw new CompileException("Unknow JoinField in clause [ " + item.getType() + ", " + item.getText() + " ]");
+			throw new CompileException("Unknown JoinField in clause [ " + item.getType() + ", " + item.getText() + " ]");
 		}
 		
 		// Use clone
@@ -840,7 +909,7 @@ public class QueryCompiler implements Serializable {
 	 */
 	private void throwIfUncompile() {
 		if (this.compiledSql == null) {
-			throw new IllegalStateException("uncompile");
+			throw new IllegalStateException("Not compiled");
 		}
 	}
 
@@ -855,7 +924,7 @@ public class QueryCompiler implements Serializable {
 					"ANTLR cannot parse AjQL stream, threw an exception [ "
 					+ cause.getClass().getName() + ": " + ex.getCause() + " {" + ajql + "} ]", ex.getCause());
 		}
-		throw new CompileException("Parse AjQL error {" + ajql + "}", ex);
+		throw new CompileException("Error parsing AjQL: {" + ajql + "}", ex);
 	}
 	
 	// ----------------------------------------------------------- Just for Nested SQL

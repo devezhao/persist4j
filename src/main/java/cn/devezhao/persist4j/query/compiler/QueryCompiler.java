@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -171,6 +172,10 @@ public class QueryCompiler implements Serializable {
 		boolean distinctAggregator = false;
 		Set<JoinField> distinctFields = new HashSet<>();
 		Map<JoinField, AST> mutliFieldsAggregators = new HashMap<>();
+		// 嵌套聚合 eg. count(distinct DATE_FORMAT(x, '%Y'))
+		// NOTE 用 IdentityHashMap 因为 JoinField#equals 不比较 aggregatorSibling，
+		// 同字段不同格式串的 count 会 equals 相等而互相覆盖
+		Map<JoinField, AST> nestedAggregators = new IdentityHashMap<>();
 
 		List<JoinField> selectFields = new LinkedList<>();
 		AST item = select.getFirstChild();
@@ -201,11 +206,23 @@ public class QueryCompiler implements Serializable {
 				if (withDistinct) {
 					column = column.getNextSibling();
 				}
-				
+
+				// eg. count(distinct DATE_FORMAT(x, '%Y'))
+				AST nested = null;
+				if (item.getType() == AjQLParserTokenTypes.COUNT
+						&& ParserHelper.isAggregatorWithMode(column.getType())) {
+					nested = column;
+					column = column.getFirstChild();
+				}
+
 				aJF = bindJoinField(aJTree, entity, column, SelectItemType.Aggregator);
 				aJF.setAggregator(item.getText(), withDistinct ? "distinct" : null);
-				
-				if (ParserHelper.isAggregatorWithMode(item.getType())) {
+
+				if (nested != null) {
+					// NOTE 不设置 aggregatorMode，格式串在生成 SQL 时从 nested 取
+					nestedAggregators.put(aJF, nested);
+
+				} else if (ParserHelper.isAggregatorWithMode(item.getType())) {
 					column = column.getNextSibling();
 
 					// group_concat
@@ -306,7 +323,14 @@ public class QueryCompiler implements Serializable {
 					clause = s.append(")").toString();
 
 				} else {
-					if (aJF.getAggregatorMode() != null) {
+					AST nested = nestedAggregators.get(aJF);
+					if (nested != null) {
+						// eg. count( distinct DATE_FORMAT( _t0.`X`, '%Y' ) )
+						String mode = nested.getFirstChild().getNextSibling().getNextSibling().getText();  // [x, '%Y']
+						clause = String.format("%s( %s%s( %s, '%s' ) ) as ", aJF.getAggregator(),
+								aJF.getAggregatorSibling() == null ? "" : aJF.getAggregatorSibling() + " ",
+								nested.getText(), aJF.getName(), mode);
+					} else if (aJF.getAggregatorMode() != null) {
 						clause = String.format("%s( %s, '%s' ) as ", aJF.getAggregator(), aJF.getName(), aJF.getAggregatorMode());
 					} else if (aJF.getAggregatorSibling() != null) {
 						clause = String.format("%s( %s %s ) as ", aJF.getAggregator(), aJF.getAggregatorSibling(), aJF.getName());
@@ -644,6 +668,15 @@ public class QueryCompiler implements Serializable {
         if (withDistinct) {
             column = column.getNextSibling();
         }
+
+		// eg. count(distinct DATE_FORMAT(x, '%Y'))
+		if (next.getType() == AjQLParserTokenTypes.COUNT
+				&& ParserHelper.isAggregatorWithMode(column.getType())) {
+			JoinField nestedJF = getJoinField(column.getFirstChild(), column, sqlExecutorContext.getDialect());
+			return String.format("%s( %s%s( %s, '%s' ) )", next.getText(),
+					withDistinct ? "distinct " : "", column.getText(),
+					nestedJF.getName(), nestedJF.getAggregatorMode());
+		}
 
 		JoinField aJF = getJoinField(column, next, sqlExecutorContext.getDialect());
 		StringBuilder clause = new StringBuilder(next.getText())

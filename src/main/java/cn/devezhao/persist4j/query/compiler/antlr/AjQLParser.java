@@ -1059,6 +1059,7 @@ public AjQLParser(ParserSharedInputState state) {
 					match(DISTINCT);
 					break;
 				}
+				case DATE_FORMAT:
 				case NULL:
 				case TRUE:
 				case FALSE:
@@ -1103,6 +1104,12 @@ public AjQLParser(ParserSharedInputState state) {
 				case MINUS:
 				{
 					column();
+					astFactory.addASTChild(currentAST, returnAST);
+					break;
+				}
+				case DATE_FORMAT:
+				{
+					aggregateWithMode();
 					astFactory.addASTChild(currentAST, returnAST);
 					break;
 				}

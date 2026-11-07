@@ -176,6 +176,36 @@ public class QueryCompilerTest extends Compiler {
                 compiler.getCompiledSql());
     }
 
+    @Test
+    public void testCountDistinctNested() {
+        String ajql = "select count(distinct DATE_FORMAT(tDate, '%Y-%m-%d')) from TestAllType where 1=1";
+        QueryCompiler compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+        assertEquals("select count( distinct DATE_FORMAT( _t0.`T_DATE`, '%Y-%m-%d' ) ) as _c0 from `test_all_type` as _t0 where 1 = 1",
+                compiler.getCompiledSql());
+
+        // 无 distinct，小写函数名
+        ajql = "select count(date_format(tDate, '%Y')) from TestAllType";
+        compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+        assertEquals("select count( date_format( _t0.`T_DATE`, '%Y' ) ) as _c0 from `test_all_type` as _t0 where ( 1 = 1 )",
+                compiler.getCompiledSql());
+
+        // 多列混排 + having 中的嵌套聚合
+        ajql = "select tString, count(distinct DATE_FORMAT(tDate, '%Y-%m-%d')) from TestAllType group by tString having count(distinct DATE_FORMAT(tDate, '%Y-%m-%d')) > 1";
+        compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+        assertEquals("select _t0.`T_STRING` as _c0, count( distinct DATE_FORMAT( _t0.`T_DATE`, '%Y-%m-%d' ) ) as _c1 from `test_all_type` as _t0 where ( 1 = 1 ) group by _t0.`T_STRING` having count( distinct DATE_FORMAT( _t0.`T_DATE`, '%Y-%m-%d' ) ) > 1",
+                compiler.getCompiledSql());
+
+        // 同字段不同格式串的多个嵌套 count
+        ajql = "select count(distinct DATE_FORMAT(tDate, '%Y')), count(DATE_FORMAT(tDate, '%Y-%m')) from TestAllType";
+        compiler = createCompiler(ajql);
+        System.out.println(ajql + "\n>>\n" + compiler.getCompiledSql());
+        assertEquals("select count( distinct DATE_FORMAT( _t0.`T_DATE`, '%Y' ) ) as _c0, count( DATE_FORMAT( _t0.`T_DATE`, '%Y-%m' ) ) as _c1 from `test_all_type` as _t0 where ( 1 = 1 )",
+                compiler.getCompiledSql());
+    }
+
 	@Test
 	public void testDateAggregator() {
 		String ajql = "select year(tDate),quarter(tDate),month(tDate),week(tDate),date_format(tDate, '%Y') from TestAllType where year(tDate) = 2020";

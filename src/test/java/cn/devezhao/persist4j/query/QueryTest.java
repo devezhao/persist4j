@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertThrows;
+
 /**
  * @author <a href="mailto:zhaofang123@gmail.com">FANGFANG ZHAO</a>
  * @since 04/16/2020
@@ -62,6 +64,34 @@ public class QueryTest extends BaseTest {
                 .unique();
         System.out.println(Arrays.toString(res));
     }
+
+	@Test
+	public void testParameterStringCompat() throws Exception {
+		readySchemes();
+		String id = ID.newId(0).toLiteral();
+
+		createQuery("select tPrimary from TestAllType where tPrimary = ?")
+				.setParameter(1, id).unique();
+		createQuery("select tPrimary from TestAllType where tReference = ?")
+				.setParameter(1, id).unique();
+		createQuery("select tPrimary from TestAllType where tAnyReference = ?")
+				.setParameter(1, id).unique();
+		createQuery("select tPrimary from TestAllType where tDate > ?")
+				.setParameter(1, "2019-04-01").unique();
+		createQuery("select tPrimary from TestAllType where tTimestamp > ?")
+				.setParameter(1, "2019-04-01 00:00:00").unique();
+		createQuery("select tPrimary from TestAllType where tTime > ?")
+				.setParameter(1, "10:00:00").unique();
+		createQuery("select tPrimary from TestAllType where tBool = ?")
+				.setParameter(1, "true").unique();
+
+		assertThrows(IllegalArgumentException.class, () ->
+				createQuery("select tPrimary from TestAllType where tPrimary = ?")
+						.setParameter(1, "not-an-id").unique());
+		assertThrows(IllegalArgumentException.class, () ->
+				createQuery("select tPrimary from TestAllType where tDate > ?")
+						.setParameter(1, "2019-13-01").unique());
+	}
 
 	/**
 	 * 创建查询

@@ -160,7 +160,8 @@ public class AjqlResultImpl implements Result {
 			if (paramatersMapping != null && !paramatersMapping.isEmpty()) {
 				for (Map.Entry<ParameterItem, Object> e : paramatersMapping.entrySet()) {
 					ParameterItem pi = e.getKey();
-					pi.getField().getType().getFieldEditor().set( pstmt, pi.getIndex(), e.getValue() );
+					pi.getField().getType().getFieldEditor().set( pstmt, pi.getIndex(),
+							QueryParameterConverter.convert(pi.getField().getType(), e.getValue()) );
 				}
 			}
 			

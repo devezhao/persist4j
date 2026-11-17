@@ -129,7 +129,8 @@ public class NativeQueryImpl extends BaseQuery<NativeQuery> implements NativeQue
 				if (parameterTypes != null && parameterTypes.length == inParameters.size()) {
 					for (Map.Entry<Integer, Object> e : inParameters.entrySet()) {
 						int idx = e.getKey() - 1;
-						parameterTypes[idx].getFieldEditor().set( pstmt, idx + 1, e.getValue() );
+						parameterTypes[idx].getFieldEditor().set( pstmt, idx + 1,
+								QueryParameterConverter.convert(parameterTypes[idx], e.getValue()) );
 					}
 				} else {
 					if (LOG.isDebugEnabled()) {

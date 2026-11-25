@@ -416,7 +416,11 @@ public class ConfigurationMetadataFactory implements MetadataFactory {
 				}
 			} else {
 				for (String eName : e.getValue()) {
-					field.addReference(getEntityNoLock(eName));
+					try {
+						field.addReference(getEntityNoLock(eName));
+					} catch (MetadataException ex) {
+						LOG.error("Failed to add reference: " + eName, ex);
+					}
 				}
 			}
 		}
